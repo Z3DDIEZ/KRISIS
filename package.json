@@ -1,0 +1,8 @@
+{
+  "name": "krisis",
+  "private": true,
+  "workspaces": [
+    "frontend",
+    "functions"
+  ]
+}
