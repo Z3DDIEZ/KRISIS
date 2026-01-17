@@ -9,12 +9,7 @@ export default defineConfig({
   build: {
     rollupOptions: {
       output: {
-        manualChunks: {
-          'firebase': ['firebase/app', 'firebase/auth', 'firebase/firestore'],
-          'ui': ['react', 'react-dom'],
-          'charts': ['recharts'],
-          'utils': ['date-fns', 'lodash-es']
-        }
+        manualChunks: undefined // Disable manual chunking for now
       }
     }
   }

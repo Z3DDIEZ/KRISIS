@@ -51,6 +51,9 @@ jobs:
       contents: read
       pages: write
       id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -68,9 +71,6 @@ jobs:
         run: npm ci
 
       - name: Install frontend dependencies
-        run: cd frontend && npm install
-
-      - name: Install frontend dependencies
         run: cd frontend && npm ci
 
       - name: Build frontend
@@ -78,16 +78,19 @@ jobs:
         env:
           NODE_ENV: production
 
-      - name: Check build output
+      - name: Verify build output
         run: |
+          echo "=== Build Verification ==="
           echo "Build output:"
           ls -la frontend/dist/
+          echo ""
           echo "Assets in dist:"
           find frontend/dist -name "*.js" -o -name "*.css" | head -10
-
-      - name: Clean old artifacts
-        run: |
-          echo "Cleaning any cached artifacts..."
+          echo ""
+          echo "HTML content:"
+          cat frontend/dist/index.html
+          echo ""
+          echo "=== Verification Complete ==="
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
