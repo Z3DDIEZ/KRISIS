@@ -1,192 +1,193 @@
-# KRISIS
+# KRISIS - AI Job Application Intelligence
 
-Decision intelligence for job applications.
+**KRISIS** is an AI-augmented SaaS platform that tracks job applications and provides intelligent insights using Google's Gemini AI to help job seekers optimize their application strategy.
 
-**KRISIS** is a Google-native decision intelligence platform for job applications. 
-It helps job seekers evaluate role alignment, identify gaps, and decide what to do next — using structured data and constrained, cost-aware AI.
-orm.
+## 🚀 Features
 
-*MVP in active development.*
----
+- **Real-time Application Tracking**: Track job applications with status updates
+- **AI-Powered Analysis**: Get resume-job fit scores and improvement suggestions
+- **Smart Analytics**: Visualize application funnel and success patterns
+- **Automated Workflows**: Follow-up reminders and progress tracking
+- **Data Export**: Export your data in multiple formats
+- **Multi-platform**: Web application with mobile-responsive design
 
-## Overview
-
-**KRISIS** is a production-ready MVP built entirely on **Google Cloud Platform**. It enables users to track job applications and receive **structured AI feedback** on resume–role alignment, without hallucinations, uncontrolled costs, or opaque automation.
-
-This project was intentionally designed as a **defensible SaaS system**, not an AI demo.
----
-
-## Problem Statement
-Job seekers often apply to dozens of roles with little feedback, visibility, or insight into:
-
-- Which applications are competitive
-- Why certain applications fail
-- What concrete actions to take next
-
-Most tools stop at tracking.  
-KRISIS adds **explainable, constrained AI evaluation** on top of structured application data.
-
----
-
-## Core Features (MVP)
-
-### Application Tracking
-- Create, update, and manage job applications
-- Track status (Applied, Interview, Rejected, Offer)
-- Attach resumes and notes
-- Real-time synchronization via Firestore
-
-### AI Application Analysis (User-Initiated)
-
-- Resume–role fit score (0–100)
-- Matching skills
-- Identified gaps
-- Concrete next steps
-
-> AI analysis is **explicitly user-triggered**, rate-limited, schema-validated, and cached to ensure trust and cost predictability.
-
-### Analytics
-
-- Application counts and status breakdown
-- Weekly application velocity
-- Fit score distribution
-### Data Control
-
-- CSV export
-- Full account deletion (GDPR-style)
----
-
-## 🏗️ Architecture
-
-**Architecture Pattern:**  
-Serverless · Event-Driven · Multi-Tenant SaaS
+## 🛠️ Tech Stack
 
 ### Frontend
+- React 18 + TypeScript
+- Vite (build tool)
+- Tailwind CSS (styling)
+- TanStack Query (data fetching)
+- Zustand (state management)
+- Firebase SDK
 
-- React + TypeScript (Vite)    
-- Firebase Hosting (global CDN)
-- Firebase Auth (Email + Google OAuth)
 ### Backend
-
+- Firebase (Auth, Firestore, Hosting)
 - Cloud Functions (2nd Gen)
-- Firestore (primary datastore)
-- Cloud Storage (resume uploads)
-- Gemini API (AI analysis)
+- BigQuery (analytics)
+- Gemini AI API
 
-### Analytics & Observability
+### Infrastructure
+- Google Cloud Platform
+- Firebase Hosting
+- Secret Manager
+- Cloud Monitoring
 
-- BigQuery (event analytics)
-- Cloud Logging & Monitoring
-- Structured logs with correlation IDs
+## 🏁 Quick Start
 
-> No always-on servers. No vendor lock-in beyond GCP primitives.
+### Prerequisites
+- Node.js 20+
+- Firebase CLI (`npm install -g firebase-tools`)
+- Google Cloud SDK (optional)
+
+### 1. Clone and Install
+```bash
+git clone <repository-url>
+cd krisis
+
+# Install root dependencies
+npm install
+
+# Install frontend dependencies
+cd frontend && npm install && cd ..
+
+# Install functions dependencies (when ready)
+cd functions && npm install && cd ..
+```
+
+### 2. Firebase Setup
+```bash
+# Login to Firebase
+firebase login
+
+# Initialize Firebase project (or use existing)
+firebase use --add
+# Select your project
+
+# Set up environment variables
+cd frontend
+cp env.example .env
+# Edit .env with your Firebase config
+```
+
+### 3. Development
+```bash
+# Start frontend development server
+cd frontend
+npm run dev
+
+# In another terminal, start functions (when ready)
+cd functions
+npm run serve
+```
+
+### 4. Build for Production
+```bash
+# Build frontend
+cd frontend
+npm run build
+
+# Deploy to Firebase
+firebase deploy
+```
+
+## 📁 Project Structure
+
+```
+krisis/
+├── docs/                    # Documentation (private)
+├── frontend/                # React frontend
+│   ├── src/
+│   │   ├── components/      # Reusable UI components
+│   │   ├── layouts/         # Page layouts
+│   │   ├── lib/            # Utilities & Firebase config
+│   │   ├── pages/          # Page components
+│   │   └── test/           # Test utilities
+│   ├── public/             # Static assets
+│   └── *.config.*          # Build configurations
+├── functions/               # Cloud Functions
+├── infra/                   # Infrastructure configs
+│   ├── bigquery/           # BigQuery schemas
+│   ├── firestore.rules     # Database security rules
+│   └── storage.rules       # Storage security rules
+├── firebase.json           # Firebase configuration
+├── .firebaserc            # Firebase project aliases
+└── package.json           # Root dependencies
+```
+
+## 🔧 Development Scripts
+
+### Frontend
+```bash
+cd frontend
+
+npm run dev          # Start development server
+npm run build        # Build for production
+npm run preview      # Preview production build
+npm run lint         # Run ESLint
+npm run test         # Run tests
+npm run test:ui      # Run tests with UI
+```
+
+### Firebase
+```bash
+firebase deploy              # Deploy all services
+firebase deploy --only hosting  # Deploy only hosting
+firebase serve               # Start local emulators
+```
+
+## 🔐 Security & Privacy
+
+- **Data Isolation**: Each user can only access their own data
+- **AI Privacy**: Analysis requests are processed server-side only
+- **GDPR Compliance**: Data export and deletion capabilities
+- **Secure Authentication**: Firebase Auth with email/password and Google OAuth
+
+## 📊 Analytics & Monitoring
+
+- **Cloud Logging**: Comprehensive logging for debugging
+- **Cloud Monitoring**: Performance metrics and alerting
+- **BigQuery**: Advanced analytics and reporting
+- **Error Reporting**: Automatic error tracking
+
+## 🚀 Deployment
+
+### Environments
+- **Development**: `krisis-dev` Firebase project
+- **Staging**: `krisis-staging` Firebase project
+- **Production**: `krisis-prod` Firebase project
+
+### CI/CD
+- GitHub Actions for automated testing and deployment
+- Separate pipelines for dev/staging/production
+- Automated testing on pull requests
+
+## 🤝 Contributing
+
+1. Fork the repository
+2. Create a feature branch: `git checkout -b feature/your-feature`
+3. Commit changes: `git commit -am 'Add your feature'`
+4. Push to branch: `git push origin feature/your-feature`
+5. Create a Pull Request
+
+## 📝 License
+
+This project is licensed under the MIT License - see the LICENSE file for details.
+
+## 🙋 Support
+
+For questions or support:
+- Create an issue in the repository
+- Check the documentation in the `docs/` folder
+- Review the development roadmap
+
+## 🎯 Roadmap
+
+- **Phase 1** (Current): Core application tracking and AI analysis
+- **Phase 2**: Advanced analytics and automation
+- **Phase 3**: Mobile apps and enterprise features
+- **Phase 4**: Multi-tenant architecture and scaling
 
 ---
 
-## 🔐 Security Model
-
-Security is enforced at the **database boundary**, not the UI.
-
-- Strict Firestore rules ensure tenant isolation
-- Users can only read/write their own data
-- AI analysis and analytics collections are **server-only**
-- Immutable fields prevent replay and abuse
-- Secrets stored in Google Secret Manager
-
-A full threat model and rule test cases are documented in the repository.
-
----
-
-## 🤖 AI Reliability & Trust
-
-This system treats AI as **untrusted input**.
-
-Controls in place:
-
-- Single locked prompt    
-- JSON-only responses
-- Strict schema validation
-- Retry with hard failure limits
-- Per-user quotas
-- Cached results to reduce cost and variance
-    
-
-If AI output does not meet validation criteria, it is discarded.
-
----
-
-## 💰 Cost Awareness
-
-Designed to operate comfortably within free tiers.
-
-|Service|Cost Strategy|
-|---|---|
-|Firebase Hosting|CDN, free tier|
-|Firestore|Minimal reads/writes|
-|Cloud Functions|Event-driven only|
-|Gemini API|Quota-limited, cached|
-|BigQuery|Write-only, partitioned|
-
-Estimated MVP cost: **$10–15/month**
-
----
-
-## 📈 Scalability Plan
-
-- **0–1K users:** Current architecture
-- **1K–10K users:** Introduce Cloud Run API layer
-- **10K+ users:** Batch BigQuery ingestion, multi-region
-    
-
-Scalability decisions are deferred intentionally until metrics justify them.
-
----
-
-## 🧪 Testing & Validation
-
-- Firestore rules tested against common attack scenarios
-- AI schema validation enforced server-side
-- Manual QA against all MVP user flows
-- Error states handled explicitly in UX
-    
-
----
-
-## 🚫 Non-Goals (By Design)
-
-This MVP does NOT:
-
-- Guarantee hiring outcomes
-- Replace career coaching
-- Auto-optimize resumes
-- Provide recruiter features
-- Use conversational AI
-
-These constraints are intentional.
-
----
-
-## 🧭 Project Status
-
-**Status:** MVP in development 
-**Next Iterations (Post-MVP):**
-
-- Cover letter generation
-- Interview preparation
-- Paid tiers
-- Organization views
-
----
-
-## 👤 Author
-
-**Zawadi M C Nyachiya**  
- Software Developer · Systems-Oriented Engineer 
- 
-Built as an independent SaaS project to demonstrate production-grade system design, cloud architecture, and applied AI reliability.
- 
-Johannesburg, South Africa
-
-GitHub: [https://github.com/Z3DDIEZ](https://github.com/Z3DDIEZ)
-
----
+**Built with ❤️ using Google Cloud Platform**

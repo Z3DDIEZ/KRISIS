@@ -1,0 +1,8 @@
+{
+  "projects": {
+    "default": "krisis-dev",
+    "dev": "krisis-dev",
+    "staging": "krisis-staging",
+    "prod": "krisis-prod"
+  }
+}
