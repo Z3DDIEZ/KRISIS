@@ -118,7 +118,7 @@ jobs:
       - name: Deploy Firestore Rules
         run: |
           # Use the project ID directly
-          PROJECT_ID="krisis"
+          PROJECT_ID="krisis-6b464"
           echo "Deploying to project: $PROJECT_ID"
 
           # Use modern authentication with token
@@ -149,7 +149,7 @@ jobs:
       - name: Deploy Firestore Rules Only (Safe for early dev)
         run: |
           # Use the project ID directly
-          PROJECT_ID="krisis"
+          PROJECT_ID="krisis-6b464"
           echo "Deploying to project: $PROJECT_ID"
 
           # Use modern authentication with token

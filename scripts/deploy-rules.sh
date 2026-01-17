@@ -6,7 +6,7 @@
 
 set -e
 
-PROJECT_ID=${1:-"krisis"}
+PROJECT_ID=${1:-"krisis-6b464"}
 
 echo "🚀 Deploying Firestore rules to project: $PROJECT_ID"
 

@@ -126,11 +126,18 @@ If you get "Missing or insufficient permissions":
 4. Update `.firebaserc` with your actual project IDs
 
 #### Firebase Project Selection Error
-If you get "Invalid project selection":
-1. Update `.firebaserc` with your actual Firebase project ID
-2. Use direct project ID: `firebase deploy --project krisis`
-3. Make sure your GitHub secret `FIREBASE_TOKEN` is set with a valid Firebase token
-4. Run `firebase projects:list` to see available projects
+If you get "Invalid project selection" or "Project not found":
+1. Run `firebase projects:list` to see your actual project IDs
+2. Update `.firebaserc` with your actual Firebase project ID
+3. Update your `.env` file with the correct project ID
+4. Use direct project ID: `firebase deploy --project your-actual-project-id`
+5. Make sure your GitHub secret `FIREBASE_TOKEN` is set with a valid Firebase token
+
+#### 403 Permission Denied
+If you get "Project not found or permission denied":
+1. Verify the project ID is correct: `firebase projects:list`
+2. Check that your Firebase token has access to the project
+3. Make sure you're using the project ID, not the display name
 
 #### GitHub Pages 404 Errors
 If assets aren't loading on GitHub Pages:
@@ -200,17 +207,24 @@ firebase serve               # Start local emulators
 ## 🚀 Deployment
 
 ### Firebase Project
-- **Project**: `krisis` Firebase project (single project setup)
+- **Project**: `krisis-6b464` Firebase project (single project setup)
 
 ### Project Configuration
 Your `.firebaserc` file should be configured as:
 ```json
 {
   "projects": {
-    "default": "krisis"
+    "default": "krisis-6b464"
   }
 }
 ```
+
+### Finding Your Project ID
+To find your actual Firebase project ID:
+```bash
+firebase projects:list
+```
+Or check the URL in your Firebase Console: `https://console.firebase.google.com/project/YOUR_PROJECT_ID/...`
 
 ### CI/CD
 - GitHub Actions for automated testing and deployment
