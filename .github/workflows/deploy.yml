@@ -85,11 +85,14 @@ jobs:
           echo "Assets in dist:"
           find frontend/dist -name "*.js" -o -name "*.css" | head -10
 
+      - name: Clean old artifacts
+        run: |
+          echo "Cleaning any cached artifacts..."
+
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
           path: frontend/dist
-          retention-days: 1
 
       - name: Deploy to GitHub Pages
         id: deployment
