@@ -22,7 +22,8 @@
     "date-fns": "^3.0.6",
     "lodash-es": "^4.17.21",
     "recharts": "^2.8.0",
-    "sonner": "^1.2.3"
+    "sonner": "^1.2.3",
+    "react-firebase-hooks": "^5.1.1"
   },
   "devDependencies": {
     "@types/react": "^18.2.39",
