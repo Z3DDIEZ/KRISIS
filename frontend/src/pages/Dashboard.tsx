@@ -70,9 +70,12 @@ function Dashboard() {
         <div className="px-6 py-4 border-b border-gray-200">
           <div className="flex items-center justify-between">
             <h3 className="text-lg font-medium text-gray-900">Recent Applications</h3>
-            <button className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm font-medium">
+            <a
+              href="/applications/new"
+              className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm font-medium inline-block"
+            >
               Add Application
-            </button>
+            </a>
           </div>
         </div>
         <div className="p-6">
@@ -82,9 +85,12 @@ function Dashboard() {
             </div>
             <h3 className="text-lg font-medium text-gray-900 mb-2">No applications yet</h3>
             <p className="text-gray-500 mb-6">Get started by adding your first job application.</p>
-            <button className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm font-medium">
+            <a
+              href="/applications/new"
+              className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm font-medium inline-block"
+            >
               Add Your First Application
-            </button>
+            </a>
           </div>
         </div>
       </div>
