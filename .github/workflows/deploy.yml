@@ -73,10 +73,14 @@ jobs:
       - name: Install frontend dependencies
         run: cd frontend && npm ci
 
+      - name: Clean build cache
+        run: cd frontend && rm -rf dist node_modules/.vite
+
       - name: Build frontend
         run: cd frontend && npm run build
         env:
           NODE_ENV: production
+          VITE_BASE_URL: /krisis/
 
       - name: Verify build output
         run: |
@@ -86,6 +90,9 @@ jobs:
           echo ""
           echo "Assets in dist:"
           find frontend/dist -name "*.js" -o -name "*.css" | head -10
+          echo ""
+          echo "Asset checksums:"
+          find frontend/dist/assets -type f -exec shasum {} \; | head -5
           echo ""
           echo "HTML content:"
           cat frontend/dist/index.html
