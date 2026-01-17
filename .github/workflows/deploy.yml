@@ -70,22 +70,58 @@ jobs:
       - name: Install frontend dependencies
         run: cd frontend && npm install
 
+      - name: Install frontend dependencies
+        run: cd frontend && npm ci
+
       - name: Build frontend
         run: cd frontend && npm run build
         env:
           NODE_ENV: production
 
       - name: Check build output
-        run: ls -la frontend/dist/
+        run: |
+          echo "Build output:"
+          ls -la frontend/dist/
+          echo "Assets in dist:"
+          find frontend/dist -name "*.js" -o -name "*.css" | head -10
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
           path: frontend/dist
+          retention-days: 1
 
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
+
+  # Deploy Firestore rules on every push to main
+  deploy-firestore:
+    name: Deploy Firestore Rules
+    needs: test
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install Firebase CLI
+        run: npm install -g firebase-tools
+
+      - name: Deploy Firestore Rules
+        run: |
+          firebase use prod --token ${{ secrets.FIREBASE_TOKEN_PROD }}
+          firebase deploy --only firestore:rules --token ${{ secrets.FIREBASE_TOKEN_PROD }}
+        env:
+          FIREBASE_TOKEN_PROD: ${{ secrets.FIREBASE_TOKEN_PROD }}
 
   # Firebase deployment (when ready for full stack)
   deploy-firebase:
@@ -109,7 +145,7 @@ jobs:
 
       - name: Deploy Firestore Rules Only (Safe for early dev)
         run: |
-          firebase use prod
-          firebase deploy --only firestore:rules
+          firebase use prod --token ${{ secrets.FIREBASE_TOKEN_PROD }}
+          firebase deploy --only firestore:rules --token ${{ secrets.FIREBASE_TOKEN_PROD }}
         env:
-          FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN_PROD }}
+          FIREBASE_TOKEN_PROD: ${{ secrets.FIREBASE_TOKEN_PROD }}

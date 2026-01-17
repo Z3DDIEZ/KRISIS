@@ -38,7 +38,12 @@ function Applications() {
   const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
-    if (!user) return
+    if (!user) {
+      setIsLoading(false)
+      return
+    }
+
+    console.log('Loading applications for user:', user.uid)
 
     const q = query(
       collection(db, `users/${user.uid}/applications`),
@@ -46,6 +51,7 @@ function Applications() {
     )
 
     const unsubscribe = onSnapshot(q, (querySnapshot) => {
+      console.log('Received applications snapshot:', querySnapshot.size)
       const apps: Application[] = []
       querySnapshot.forEach((doc) => {
         apps.push({ id: doc.id, ...doc.data() } as Application)
@@ -54,7 +60,12 @@ function Applications() {
       setIsLoading(false)
     }, (error) => {
       console.error('Error loading applications:', error)
-      toast.error('Failed to load applications')
+      console.error('Error details:', {
+        code: error.code,
+        message: error.message,
+        userId: user.uid
+      })
+      toast.error(`Failed to load applications: ${error.message}`)
       setIsLoading(false)
     })
 

@@ -108,7 +108,27 @@ npm run preview
 ```bash
 # Deploy to Firebase Hosting
 firebase deploy --only hosting
+
+# Deploy Firestore rules only (safe for development)
+firebase deploy --only firestore:rules
+
+# Deploy everything
+firebase deploy
 ```
+
+### Troubleshooting
+
+#### Firestore Permissions Error
+If you get "Missing or insufficient permissions":
+1. Make sure you're signed in: `firebase login`
+2. Deploy the security rules: `firebase deploy --only firestore:rules`
+3. Check that your Firebase project ID matches your environment variables
+
+#### GitHub Pages 404 Errors
+If assets aren't loading on GitHub Pages:
+1. Check that the build completed successfully in GitHub Actions
+2. Verify the base path in `vite.config.ts` matches your repository name
+3. Make sure GitHub Pages is enabled for your repository
 
 ## 📁 Project Structure
 
