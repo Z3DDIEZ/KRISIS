@@ -9,6 +9,9 @@ on:
 # Allow manual triggering for testing
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 jobs:
   # Quality checks and testing
   test:
@@ -89,6 +92,9 @@ jobs:
     name: Deploy to Firebase (Manual Only)
     if: github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
     steps:
       - name: Checkout code
         uses: actions/checkout@v4

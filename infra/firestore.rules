@@ -1,0 +1,90 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Helper functions
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+
+    function isCreate() {
+      return request.resource.data.keys().size() > 0
+        && !exists(resource);
+    }
+
+    function isUpdate() {
+      return exists(resource);
+    }
+
+    // User profile documents
+    match /users/{userId} {
+      allow read: if isOwner(userId);
+      allow create: if isOwner(userId)
+        && request.resource.data.keys().hasOnly([
+          'email', 'displayName', 'photoURL', 'createdAt', 'settings'
+        ])
+        && request.resource.data.createdAt == request.time;
+
+      allow update: if isOwner(userId)
+        && request.resource.data.diff(resource.data).changedKeys()
+           .hasOnly(['settings']);
+
+      allow delete: if false; // Users cannot delete their own profile
+    }
+
+    // Applications subcollection
+    match /users/{userId}/applications/{applicationId} {
+      allow read: if isOwner(userId);
+
+      allow create: if isOwner(userId)
+        && request.resource.data.keys().hasOnly([
+          'company', 'role', 'status', 'dateApplied', 'notes',
+          'resumeUrl', 'createdAt', 'updatedAt', 'requestAnalysis'
+        ])
+        && request.resource.data.company is string
+        && request.resource.data.company.size() > 0
+        && request.resource.data.company.size() <= 100
+        && request.resource.data.role is string
+        && request.resource.data.role.size() > 0
+        && request.resource.data.role.size() <= 100
+        && request.resource.data.status in [
+          'Applied', 'Phone Screen', 'Technical Interview',
+          'Final Round', 'Offer', 'Rejected'
+        ]
+        && request.resource.data.dateApplied is string
+        && request.resource.data.dateApplied.size() == 10
+        && request.resource.data.createdAt == request.time
+        && request.resource.data.updatedAt == request.time;
+
+      allow update: if isOwner(userId)
+        && request.resource.data.diff(resource.data).changedKeys()
+           .hasOnly(['status', 'notes', 'resumeUrl', 'updatedAt', 'requestAnalysis'])
+        && request.resource.data.updatedAt == request.time;
+
+      allow delete: if isOwner(userId);
+    }
+
+    // AI Analysis subcollection (server-only writes)
+    match /users/{userId}/aiAnalysis/{analysisId} {
+      allow read: if isOwner(userId);
+      allow write: if false; // Only Cloud Functions can write AI results
+    }
+
+    // Weekly Analytics subcollection (server-only writes)
+    match /users/{userId}/weeklyAnalytics/{weekId} {
+      allow read: if isOwner(userId);
+      allow write: if false; // Only Cloud Functions can write analytics
+    }
+
+    // Global analytics (future use - admin only)
+    match /globalAnalytics/{metricId} {
+      allow read: if false; // No public access
+      allow write: if false; // Admin only via Cloud Functions
+    }
+  }
+}
