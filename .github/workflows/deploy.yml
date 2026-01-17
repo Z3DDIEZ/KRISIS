@@ -89,6 +89,9 @@ jobs:
           NODE_ENV: production
           CI: true
 
+      - name: Copy 404.html for SPA routing
+        run: cp frontend/public/404.html frontend/dist/404.html
+
       - name: Verify build output
         run: |
           echo "=== Build Verification ==="
@@ -96,7 +99,7 @@ jobs:
           ls -la frontend/dist/
           echo ""
           echo "Assets in dist:"
-          find frontend/dist -name "*.js" -o -name "*.css" -o -name "*.svg" | head -10
+          find frontend/dist -name "*.js" -o -name "*.css" -o -name "*.svg" -o -name "*.html" | head -10
           echo ""
           echo "Asset checksums:"
           find frontend/dist/assets -type f -exec shasum {} \; | head -5

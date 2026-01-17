@@ -4,8 +4,8 @@ import react from '@vitejs/plugin-react'
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [react()],
-  // Set base path for GitHub Pages deployment
-  base: '/krisis/',
+  // Set base path for GitHub Pages deployment (only in production)
+  base: process.env.NODE_ENV === 'production' ? '/krisis/' : '/',
   build: {
     // Ensure deterministic builds
     rollupOptions: {
