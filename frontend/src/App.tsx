@@ -14,9 +14,11 @@ const queryClient = new QueryClient({
 })
 
 function App() {
+  const basename = import.meta.env.PROD ? '/krisis' : ''
+
   return (
     <QueryClientProvider client={queryClient}>
-      <Router future={{
+      <Router basename={basename} future={{
         v7_startTransition: true,
         v7_relativeSplatPath: true,
       }}>

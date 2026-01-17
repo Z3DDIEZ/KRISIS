@@ -109,7 +109,9 @@ jobs:
       - name: Force clean deployment
         run: |
           echo "Forcing clean deployment by adding timestamp"
-          echo "Deployed at: $(date)" > frontend/dist/.deploy-timestamp
+          echo "Deployed at: $(date -u +'%Y-%m-%d %H:%M:%S UTC')" > frontend/dist/.deploy-timestamp
+          echo "Build ID: ${{ github.run_id }}" >> frontend/dist/.deploy-timestamp
+          echo "Commit: ${{ github.sha }}" >> frontend/dist/.deploy-timestamp
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
