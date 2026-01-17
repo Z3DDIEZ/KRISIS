@@ -2,6 +2,25 @@
 
 **KRISIS** is an AI-augmented SaaS platform that tracks job applications and provides intelligent insights using Google's Gemini AI to help job seekers optimize their application strategy.
 
+## 📊 Project Status
+
+### ✅ **Week 1 Complete** - Project Setup & Infrastructure
+- ✅ React 18 + TypeScript + Vite project initialized
+- ✅ Firebase project configured with Auth, Firestore, Hosting
+- ✅ Tailwind CSS and component library set up
+- ✅ ESLint, Prettier, Vitest testing framework configured
+- ✅ CI/CD pipeline with GitHub Actions working
+- ✅ Firebase credentials properly configured
+- ✅ Development server running with real Firebase integration
+- ✅ Testing suite established and passing
+
+### 🚧 **Week 2 In Progress** - Authentication & Security Foundation
+- 🔄 Firebase Auth implementation (Email + Google OAuth)
+- 🔄 Authentication flows (Sign up, Sign in, Sign out)
+- 🔄 Firestore security rules setup
+- 🔄 User profile management
+- 🔄 Session management and token refresh
+
 ## 🚀 Features
 
 - **Real-time Application Tracking**: Track job applications with status updates
@@ -38,57 +57,57 @@
 ### Prerequisites
 - Node.js 20+
 - Firebase CLI (`npm install -g firebase-tools`)
-- Google Cloud SDK (optional)
+- Firebase project with Auth and Firestore enabled
 
 ### 1. Clone and Install
 ```bash
 git clone <repository-url>
 cd krisis
 
-# Install root dependencies
-npm install
-
 # Install frontend dependencies
-cd frontend && npm install && cd ..
-
-# Install functions dependencies (when ready)
-cd functions && npm install && cd ..
+cd frontend && npm install
 ```
 
-### 2. Firebase Setup
+### 2. Environment Setup
 ```bash
-# Login to Firebase
-firebase login
-
-# Initialize Firebase project (or use existing)
-firebase use --add
-# Select your project
-
-# Set up environment variables
+# Copy environment template
 cd frontend
 cp env.example .env
-# Edit .env with your Firebase config
+
+# Edit .env with your Firebase project credentials
+# Required variables:
+# VITE_FIREBASE_API_KEY=your_api_key
+# VITE_FIREBASE_AUTH_DOMAIN=your_project.firebaseapp.com
+# VITE_FIREBASE_PROJECT_ID=your_project_id
+# VITE_FIREBASE_STORAGE_BUCKET=your_project.appspot.com
+# VITE_FIREBASE_MESSAGING_SENDER_ID=your_sender_id
+# VITE_FIREBASE_APP_ID=your_app_id
 ```
 
 ### 3. Development
 ```bash
-# Start frontend development server
+# Start development server (runs on http://localhost:5173 or next available port)
 cd frontend
 npm run dev
-
-# In another terminal, start functions (when ready)
-cd functions
-npm run serve
 ```
 
-### 4. Build for Production
+### 4. Build & Test
 ```bash
-# Build frontend
+# Run tests
 cd frontend
+npm run test:run
+
+# Build for production
 npm run build
 
-# Deploy to Firebase
-firebase deploy
+# Preview production build
+npm run preview
+```
+
+### 5. Deploy (when ready)
+```bash
+# Deploy to Firebase Hosting
+firebase deploy --only hosting
 ```
 
 ## 📁 Project Structure
