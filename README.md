@@ -109,11 +109,11 @@ npm run preview
 # Deploy to Firebase Hosting
 firebase deploy --only hosting
 
-# Deploy Firestore rules only (safe for development)
-firebase deploy --only firestore:rules
+# Deploy Firestore configuration (rules + indexes)
+firebase deploy --only firestore --project krisis-6b464
 
 # Deploy everything
-firebase deploy
+firebase deploy --project krisis-6b464
 ```
 
 ### Troubleshooting
@@ -138,6 +138,11 @@ If you get "Project not found or permission denied":
 1. Verify the project ID is correct: `firebase projects:list`
 2. Check that your Firebase token has access to the project
 3. Make sure you're using the project ID, not the display name
+
+#### Firestore Indexes Parse Error
+If you get "Parse Error in firestore.indexes.json":
+1. The indexes file was empty - it's now fixed with a minimal configuration
+2. If you need custom indexes later, they can be added to `infra/firestore.indexes.json`
 
 #### GitHub Pages 404 Errors
 If assets aren't loading on GitHub Pages:

@@ -23,8 +23,8 @@ if ! firebase projects:list &> /dev/null; then
 fi
 
 # Deploy directly to the project (no need to use aliases)
-echo "🔥 Deploying Firestore rules..."
-firebase deploy --only firestore:rules --project "$PROJECT_ID"
+echo "🔥 Deploying Firestore configuration..."
+firebase deploy --only firestore --project "$PROJECT_ID"
 
 echo "✅ Firestore rules deployed successfully!"
 echo ""

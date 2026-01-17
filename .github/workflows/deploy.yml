@@ -122,7 +122,8 @@ jobs:
           echo "Deploying to project: $PROJECT_ID"
 
           # Use modern authentication with token
-          firebase deploy --only firestore:rules --project "$PROJECT_ID" --token "${{ secrets.FIREBASE_TOKEN }}"
+          echo "Deploying Firestore rules..."
+          firebase deploy --only firestore --project "$PROJECT_ID" --token "${{ secrets.FIREBASE_TOKEN }}"
         env:
           FIREBASE_TOKEN_PROD: ${{ secrets.FIREBASE_TOKEN_PROD }}
 
@@ -153,6 +154,7 @@ jobs:
           echo "Deploying to project: $PROJECT_ID"
 
           # Use modern authentication with token
-          firebase deploy --only firestore:rules --project "$PROJECT_ID" --token "${{ secrets.FIREBASE_TOKEN }}"
+          echo "Deploying Firestore configuration..."
+          firebase deploy --only firestore --project "$PROJECT_ID" --token "${{ secrets.FIREBASE_TOKEN }}"
         env:
           FIREBASE_TOKEN_PROD: ${{ secrets.FIREBASE_TOKEN_PROD }}
