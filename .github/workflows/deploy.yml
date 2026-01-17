@@ -65,9 +65,9 @@ jobs:
         run: cd frontend && npm ci
 
       - name: Build frontend
+        run: cd frontend && npm run build
         env:
           NODE_ENV: production
-        run: cd frontend && npm run build
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
