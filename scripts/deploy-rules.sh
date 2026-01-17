@@ -2,10 +2,11 @@
 
 # Deploy Firestore rules locally for testing
 # Usage: ./scripts/deploy-rules.sh [project-id]
+# If no project-id provided, uses krisis-prod
 
 set -e
 
-PROJECT_ID=${1:-"demo-project"}
+PROJECT_ID=${1:-"krisis"}
 
 echo "🚀 Deploying Firestore rules to project: $PROJECT_ID"
 
@@ -21,13 +22,9 @@ if ! firebase projects:list &> /dev/null; then
     exit 1
 fi
 
-# Use the specified project
-echo "📋 Using project: $PROJECT_ID"
-firebase use "$PROJECT_ID"
-
-# Deploy only the rules
+# Deploy directly to the project (no need to use aliases)
 echo "🔥 Deploying Firestore rules..."
-firebase deploy --only firestore:rules
+firebase deploy --only firestore:rules --project "$PROJECT_ID"
 
 echo "✅ Firestore rules deployed successfully!"
 echo ""
@@ -35,3 +32,4 @@ echo "🔍 To test locally:"
 echo "   firebase emulators:start --only firestore"
 echo ""
 echo "📝 Rules file: infra/firestore.rules"
+echo "🎯 Project: $PROJECT_ID"

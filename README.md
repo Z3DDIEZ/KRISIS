@@ -121,8 +121,16 @@ firebase deploy
 #### Firestore Permissions Error
 If you get "Missing or insufficient permissions":
 1. Make sure you're signed in: `firebase login`
-2. Deploy the security rules: `firebase deploy --only firestore:rules`
+2. Deploy the security rules: `firebase deploy --only firestore:rules --project your-project-id`
 3. Check that your Firebase project ID matches your environment variables
+4. Update `.firebaserc` with your actual project IDs
+
+#### Firebase Project Selection Error
+If you get "Invalid project selection":
+1. Update `.firebaserc` with your actual Firebase project ID
+2. Use direct project ID: `firebase deploy --project krisis`
+3. Make sure your GitHub secret `FIREBASE_TOKEN` is set with a valid Firebase token
+4. Run `firebase projects:list` to see available projects
 
 #### GitHub Pages 404 Errors
 If assets aren't loading on GitHub Pages:
@@ -191,10 +199,18 @@ firebase serve               # Start local emulators
 
 ## 🚀 Deployment
 
-### Environments
-- **Development**: `krisis-dev` Firebase project
-- **Staging**: `krisis-staging` Firebase project
-- **Production**: `krisis-prod` Firebase project
+### Firebase Project
+- **Project**: `krisis` Firebase project (single project setup)
+
+### Project Configuration
+Your `.firebaserc` file should be configured as:
+```json
+{
+  "projects": {
+    "default": "krisis"
+  }
+}
+```
 
 ### CI/CD
 - GitHub Actions for automated testing and deployment

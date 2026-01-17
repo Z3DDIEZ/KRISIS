@@ -103,7 +103,6 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
-      id-token: write
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -118,8 +117,12 @@ jobs:
 
       - name: Deploy Firestore Rules
         run: |
-          firebase use prod --token ${{ secrets.FIREBASE_TOKEN_PROD }}
-          firebase deploy --only firestore:rules --token ${{ secrets.FIREBASE_TOKEN_PROD }}
+          # Use the project ID directly
+          PROJECT_ID="krisis"
+          echo "Deploying to project: $PROJECT_ID"
+
+          # Use modern authentication with token
+          firebase deploy --only firestore:rules --project "$PROJECT_ID" --token "${{ secrets.FIREBASE_TOKEN }}"
         env:
           FIREBASE_TOKEN_PROD: ${{ secrets.FIREBASE_TOKEN_PROD }}
 
@@ -145,7 +148,11 @@ jobs:
 
       - name: Deploy Firestore Rules Only (Safe for early dev)
         run: |
-          firebase use prod --token ${{ secrets.FIREBASE_TOKEN_PROD }}
-          firebase deploy --only firestore:rules --token ${{ secrets.FIREBASE_TOKEN_PROD }}
+          # Use the project ID directly
+          PROJECT_ID="krisis"
+          echo "Deploying to project: $PROJECT_ID"
+
+          # Use modern authentication with token
+          firebase deploy --only firestore:rules --project "$PROJECT_ID" --token "${{ secrets.FIREBASE_TOKEN }}"
         env:
           FIREBASE_TOKEN_PROD: ${{ secrets.FIREBASE_TOKEN_PROD }}
