@@ -7,10 +7,18 @@ export default defineConfig({
   // Set base path for GitHub Pages deployment
   base: '/krisis/',
   build: {
+    // Ensure deterministic builds
     rollupOptions: {
       output: {
-        manualChunks: undefined // Disable manual chunking for now
+        manualChunks: undefined, // Disable manual chunking for now
+        // Make chunk names deterministic
+        chunkFileNames: 'assets/[name]-[hash].js',
+        entryFileNames: 'assets/[name]-[hash].js',
+        assetFileNames: 'assets/[name]-[hash].[ext]'
       }
-    }
+    },
+    // Ensure consistent builds
+    minify: 'esbuild',
+    sourcemap: false
   }
 })

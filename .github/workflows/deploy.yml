@@ -76,11 +76,18 @@ jobs:
       - name: Clean build cache
         run: cd frontend && rm -rf dist node_modules/.vite
 
+      - name: Verify public assets
+        run: |
+          echo "Public assets:"
+          ls -la frontend/public/
+          echo "Vite.svg exists:"
+          test -f frontend/public/vite.svg && echo "✅ Found" || echo "❌ Missing"
+
       - name: Build frontend
         run: cd frontend && npm run build
         env:
           NODE_ENV: production
-          VITE_BASE_URL: /krisis/
+          CI: true
 
       - name: Verify build output
         run: |
@@ -89,7 +96,7 @@ jobs:
           ls -la frontend/dist/
           echo ""
           echo "Assets in dist:"
-          find frontend/dist -name "*.js" -o -name "*.css" | head -10
+          find frontend/dist -name "*.js" -o -name "*.css" -o -name "*.svg" | head -10
           echo ""
           echo "Asset checksums:"
           find frontend/dist/assets -type f -exec shasum {} \; | head -5
@@ -98,6 +105,11 @@ jobs:
           cat frontend/dist/index.html
           echo ""
           echo "=== Verification Complete ==="
+
+      - name: Force clean deployment
+        run: |
+          echo "Forcing clean deployment by adding timestamp"
+          echo "Deployed at: $(date)" > frontend/dist/.deploy-timestamp
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
