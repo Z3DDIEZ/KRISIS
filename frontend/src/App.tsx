@@ -14,7 +14,7 @@ const queryClient = new QueryClient({
 })
 
 function App() {
-  const basename = import.meta.env.PROD ? '/krisis' : ''
+  const basename = import.meta.env.PROD ? '/KRISIS' : ''
 
   return (
     <QueryClientProvider client={queryClient}>
