@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useAuthState } from 'react-firebase-hooks/auth'
-import { updateProfile } from 'firebase/auth'
+import { updateProfile, sendEmailVerification } from 'firebase/auth'
 import { auth } from '../lib/firebase'
 import { toast } from 'sonner'
 
@@ -9,16 +9,28 @@ function Profile() {
   const [isEditing, setIsEditing] = useState(false)
   const [displayName, setDisplayName] = useState(user?.displayName || '')
   const [isUpdating, setIsUpdating] = useState(false)
+  const [isResendingVerification, setIsResendingVerification] = useState(false)
 
   const handleUpdateProfile = async (e: React.FormEvent) => {
     e.preventDefault()
 
     if (!user) return
 
+    const trimmedName = displayName.trim()
+
+    // Allow saving empty string to clear display name if it previously existed
+    // But require non-empty name if setting for the first time
+    if (trimmedName === '' && user.displayName && user.displayName.trim() !== '') {
+      // Allow clearing existing display name
+    } else if (trimmedName === '' && !user.displayName) {
+      toast.info('Please enter a display name')
+      return
+    }
+
     setIsUpdating(true)
     try {
       await updateProfile(user, {
-        displayName: displayName.trim()
+        displayName: trimmedName
       })
       toast.success('Profile updated successfully!')
       setIsEditing(false)
@@ -26,6 +38,20 @@ function Profile() {
       toast.error(`Failed to update profile: ${error.message}`)
     } finally {
       setIsUpdating(false)
+    }
+  }
+
+  const handleResendVerification = async () => {
+    if (!user) return
+
+    setIsResendingVerification(true)
+    try {
+      await sendEmailVerification(user)
+      toast.success('Verification email sent! Please check your inbox.')
+    } catch (error: any) {
+      toast.error(`Failed to send verification email: ${error.message}`)
+    } finally {
+      setIsResendingVerification(false)
     }
   }
 
@@ -88,6 +114,7 @@ function Profile() {
                   onChange={(e) => setDisplayName(e.target.value)}
                   className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                   placeholder="Enter your display name"
+                  autoFocus
                 />
                 <button
                   type="submit"
@@ -162,6 +189,15 @@ function Profile() {
                     </h4>
                     <div className="mt-2 text-sm text-yellow-700">
                       <p>Please check your email and click the verification link to secure your account.</p>
+                    </div>
+                    <div className="mt-3">
+                      <button
+                        onClick={handleResendVerification}
+                        disabled={isResendingVerification}
+                        className="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-yellow-700 bg-yellow-100 hover:bg-yellow-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500 disabled:opacity-50 disabled:cursor-not-allowed"
+                      >
+                        {isResendingVerification ? 'Sending...' : 'Resend Verification Email'}
+                      </button>
                     </div>
                   </div>
                 </div>
