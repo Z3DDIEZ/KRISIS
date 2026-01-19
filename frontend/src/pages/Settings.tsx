@@ -1,55 +1,61 @@
 function Settings() {
   return (
-    <div>
-      <div className="mb-8">
-        <h1 className="text-2xl font-bold text-gray-900">Settings</h1>
-        <p className="text-gray-600">Manage your account and preferences</p>
+    <div className="max-w-4xl mx-auto" style={{ paddingTop: 'var(--spacing-2xl)', paddingBottom: 'var(--spacing-2xl)' }}>
+      {/* Page Header */}
+      <div className="mb-xl">
+        <h1 className="text-3xl font-bold text-primary">Settings</h1>
+        <p className="text-secondary text-base mt-sm">Manage your account and preferences</p>
       </div>
 
-      <div className="space-y-6">
-        <div className="bg-white shadow rounded-lg">
-          <div className="px-6 py-4 border-b border-gray-200">
-            <h3 className="text-lg font-medium text-gray-900">Account Settings</h3>
+      {/* Settings Cards */}
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-xl)' }}>
+        
+        {/* Account Settings Card */}
+        <div className="card">
+          <div className="card-header">
+            <h3 className="card-title">Account Settings</h3>
           </div>
-          <div className="p-6">
-            <div className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Email Notifications
-                </label>
-                <div className="flex items-center">
-                  <input
-                    type="checkbox"
-                    className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
-                  />
-                  <span className="ml-2 text-sm text-gray-600">
-                    Receive weekly progress summaries
-                  </span>
-                </div>
+          <div style={{ padding: 'var(--spacing-lg)' }}>
+            <div className="input-group">
+              <label htmlFor="email-notifications" className="input-label">
+                Email Notifications
+              </label>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--spacing-sm)' }}>
+                <input
+                  type="checkbox"
+                  id="email-notifications"
+                  className="checkbox"
+                />
+                <span className="text-sm text-secondary">
+                  Receive weekly progress summaries
+                </span>
               </div>
+            </div>
 
-              <div className="pt-4">
-                <button className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-md text-sm font-medium">
-                  Delete Account
-                </button>
-              </div>
+            <div className="border-t border-border-light" style={{ paddingTop: 'var(--spacing-lg)', marginTop: 'var(--spacing-lg)' }}>
+              <h4 className="text-sm font-semibold text-primary mb-md">Danger Zone</h4>
+              <button className="btn btn-secondary" style={{ color: 'var(--status-rejected)', borderColor: 'var(--status-rejected)' }}>
+                🗑️ Delete Account
+              </button>
             </div>
           </div>
         </div>
 
-        <div className="bg-white shadow rounded-lg">
-          <div className="px-6 py-4 border-b border-gray-200">
-            <h3 className="text-lg font-medium text-gray-900">Data Export</h3>
+        {/* Data Export Card */}
+        <div className="card">
+          <div className="card-header">
+            <h3 className="card-title">Data Export</h3>
           </div>
-          <div className="p-6">
-            <p className="text-sm text-gray-600 mb-4">
+          <div style={{ padding: 'var(--spacing-lg)' }}>
+            <p className="text-secondary mb-lg">
               Download all your application data in CSV format.
             </p>
-            <button className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm font-medium">
-              Export Data
+            <button className="btn btn-orange">
+              📥 Export Data
             </button>
           </div>
         </div>
+
       </div>
     </div>
   )
