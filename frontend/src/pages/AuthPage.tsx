@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { signInWithEmailAndPassword, createUserWithEmailAndPassword, GoogleAuthProvider, signInWithPopup } from 'firebase/auth'
-import { auth } from '../lib/firebase'
+import { doc, setDoc, serverTimestamp } from 'firebase/firestore'
+import { auth, db } from '../lib/firebase'
 import { toast } from 'sonner'
 import LoadingSpinner from '../components/ui/LoadingSpinner'
 
@@ -23,7 +24,21 @@ function AuthPage() {
     setLoading(true)
     try {
       if (isSignUp) {
-        await createUserWithEmailAndPassword(auth, email, password)
+        const userCredential = await createUserWithEmailAndPassword(auth, email, password)
+        const user = userCredential.user
+
+        // Create user profile document
+        await setDoc(doc(db, `users/${user.uid}`), {
+          email: user.email,
+          displayName: user.displayName || null,
+          photoURL: user.photoURL || null,
+          createdAt: serverTimestamp(),
+          settings: {
+            emailNotifications: true,
+            timezone: Intl.DateTimeFormat().resolvedOptions().timeZone
+          }
+        })
+
         toast.success('Account created successfully! Please check your email for verification.')
       } else {
         await signInWithEmailAndPassword(auth, email, password)
@@ -40,7 +55,28 @@ function AuthPage() {
     const provider = new GoogleAuthProvider()
     setLoading(true)
     try {
-      await signInWithPopup(auth, provider)
+      const result = await signInWithPopup(auth, provider)
+      const user = result.user
+
+      // Check if user profile exists, create if not
+      const userDocRef = doc(db, `users/${user.uid}`)
+      try {
+        // Try to create the document (will fail if it already exists due to Firestore rules)
+        await setDoc(userDocRef, {
+          email: user.email,
+          displayName: user.displayName || null,
+          photoURL: user.photoURL || null,
+          createdAt: serverTimestamp(),
+          settings: {
+            emailNotifications: true,
+            timezone: Intl.DateTimeFormat().resolvedOptions().timeZone
+          }
+        }, { merge: true }) // Use merge to avoid overwriting existing data
+      } catch (error) {
+        // Document already exists, which is fine
+        console.log('User profile already exists')
+      }
+
       toast.success('Signed in with Google!')
     } catch (error: any) {
       toast.error(error.message || 'Google authentication failed')

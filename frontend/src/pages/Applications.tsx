@@ -43,15 +43,12 @@ function Applications() {
       return
     }
 
-    console.log('Loading applications for user:', user.uid)
-
     const q = query(
       collection(db, `users/${user.uid}/applications`),
       orderBy('dateApplied', 'desc')
     )
 
     const unsubscribe = onSnapshot(q, (querySnapshot) => {
-      console.log('Received applications snapshot:', querySnapshot.size)
       const apps: Application[] = []
       querySnapshot.forEach((doc) => {
         apps.push({ id: doc.id, ...doc.data() } as Application)

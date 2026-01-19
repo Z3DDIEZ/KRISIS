@@ -28,7 +28,7 @@ service cloud.firestore {
         && request.resource.data.keys().hasOnly([
           'email', 'displayName', 'photoURL', 'createdAt', 'settings'
         ])
-        && request.resource.data.createdAt == request.time;
+        && request.resource.data.createdAt is timestamp;
 
       allow update: if isOwner(userId)
         && request.resource.data.diff(resource.data).changedKeys()
@@ -41,30 +41,30 @@ service cloud.firestore {
     match /users/{userId}/applications/{applicationId} {
       allow read: if isOwner(userId);
 
-      allow create: if isOwner(userId)
-        && request.resource.data.keys().hasOnly([
-          'company', 'role', 'status', 'dateApplied', 'notes',
-          'resumeUrl', 'createdAt', 'updatedAt', 'requestAnalysis'
-        ])
-        && request.resource.data.company is string
-        && request.resource.data.company.size() > 0
-        && request.resource.data.company.size() <= 100
-        && request.resource.data.role is string
-        && request.resource.data.role.size() > 0
-        && request.resource.data.role.size() <= 100
-        && request.resource.data.status in [
-          'Applied', 'Phone Screen', 'Technical Interview',
-          'Final Round', 'Offer', 'Rejected'
-        ]
-        && request.resource.data.dateApplied is string
-        && request.resource.data.dateApplied.size() == 10
-        && request.resource.data.createdAt == request.time
-        && request.resource.data.updatedAt == request.time;
+        allow create: if isOwner(userId)
+          && request.resource.data.keys().hasOnly([
+            'company', 'role', 'status', 'dateApplied', 'notes',
+            'resumeUrl', 'createdAt', 'updatedAt', 'requestAnalysis'
+          ])
+          && request.resource.data.company is string
+          && request.resource.data.company.size() > 0
+          && request.resource.data.company.size() <= 100
+          && request.resource.data.role is string
+          && request.resource.data.role.size() > 0
+          && request.resource.data.role.size() <= 100
+          && request.resource.data.status in [
+            'Applied', 'Phone Screen', 'Technical Interview',
+            'Final Round', 'Offer', 'Rejected'
+          ]
+          && request.resource.data.dateApplied is string
+          && request.resource.data.dateApplied.size() == 10
+          && request.resource.data.createdAt is timestamp
+          && request.resource.data.updatedAt is timestamp;
 
       allow update: if isOwner(userId)
         && request.resource.data.diff(resource.data).changedKeys()
            .hasOnly(['status', 'notes', 'resumeUrl', 'updatedAt', 'requestAnalysis'])
-        && request.resource.data.updatedAt == request.time;
+        && request.resource.data.updatedAt is timestamp;
 
       allow delete: if isOwner(userId);
     }

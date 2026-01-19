@@ -23,6 +23,13 @@ interface ApplicationFormData {
   requestAnalysis: boolean
 }
 
+interface FormErrors {
+  company?: string
+  role?: string
+  dateApplied?: string
+  notes?: string
+}
+
 const statusOptions = [
   { value: 'Applied', label: 'Applied' },
   { value: 'Phone Screen', label: 'Phone Screen' },
@@ -38,6 +45,7 @@ function ApplicationDetail() {
   const [user, loading] = useAuthState(auth)
   const isNewApplication = id === 'new'
 
+
   const [formData, setFormData] = useState<ApplicationFormData>({
     company: '',
     role: '',
@@ -48,14 +56,18 @@ function ApplicationDetail() {
   })
 
   const [isSubmitting, setIsSubmitting] = useState(false)
-  const [isLoading, setIsLoading] = useState(!isNewApplication)
+  const [isLoading, setIsLoading] = useState(id && id !== 'new')
+  const [errors, setErrors] = useState<FormErrors>({})
+  const [originalData, setOriginalData] = useState<ApplicationFormData | null>(null)
 
   // Load existing application data
   useEffect(() => {
-    if (!isNewApplication && user && id) {
+    if (id && id !== 'new' && user) {
       loadApplication()
+    } else if (id === 'new' || !id) {
+      setIsLoading(false)
     }
-  }, [user, id, isNewApplication])
+  }, [user, id])
 
   const loadApplication = async () => {
     if (!user || !id) return
@@ -66,7 +78,7 @@ function ApplicationDetail() {
 
       if (docSnap.exists()) {
         const data = docSnap.data()
-        setFormData({
+        const loadedData = {
           company: data.company || '',
           role: data.role || '',
           status: data.status || 'Applied',
@@ -74,7 +86,9 @@ function ApplicationDetail() {
           notes: data.notes || '',
           resumeUrl: data.resumeUrl || '',
           requestAnalysis: false // Reset to false for edits
-        })
+        }
+        setFormData(loadedData)
+        setOriginalData(loadedData)
       } else {
         toast.error('Application not found')
         navigate('/applications')
@@ -87,40 +101,122 @@ function ApplicationDetail() {
     }
   }
 
+  const validateField = (field: keyof ApplicationFormData, value: string | boolean | undefined): string | undefined => {
+    switch (field) {
+      case 'company':
+        if (!value || typeof value === 'string' && !value.trim()) {
+          return 'Company name is required'
+        }
+        if (typeof value === 'string' && value.trim().length < 2) {
+          return 'Company name must be at least 2 characters'
+        }
+        if (typeof value === 'string' && value.trim().length > 100) {
+          return 'Company name must be less than 100 characters'
+        }
+        break
+      case 'role':
+        if (!value || typeof value === 'string' && !value.trim()) {
+          return 'Role is required'
+        }
+        if (typeof value === 'string' && value.trim().length < 2) {
+          return 'Role must be at least 2 characters'
+        }
+        if (typeof value === 'string' && value.trim().length > 100) {
+          return 'Role must be less than 100 characters'
+        }
+        break
+      case 'dateApplied':
+        if (!value || typeof value === 'string' && !value.trim()) {
+          return 'Date applied is required'
+        }
+        try {
+          validateAndNormalizeDate(value as string, false)
+        } catch {
+          return 'Please enter a valid date'
+        }
+        break
+      case 'notes':
+        if (typeof value === 'string' && value.length > 1000) {
+          return 'Notes must be less than 1000 characters'
+        }
+        break
+      // resumeUrl and requestAnalysis don't need validation
+      case 'resumeUrl':
+      case 'requestAnalysis':
+        break
+    }
+    return undefined
+  }
+
   const handleInputChange = (field: keyof ApplicationFormData, value: string | boolean) => {
     setFormData(prev => ({ ...prev, [field]: value }))
+
+    // Real-time validation
+    const error = validateField(field, value)
+    setErrors(prev => ({ ...prev, [field]: error }))
   }
 
   const handleDateChange = (dateString: string) => {
     try {
       const normalizedDate = validateAndNormalizeDate(dateString, true)
       setFormData(prev => ({ ...prev, dateApplied: normalizedDate }))
+      setErrors(prev => ({ ...prev, dateApplied: undefined }))
     } catch (error) {
-      toast.error('Invalid date format')
+      setErrors(prev => ({ ...prev, dateApplied: 'Please enter a valid date' }))
     }
   }
 
   const validateForm = (): boolean => {
-    if (!formData.company.trim()) {
-      toast.error('Company name is required')
+    const newErrors: FormErrors = {}
+
+    // Only validate fields that can have validation errors
+    const fieldsToValidate: (keyof ApplicationFormData)[] = ['company', 'role', 'dateApplied', 'notes']
+
+    fieldsToValidate.forEach(field => {
+      const error = validateField(field, formData[field])
+      if (error) {
+        newErrors[field as keyof FormErrors] = error
+      }
+    })
+
+    setErrors(newErrors)
+
+    if (Object.keys(newErrors).length > 0) {
+      toast.error('Please fix the errors below')
       return false
     }
-    if (!formData.role.trim()) {
-      toast.error('Role is required')
-      return false
-    }
-    if (!formData.dateApplied) {
-      toast.error('Date applied is required')
-      return false
-    }
+
     return true
+  }
+
+  const hasFormChanged = (): boolean => {
+    if (!originalData) return true // For new applications, always allow submit
+
+    return (
+      formData.company.trim() !== originalData.company.trim() ||
+      formData.role.trim() !== originalData.role.trim() ||
+      formData.status !== originalData.status ||
+      formData.dateApplied !== originalData.dateApplied ||
+      formData.notes.trim() !== originalData.notes.trim() ||
+      formData.resumeUrl !== originalData.resumeUrl
+    )
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (!user || !validateForm()) return
+
+    if (!user || !validateForm()) {
+      return
+    }
+
+    // For existing applications, check if anything actually changed
+    if (!isNewApplication && !hasFormChanged()) {
+      toast.info('No changes detected')
+      return
+    }
 
     setIsSubmitting(true)
+    console.log('Starting form submission...')
     try {
       const applicationData = {
         ...formData,
@@ -147,18 +243,27 @@ function ApplicationDetail() {
         )
         toast.success('Application updated successfully!')
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error saving application:', error)
-      toast.error('Failed to save application')
+      console.error('Error details:', {
+        code: error.code,
+        message: error.message,
+        userId: user?.uid
+      })
+      toast.error(`Failed to save application: ${error.message}`)
     } finally {
       setIsSubmitting(false)
     }
   }
 
-  if (loading || isLoading) {
+  // Show loading for existing applications that are still loading
+  if (id && id !== 'new' && (loading || isLoading)) {
     return (
       <div className="flex items-center justify-center min-h-64">
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+        <p className="mt-4 text-gray-600">
+          {loading ? 'Loading authentication...' : 'Loading application...'}
+        </p>
       </div>
     )
   }
@@ -199,9 +304,14 @@ function ApplicationDetail() {
               maxLength={100}
               value={formData.company}
               onChange={(e) => handleInputChange('company', e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
+                errors.company ? 'border-red-300 focus:ring-red-500 focus:border-red-500' : 'border-gray-300'
+              }`}
               placeholder="e.g., Google, Microsoft"
             />
+            {errors.company && (
+              <p className="mt-1 text-sm text-red-600">{errors.company}</p>
+            )}
           </div>
 
           {/* Role */}
@@ -216,9 +326,14 @@ function ApplicationDetail() {
               maxLength={100}
               value={formData.role}
               onChange={(e) => handleInputChange('role', e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
+                errors.role ? 'border-red-300 focus:ring-red-500 focus:border-red-500' : 'border-gray-300'
+              }`}
               placeholder="e.g., Software Engineer"
             />
+            {errors.role && (
+              <p className="mt-1 text-sm text-red-600">{errors.role}</p>
+            )}
           </div>
         </div>
 
@@ -253,13 +368,17 @@ function ApplicationDetail() {
               required
               value={formData.dateApplied}
               onChange={(e) => handleDateChange(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
+                errors.dateApplied ? 'border-red-300 focus:ring-red-500 focus:border-red-500' : 'border-gray-300'
+              }`}
             />
-            {formData.dateApplied && (
+            {errors.dateApplied ? (
+              <p className="mt-1 text-sm text-red-600">{errors.dateApplied}</p>
+            ) : formData.dateApplied ? (
               <p className="mt-1 text-sm text-gray-500">
                 {formatDateForDisplay(formData.dateApplied)}
               </p>
-            )}
+            ) : null}
           </div>
         </div>
 
@@ -271,11 +390,24 @@ function ApplicationDetail() {
           <textarea
             id="notes"
             rows={4}
+            maxLength={1000}
             value={formData.notes}
             onChange={(e) => handleInputChange('notes', e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
+              errors.notes ? 'border-red-300 focus:ring-red-500 focus:border-red-500' : 'border-gray-300'
+            }`}
             placeholder="Additional details about this application..."
           />
+          <div className="mt-1 flex justify-between text-sm">
+            {errors.notes ? (
+              <p className="text-red-600">{errors.notes}</p>
+            ) : (
+              <p className="text-gray-500">Optional additional details</p>
+            )}
+            <p className={`text-gray-500 ${formData.notes.length > 900 ? 'text-orange-600' : ''}`}>
+              {formData.notes.length}/1000
+            </p>
+          </div>
         </div>
 
         {/* AI Analysis Request */}

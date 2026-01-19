@@ -1,7 +1,5 @@
 import { Link, useLocation } from 'react-router-dom'
-import { signOut } from 'firebase/auth'
-import { auth } from '../lib/firebase'
-import { toast } from 'sonner'
+import UserMenu from '../components/ui/UserMenu'
 
 interface MainLayoutProps {
   children: React.ReactNode
@@ -10,18 +8,10 @@ interface MainLayoutProps {
 function MainLayout({ children }: MainLayoutProps) {
   const location = useLocation()
 
-  const handleSignOut = async () => {
-    try {
-      await signOut(auth)
-      toast.success('Signed out successfully')
-    } catch (error) {
-      toast.error('Failed to sign out')
-    }
-  }
-
   const navigation = [
     { name: 'Dashboard', href: '/', icon: '📊' },
     { name: 'Applications', href: '/applications', icon: '📋' },
+    { name: 'Profile', href: '/profile', icon: '👤' },
     { name: 'Settings', href: '/settings', icon: '⚙️' },
   ]
 
@@ -35,12 +25,7 @@ function MainLayout({ children }: MainLayoutProps) {
               <h1 className="text-xl font-bold text-gray-900">KRISIS</h1>
               <span className="ml-2 text-sm text-gray-500">Job Application Intelligence</span>
             </div>
-            <button
-              onClick={handleSignOut}
-              className="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium"
-            >
-              Sign Out
-            </button>
+            <UserMenu />
           </div>
         </div>
       </header>
