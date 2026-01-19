@@ -61,56 +61,69 @@ function UserMenu() {
     <div className="relative" ref={menuRef}>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center justify-center w-10 h-10 bg-blue-500 hover:bg-blue-600 rounded-full text-white font-medium text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+        className="btn-icon hover-lift"
+        style={{
+          background: 'var(--primary-orange)',
+          color: 'white',
+          width: '40px',
+          height: '40px',
+          borderRadius: 'var(--radius-xl)'
+        }}
         aria-label="User menu"
       >
         {initials}
       </button>
 
       {isOpen && (
-        <div className="absolute right-0 mt-2 w-64 bg-white rounded-md shadow-lg ring-1 ring-black ring-opacity-5 z-50">
-          <div className="p-4 border-b border-gray-200">
-            <div className="flex items-center space-x-3">
-              <div className="w-12 h-12 bg-blue-500 rounded-full flex items-center justify-center text-white font-bold text-lg">
+        <div className="card absolute right-0 mt-sm w-72 shadow-xl z-50 animate-slide-up">
+          <div className="p-md border-b border-border-light">
+            <div className="flex items-center gap-md">
+              <div
+                className="w-12 h-12 rounded-xl flex items-center justify-center font-bold text-lg"
+                style={{
+                  background: 'var(--primary-orange)',
+                  color: 'white'
+                }}
+              >
                 {initials}
               </div>
               <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium text-gray-900 truncate">
+                <p className="font-medium text-primary truncate">
                   {user.displayName || 'No name set'}
                 </p>
-                <p className="text-sm text-gray-500 truncate">
+                <p className="text-sm text-secondary truncate">
                   {user.email}
                 </p>
               </div>
             </div>
           </div>
 
-          <div className="py-1">
+          <div className="p-sm">
             <Link
               to="/profile"
-              className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900"
+              className="flex items-center gap-sm px-md py-sm text-sm text-primary hover:bg-background-light rounded-md transition-colors"
               onClick={() => setIsOpen(false)}
             >
-              <span className="mr-3">👤</span>
+              <span>👤</span>
               View Profile
             </Link>
 
             <Link
               to="/settings"
-              className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900"
+              className="flex items-center gap-sm px-md py-sm text-sm text-primary hover:bg-background-light rounded-md transition-colors"
               onClick={() => setIsOpen(false)}
             >
-              <span className="mr-3">⚙️</span>
+              <span>⚙️</span>
               Settings
             </Link>
 
-            <hr className="my-1 border-gray-200" />
+            <hr className="my-sm border-border-light" />
 
             <button
               onClick={handleSignOut}
-              className="flex items-center w-full px-4 py-2 text-sm text-red-700 hover:bg-red-50 hover:text-red-900"
+              className="flex items-center gap-sm w-full px-md py-sm text-sm text-danger hover:bg-red-50 rounded-md transition-colors"
             >
-              <span className="mr-3">🚪</span>
+              <span>🚪</span>
               Sign Out
             </button>
           </div>

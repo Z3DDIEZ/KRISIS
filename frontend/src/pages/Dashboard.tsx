@@ -101,145 +101,125 @@ function Dashboard() {
   }
 
   return (
-    <div>
-      <div className="mb-8">
-        <h1 className="text-2xl font-bold text-gray-900">Dashboard</h1>
-        <p className="text-gray-600">Welcome to KRISIS - Your job application intelligence platform</p>
+    <div className="animate-fade-in">
+      {/* Page Header */}
+      <div className="mb-xl">
+        <h1 className="text-3xl font-bold text-primary mb-sm">Dashboard</h1>
+        <p className="text-secondary text-base">Welcome to KRISIS - Your job application intelligence platform</p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-        {/* Stats Cards */}
-        <Link to="/applications" className="bg-white p-6 rounded-lg shadow hover:shadow-md transition-shadow cursor-pointer">
-          <div className="flex items-center">
-            <div className="flex-shrink-0">
-              <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center">
-                <span className="text-white text-sm font-medium">📋</span>
-              </div>
-            </div>
-            <div className="ml-4">
-              <dt className="text-sm font-medium text-gray-500 truncate">Total Applications</dt>
-              <dd className="text-lg font-medium text-gray-900">{stats.totalApplications}</dd>
-            </div>
+      {/* Stats Grid */}
+      <div className="stats-grid mb-xl">
+        {/* Total Applications - Clickable */}
+        <Link to="/applications" className="stat-card group">
+          <div className="stat-icon blue">
+            📋
+          </div>
+          <div className="stat-card-content">
+            <div className="stat-value text-primary">{stats.totalApplications}</div>
+            <div className="stat-label text-secondary uppercase tracking-wide">Total Applications</div>
           </div>
         </Link>
 
-        <div className="bg-white p-6 rounded-lg shadow">
-          <div className="flex items-center">
-            <div className="flex-shrink-0">
-              <div className="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center">
-                <span className="text-white text-sm font-medium">✅</span>
-              </div>
-            </div>
-            <div className="ml-4">
-              <dt className="text-sm font-medium text-gray-500 truncate">Interviews</dt>
-              <dd className="text-lg font-medium text-gray-900">{stats.interviews}</dd>
-            </div>
+        {/* Interviews */}
+        <div className="stat-card">
+          <div className="stat-icon green">
+            ✅
+          </div>
+          <div className="stat-card-content">
+            <div className="stat-value text-primary">{stats.interviews}</div>
+            <div className="stat-label text-secondary uppercase tracking-wide">Interviews</div>
           </div>
         </div>
 
-        <div className="bg-white p-6 rounded-lg shadow">
-          <div className="flex items-center">
-            <div className="flex-shrink-0">
-              <div className="w-8 h-8 bg-yellow-500 rounded-full flex items-center justify-center">
-                <span className="text-white text-sm font-medium">🤖</span>
-              </div>
-            </div>
-            <div className="ml-4">
-              <dt className="text-sm font-medium text-gray-500 truncate">AI Analyses</dt>
-              <dd className="text-lg font-medium text-gray-900">{stats.aiAnalyses}</dd>
-            </div>
+        {/* AI Analyses */}
+        <div className="stat-card">
+          <div className="stat-icon orange">
+            🤖
+          </div>
+          <div className="stat-card-content">
+            <div className="stat-value text-primary">{stats.aiAnalyses}</div>
+            <div className="stat-label text-secondary uppercase tracking-wide">AI Analyses</div>
           </div>
         </div>
 
-        <div className="bg-white p-6 rounded-lg shadow">
-          <div className="flex items-center">
-            <div className="flex-shrink-0">
-              <div className="w-8 h-8 bg-purple-500 rounded-full flex items-center justify-center">
-                <span className="text-white text-sm font-medium">📈</span>
-              </div>
-            </div>
-            <div className="ml-4">
-              <dt className="text-sm font-medium text-gray-500 truncate">Success Rate</dt>
-              <dd className="text-lg font-medium text-gray-900">{stats.successRate}%</dd>
-            </div>
+        {/* Success Rate */}
+        <div className="stat-card">
+          <div className="stat-icon blue">
+            📈
+          </div>
+          <div className="stat-card-content">
+            <div className="stat-value text-primary">{stats.successRate}%</div>
+            <div className="stat-label text-secondary uppercase tracking-wide">Success Rate</div>
           </div>
         </div>
       </div>
 
       {/* Recent Applications */}
-      <div className="bg-white shadow rounded-lg">
-        <div className="px-6 py-4 border-b border-gray-200">
-          <div className="flex items-center justify-between">
-            <h3 className="text-lg font-medium text-gray-900">Recent Applications</h3>
-            <Link
-              to="/applications/new"
-              className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm font-medium"
-            >
-              Add Application
-            </Link>
-          </div>
+      <div className="card">
+        <div className="card-header">
+          <h3 className="card-title">Recent Applications</h3>
+          <Link to="/applications/new" className="btn btn-orange">
+            Add Application
+          </Link>
         </div>
-        <div className="p-6">
+
+        <div className="card-body">
           {applications.length === 0 ? (
-            <div className="text-center py-12">
-              <div className="text-gray-400 mb-4">
-                <span className="text-4xl">📋</span>
-              </div>
-              <h3 className="text-lg font-medium text-gray-900 mb-2">No applications yet</h3>
-              <p className="text-gray-500 mb-6">Get started by adding your first job application.</p>
-              <Link
-                to="/applications/new"
-                className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm font-medium inline-block"
-              >
+            <div className="empty-state">
+              <div className="empty-icon">📋</div>
+              <h3 className="empty-title">No applications yet</h3>
+              <p className="empty-description">Get started by adding your first job application.</p>
+              <Link to="/applications/new" className="btn btn-orange">
                 Add Your First Application
               </Link>
             </div>
           ) : (
-            <div className="space-y-4">
+            <div className="space-y-md">
               {applications.map((application) => (
-                <div key={application.id} className="flex items-center justify-between p-4 border border-gray-200 rounded-lg hover:bg-gray-50">
-                  <div className="flex items-center space-x-4">
-                    <div className="flex-shrink-0">
-                      <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
-                        <span className="text-blue-600 font-medium text-sm">
-                          {application.company.charAt(0).toUpperCase()}
-                        </span>
+                <div key={application.id} className="application-card">
+                  <div className="application-card-header">
+                    <div className="company-logo bg-primary-orange-bg">
+                      <span className="text-primary-orange font-semibold">
+                        {application.company.charAt(0).toUpperCase()}
+                      </span>
+                    </div>
+                    <div className="company-info">
+                      <div className="company-name">
+                        {application.company} - {application.role}
+                      </div>
+                      <div className="position-title text-secondary">
+                        Applied {formatDateForDisplay(application.dateApplied)}
                       </div>
                     </div>
-                    <div>
-                      <h4 className="text-sm font-medium text-gray-900">
-                        {application.company} - {application.role}
-                      </h4>
-                      <p className="text-sm text-gray-500">
-                        Applied {formatDateForDisplay(application.dateApplied)}
-                      </p>
-                    </div>
                   </div>
-                  <div className="flex items-center space-x-4">
-                    <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
-                      application.status === 'Applied' ? 'bg-gray-100 text-gray-800' :
-                      application.status === 'Phone Screen' ? 'bg-blue-100 text-blue-800' :
-                      application.status === 'Technical Interview' ? 'bg-yellow-100 text-yellow-800' :
-                      application.status === 'Final Round' ? 'bg-purple-100 text-purple-800' :
-                      application.status === 'Offer' ? 'bg-green-100 text-green-800' :
-                      'bg-red-100 text-red-800'
+
+                  <div className="application-card-footer">
+                    <div className={`badge ${
+                      application.status === 'Applied' ? 'badge-applied' :
+                      application.status === 'Phone Screen' ? 'badge-phone' :
+                      application.status === 'Technical Interview' ? 'badge-technical' :
+                      application.status === 'Final Round' ? 'badge-final' :
+                      application.status === 'Offer' ? 'badge-offer' :
+                      'badge-rejected'
                     }`}>
                       {application.status}
-                    </span>
+                    </div>
                     <Link
                       to={`/applications/${application.id}`}
-                      className="text-blue-600 hover:text-blue-900 text-sm font-medium"
+                      className="btn btn-ghost btn-sm"
                     >
-                      View
+                      View Details
                     </Link>
                   </div>
                 </div>
               ))}
+
               {applications.length >= 5 && (
-                <div className="text-center pt-4">
+                <div className="text-center pt-lg">
                   <Link
                     to="/applications"
-                    className="text-blue-600 hover:text-blue-900 text-sm font-medium"
+                    className="btn btn-ghost"
                   >
                     View all applications →
                   </Link>

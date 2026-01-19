@@ -102,101 +102,80 @@ function Applications() {
   }
 
   return (
-    <div>
-      <div className="mb-8 flex justify-between items-center">
+    <div className="animate-fade-in">
+      {/* Page Header */}
+      <div className="flex justify-between items-start mb-xl">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Applications</h1>
-          <p className="text-gray-600">Manage all your job applications</p>
+          <h1 className="text-3xl font-bold text-primary mb-sm">Applications</h1>
+          <p className="text-secondary text-base">Manage all your job applications</p>
         </div>
-        <Link
-          to="/applications/new"
-          className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm font-medium"
-        >
-          Add Application
+        <Link to="/applications/new" className="btn btn-orange">
+          ➕ Add Application
         </Link>
       </div>
 
       {applications.length === 0 ? (
-        <div className="bg-white shadow rounded-lg p-6">
-          <div className="text-center py-12">
-            <div className="text-gray-400 mb-4">
-              <span className="text-4xl">📋</span>
+        <div className="card">
+          <div className="card-body">
+            <div className="empty-state">
+              <div className="empty-icon">📋</div>
+              <h3 className="empty-title">No applications yet</h3>
+              <p className="empty-description">Start tracking your job applications to get AI-powered insights.</p>
+              <Link to="/applications/new" className="btn btn-orange">
+                Add Your First Application
+              </Link>
             </div>
-            <h3 className="text-lg font-medium text-gray-900 mb-2">No applications yet</h3>
-            <p className="text-gray-500 mb-6">Start tracking your job applications to get AI-powered insights.</p>
-            <Link
-              to="/applications/new"
-              className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm font-medium inline-block"
-            >
-              Add Your First Application
-            </Link>
           </div>
         </div>
       ) : (
-        <div className="bg-white shadow rounded-lg overflow-hidden">
-          <div className="px-6 py-4 border-b border-gray-200">
-            <h3 className="text-lg font-medium text-gray-900">Your Applications</h3>
-          </div>
+        <div className="card-grid">
+          {applications.map((application) => (
+            <div key={application.id} className="application-card">
+              <div className="application-card-header">
+                <div className="company-logo bg-primary-orange-bg">
+                  <span className="text-primary-orange font-semibold">
+                    {application.company.charAt(0).toUpperCase()}
+                  </span>
+                </div>
+                <div className="company-info">
+                  <div className="company-name">
+                    {application.company} - {application.role}
+                  </div>
+                  <div className="position-title text-secondary">
+                    Applied {formatDateForDisplay(application.dateApplied)}
+                  </div>
+                </div>
+              </div>
 
-          <div className="overflow-x-auto">
-            <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-gray-50">
-                <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Company
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Role
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Status
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Date Applied
-                  </th>
-                  <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Actions
-                  </th>
-                </tr>
-              </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
-                {applications.map((application) => (
-                  <tr key={application.id} className="hover:bg-gray-50">
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm font-medium text-gray-900">
-                        {application.company}
-                      </div>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm text-gray-900">{application.role}</div>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${statusColors[application.status as keyof typeof statusColors] || 'bg-gray-100 text-gray-800'}`}>
-                        {application.status}
-                      </span>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                      {formatDateForDisplay(application.dateApplied)}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium space-x-2">
-                      <Link
-                        to={`/applications/${application.id}`}
-                        className="text-blue-600 hover:text-blue-900"
-                      >
-                        Edit
-                      </Link>
-                      <button
-                        onClick={() => handleDelete(application.id, application.company)}
-                        className="text-red-600 hover:text-red-900"
-                      >
-                        Delete
-                      </button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+              <div className="application-card-footer">
+                <div className={`badge ${
+                  application.status === 'Applied' ? 'badge-applied' :
+                  application.status === 'Phone Screen' ? 'badge-phone' :
+                  application.status === 'Technical Interview' ? 'badge-technical' :
+                  application.status === 'Final Round' ? 'badge-final' :
+                  application.status === 'Offer' ? 'badge-offer' :
+                  'badge-rejected'
+                }`}>
+                  {application.status}
+                </div>
+                <div className="card-actions">
+                  <Link
+                    to={`/applications/${application.id}`}
+                    className="icon-button"
+                  >
+                    ✏️
+                  </Link>
+                  <button
+                    onClick={() => handleDelete(application.id, application.company)}
+                    className="icon-button"
+                    style={{ color: 'var(--status-rejected)' }}
+                  >
+                    🗑️
+                  </button>
+                </div>
+              </div>
+            </div>
+          ))}
         </div>
       )}
     </div>

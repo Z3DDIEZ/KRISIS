@@ -277,12 +277,13 @@ function ApplicationDetail() {
   }
 
   return (
-    <div className="max-w-2xl mx-auto">
-      <div className="mb-8">
-        <h1 className="text-2xl font-bold text-gray-900">
+    <div className="max-w-4xl mx-auto animate-fade-in">
+      {/* Page Header */}
+      <div className="mb-xl">
+        <h1 className="text-3xl font-bold text-primary mb-sm">
           {isNewApplication ? 'Add New Application' : 'Edit Application'}
         </h1>
-        <p className="text-gray-600">
+        <p className="text-secondary text-base">
           {isNewApplication
             ? 'Track a new job application'
             : 'Update your application details'
@@ -290,167 +291,161 @@ function ApplicationDetail() {
         </p>
       </div>
 
-      <form onSubmit={handleSubmit} className="bg-white shadow rounded-lg p-6 space-y-6">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {/* Company */}
-          <div>
-            <label htmlFor="company" className="block text-sm font-medium text-gray-700 mb-2">
-              Company *
-            </label>
-            <input
-              type="text"
-              id="company"
-              required
-              maxLength={100}
-              value={formData.company}
-              onChange={(e) => handleInputChange('company', e.target.value)}
-              className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
-                errors.company ? 'border-red-300 focus:ring-red-500 focus:border-red-500' : 'border-gray-300'
-              }`}
-              placeholder="e.g., Google, Microsoft"
-            />
-            {errors.company && (
-              <p className="mt-1 text-sm text-red-600">{errors.company}</p>
-            )}
-          </div>
+      <form onSubmit={handleSubmit} className="card">
+        <div className="card-body">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-lg">
+            {/* Company */}
+            <div className="input-group">
+              <label htmlFor="company" className="input-label">
+                Company <span className="required">*</span>
+              </label>
+              <input
+                type="text"
+                id="company"
+                required
+                maxLength={100}
+                value={formData.company}
+                onChange={(e) => handleInputChange('company', e.target.value)}
+                className={`input-field ${errors.company ? 'error' : ''}`}
+                placeholder="e.g., Google, Microsoft"
+              />
+              {errors.company && (
+                <p className="input-error">{errors.company}</p>
+              )}
+            </div>
 
-          {/* Role */}
-          <div>
-            <label htmlFor="role" className="block text-sm font-medium text-gray-700 mb-2">
-              Role *
-            </label>
-            <input
-              type="text"
-              id="role"
-              required
-              maxLength={100}
-              value={formData.role}
-              onChange={(e) => handleInputChange('role', e.target.value)}
-              className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
-                errors.role ? 'border-red-300 focus:ring-red-500 focus:border-red-500' : 'border-gray-300'
-              }`}
-              placeholder="e.g., Software Engineer"
-            />
-            {errors.role && (
-              <p className="mt-1 text-sm text-red-600">{errors.role}</p>
-            )}
-          </div>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {/* Status */}
-          <div>
-            <label htmlFor="status" className="block text-sm font-medium text-gray-700 mb-2">
-              Status
-            </label>
-            <select
-              id="status"
-              value={formData.status}
-              onChange={(e) => handleInputChange('status', e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-            >
-              {statusOptions.map(option => (
-                <option key={option.value} value={option.value}>
-                  {option.label}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          {/* Date Applied */}
-          <div>
-            <label htmlFor="dateApplied" className="block text-sm font-medium text-gray-700 mb-2">
-              Date Applied *
-            </label>
-            <input
-              type="date"
-              id="dateApplied"
-              required
-              value={formData.dateApplied}
-              onChange={(e) => handleDateChange(e.target.value)}
-              className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
-                errors.dateApplied ? 'border-red-300 focus:ring-red-500 focus:border-red-500' : 'border-gray-300'
-              }`}
-            />
-            {errors.dateApplied ? (
-              <p className="mt-1 text-sm text-red-600">{errors.dateApplied}</p>
-            ) : formData.dateApplied ? (
-              <p className="mt-1 text-sm text-gray-500">
-                {formatDateForDisplay(formData.dateApplied)}
-              </p>
-            ) : null}
-          </div>
-        </div>
-
-        {/* Notes */}
-        <div>
-          <label htmlFor="notes" className="block text-sm font-medium text-gray-700 mb-2">
-            Notes
-          </label>
-          <textarea
-            id="notes"
-            rows={4}
-            maxLength={1000}
-            value={formData.notes}
-            onChange={(e) => handleInputChange('notes', e.target.value)}
-            className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
-              errors.notes ? 'border-red-300 focus:ring-red-500 focus:border-red-500' : 'border-gray-300'
-            }`}
-            placeholder="Additional details about this application..."
-          />
-          <div className="mt-1 flex justify-between text-sm">
-            {errors.notes ? (
-              <p className="text-red-600">{errors.notes}</p>
-            ) : (
-              <p className="text-gray-500">Optional additional details</p>
-            )}
-            <p className={`text-gray-500 ${formData.notes.length > 900 ? 'text-orange-600' : ''}`}>
-              {formData.notes.length}/1000
-            </p>
-          </div>
-        </div>
-
-        {/* AI Analysis Request */}
-        {isNewApplication && (
-          <div className="bg-blue-50 border border-blue-200 rounded-md p-4">
-            <div className="flex items-start">
-              <div className="flex items-center h-5">
-                <input
-                  id="requestAnalysis"
-                  type="checkbox"
-                  checked={formData.requestAnalysis}
-                  onChange={(e) => handleInputChange('requestAnalysis', e.target.checked)}
-                  className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
-                />
-              </div>
-              <div className="ml-3">
-                <label htmlFor="requestAnalysis" className="text-sm font-medium text-blue-900">
-                  Analyze with AI
-                </label>
-                <p className="text-sm text-blue-700 mt-1">
-                  Get AI-powered insights on your resume-job fit, including matching skills, gaps, and next steps.
-                </p>
-              </div>
+            {/* Role */}
+            <div className="input-group">
+              <label htmlFor="role" className="input-label">
+                Role <span className="required">*</span>
+              </label>
+              <input
+                type="text"
+                id="role"
+                required
+                maxLength={100}
+                value={formData.role}
+                onChange={(e) => handleInputChange('role', e.target.value)}
+                className={`input-field ${errors.role ? 'error' : ''}`}
+                placeholder="e.g., Software Engineer"
+              />
+              {errors.role && (
+                <p className="input-error">{errors.role}</p>
+              )}
             </div>
           </div>
-        )}
 
-        {/* Form Actions */}
-        <div className="flex justify-end space-x-3 pt-6 border-t border-gray-200">
-          <button
-            type="button"
-            onClick={() => navigate('/applications')}
-            className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-          >
-            Cancel
-          </button>
-          <button
-            type="submit"
-            disabled={isSubmitting}
-            className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            {isSubmitting ? 'Saving...' : (isNewApplication ? 'Create Application' : 'Update Application')}
-          </button>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-lg">
+            {/* Status */}
+            <div className="input-group">
+              <label htmlFor="status" className="input-label">
+                Status
+              </label>
+              <select
+                id="status"
+                value={formData.status}
+                onChange={(e) => handleInputChange('status', e.target.value)}
+                className="select-field"
+              >
+                {statusOptions.map(option => (
+                  <option key={option.value} value={option.value}>
+                    {option.label}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            {/* Date Applied */}
+            <div className="input-group">
+              <label htmlFor="dateApplied" className="input-label">
+                Date Applied <span className="required">*</span>
+              </label>
+              <input
+                type="date"
+                id="dateApplied"
+                required
+                value={formData.dateApplied}
+                onChange={(e) => handleDateChange(e.target.value)}
+                className={`input-field ${errors.dateApplied ? 'error' : ''}`}
+              />
+              {errors.dateApplied ? (
+                <p className="input-error">{errors.dateApplied}</p>
+              ) : formData.dateApplied ? (
+                <p className="input-hint">
+                  {formatDateForDisplay(formData.dateApplied)}
+                </p>
+              ) : null}
+            </div>
+          </div>
+
+          {/* Notes */}
+          <div className="input-group">
+            <label htmlFor="notes" className="input-label">
+              Notes
+            </label>
+            <textarea
+              id="notes"
+              rows={4}
+              maxLength={1000}
+              value={formData.notes}
+              onChange={(e) => handleInputChange('notes', e.target.value)}
+              className={`textarea-field ${errors.notes ? 'error' : ''}`}
+              placeholder="Additional details about this application..."
+            />
+            <div className="flex justify-between text-sm">
+              {errors.notes ? (
+                <p className="input-error">{errors.notes}</p>
+              ) : (
+                <p className="input-hint">Optional additional details</p>
+              )}
+              <p className={`input-hint ${formData.notes.length > 900 ? 'text-orange-600' : ''}`}>
+                {formData.notes.length}/1000
+              </p>
+            </div>
+          </div>
+
+          {/* AI Analysis Request */}
+          {isNewApplication && (
+            <div className="bg-status-applied border border-status-applied rounded-lg p-lg" style={{ backgroundColor: 'rgba(52, 152, 219, 0.1)', borderColor: 'rgba(52, 152, 219, 0.2)' }}>
+              <div className="flex items-start gap-sm">
+                <div className="flex items-center h-5 mt-0.5">
+                  <input
+                    id="requestAnalysis"
+                    type="checkbox"
+                    checked={formData.requestAnalysis}
+                    onChange={(e) => handleInputChange('requestAnalysis', e.target.checked)}
+                    className="checkbox"
+                  />
+                </div>
+                <div className="flex-1">
+                  <label htmlFor="requestAnalysis" className="text-sm font-semibold text-status-applied">
+                    🤖 Analyze with AI
+                  </label>
+                  <p className="text-sm text-status-applied mt-sm opacity-80">
+                    Get AI-powered insights on your resume-job fit, including matching skills, gaps, and next steps.
+                  </p>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Form Actions */}
+          <div className="card-footer flex gap-sm">
+            <button
+              type="button"
+              onClick={() => navigate('/applications')}
+              className="btn btn-secondary"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              disabled={isSubmitting}
+              className="btn btn-primary"
+            >
+              {isSubmitting ? 'Saving...' : (isNewApplication ? 'Create Application' : 'Update Application')}
+            </button>
+          </div>
         </div>
       </form>
     </div>

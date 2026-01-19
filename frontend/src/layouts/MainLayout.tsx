@@ -16,36 +16,40 @@ function MainLayout({ children }: MainLayoutProps) {
   ]
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <header className="bg-white shadow-sm border-b">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            <div className="flex items-center">
-              <h1 className="text-xl font-bold text-gray-900">KRISIS</h1>
-              <span className="ml-2 text-sm text-gray-500">Job Application Intelligence</span>
+    <div className="min-h-screen bg-background-light">
+      {/* Navigation Bar */}
+      <nav className="navbar">
+        <div className="nav-container">
+          {/* Logo */}
+          <div className="logo">
+            <div className="logo-icon">
+              🎯
             </div>
-            <UserMenu />
+            <div>
+              <div className="font-bold">KRISIS</div>
+              <div className="text-xs text-secondary hidden sm:block">Job Application Intelligence</div>
+            </div>
           </div>
+
+          {/* User Menu */}
+          <UserMenu />
         </div>
-      </header>
+      </nav>
 
       <div className="flex">
-        {/* Sidebar */}
-        <nav className="w-64 bg-white shadow-sm min-h-[calc(100vh-4rem)]">
-          <div className="p-4">
-            <ul className="space-y-2">
+        {/* Sidebar Navigation */}
+        <nav className="hidden md:flex w-64 bg-background-white shadow-md min-h-[calc(100vh-4rem)] border-r border-border-light">
+          <div className="p-lg w-full">
+            <ul className="space-y-xs">
               {navigation.map((item) => (
                 <li key={item.name}>
                   <Link
                     to={item.href}
-                    className={`flex items-center px-3 py-2 rounded-md text-sm font-medium transition-colors ${
-                      location.pathname === item.href
-                        ? 'bg-blue-50 text-blue-700'
-                        : 'text-gray-700 hover:text-gray-900 hover:bg-gray-50'
+                    className={`nav-link ${
+                      location.pathname === item.href ? 'active' : ''
                     }`}
                   >
-                    <span className="mr-3">{item.icon}</span>
+                    <span>{item.icon}</span>
                     {item.name}
                   </Link>
                 </li>
@@ -54,9 +58,11 @@ function MainLayout({ children }: MainLayoutProps) {
           </div>
         </nav>
 
-        {/* Main content */}
-        <main className="flex-1 p-8">
-          {children}
+        {/* Main Content */}
+        <main className="flex-1 p-lg md:p-xl">
+          <div className="container">
+            {children}
+          </div>
         </main>
       </div>
     </div>
