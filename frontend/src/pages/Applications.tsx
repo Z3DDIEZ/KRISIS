@@ -23,15 +23,6 @@ interface Application {
   resumeUrl?: string
 }
 
-const statusColors = {
-  'Applied': 'bg-gray-100 text-gray-800',
-  'Phone Screen': 'bg-blue-100 text-blue-800',
-  'Technical Interview': 'bg-yellow-100 text-yellow-800',
-  'Final Round': 'bg-purple-100 text-purple-800',
-  'Offer': 'bg-green-100 text-green-800',
-  'Rejected': 'bg-red-100 text-red-800'
-}
-
 function Applications() {
   const [user, loading] = useAuthState(auth)
   const [applications, setApplications] = useState<Application[]>([])
@@ -96,7 +87,7 @@ function Applications() {
   if (!user) {
     return (
       <div className="text-center py-12">
-        <p className="text-gray-500">Please sign in to view your applications.</p>
+        <p className="text-secondary">Please sign in to view your applications.</p>
       </div>
     )
   }
@@ -150,7 +141,7 @@ function Applications() {
               <div className="application-card-footer">
                 <div className={`badge ${
                   application.status === 'Applied' ? 'badge-applied' :
-                  application.status === 'Phone Screen' ? 'badge-phone' :
+                  application.status === 'Phone Screen' ? 'badge-phone-screen' :
                   application.status === 'Technical Interview' ? 'badge-technical' :
                   application.status === 'Final Round' ? 'badge-final' :
                   application.status === 'Offer' ? 'badge-offer' :

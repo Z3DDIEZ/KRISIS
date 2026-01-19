@@ -97,6 +97,74 @@
   --transition-slow: 0.5s ease;
 }
 
+/* Dark mode color overrides */
+:root[data-theme="dark"],
+html[data-theme="dark"] {
+  /* Keep primary colors vibrant */
+  --primary-orange: #F39C12;        /* Slightly brighter in dark mode */
+  --primary-orange-light: #F5B041;
+  --primary-orange-bg: #3E2723;     /* Dark brown background */
+  
+  /* Darker backgrounds */
+  --navy-dark: #FFFFFF;             /* White text on dark */
+  --navy-medium: #E8EAED;           /* Light gray for secondary text */
+  
+  /* Keep status colors visible but slightly adjusted */
+  --status-applied: #5DADE2;        /* Lighter blue */
+  --status-phone: #AF7AC5;          /* Lighter purple */
+  --status-technical: #F5B041;      /* Lighter orange */
+  --status-final: #F39C12;          /* Lighter deep orange */
+  --status-offer: #52BE80;          /* Lighter green */
+  --status-rejected: #EC7063;       /* Lighter red */
+  
+  /* Dark backgrounds */
+  --background-light: #121212;      /* Almost black page background */
+  --background-white: #1E1E1E;      /* Dark gray for cards */
+  
+  /* Light text on dark */
+  --text-primary: #E8EAED;          /* Light gray for main text */
+  --text-secondary: #B0B3B8;        /* Medium gray for secondary */
+  --text-muted: #8E8E93;            /* Darker gray for muted */
+  
+  /* Darker borders */
+  --border-light: #2C2C2E;
+  --border-medium: #3A3A3C;
+  
+  /* Lighter shadows for depth on dark backgrounds */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 1px 3px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 4px 12px rgba(0, 0, 0, 0.5);
+  --shadow-xl: 0 8px 24px rgba(0, 0, 0, 0.6);
+}
+
+/* Smooth transition when switching themes */
+body {
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.card,
+.btn,
+.input-field,
+.badge {
+  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+}
+
+*,
+*::before,
+*::after {
+  transition: background-color 0.3s ease, 
+              color 0.3s ease, 
+              border-color 0.3s ease,
+              box-shadow 0.3s ease !important;
+}
+
+/* Prevent transition on page load */
+html.no-transition *,
+html.no-transition *::before,
+html.no-transition *::after {
+  transition: none !important;
+}
+
 /* ========================================
    BASE STYLES & RESET
    ======================================== */
@@ -1409,9 +1477,95 @@ a:hover {
   background: var(--status-rejected);
 }
 
+
 /* ========================================
-   LEGACY TAILWIND COMPATIBILITY
+   DARK MODE SPECIFICITY FIX
    ======================================== */
 
-/* Import this CSS file to get full design system */
-/* Then use Tailwind utilities alongside custom classes */
+/* Force card backgrounds to use theme variables */
+.card {
+  background: var(--background-white) !important;
+  border: 1px solid var(--border-light) !important;
+}
+
+.card-header {
+  border-bottom: 1px solid var(--border-light) !important;
+}
+
+.card-title {
+  color: var(--text-primary) !important;
+}
+
+/* Force text colors */
+.text-primary {
+  color: var(--text-primary) !important;
+}
+
+.text-secondary {
+  color: var(--text-secondary) !important;
+}
+
+.text-muted {
+  color: var(--text-muted) !important;
+}
+
+/* Force button backgrounds */
+.btn-primary {
+  background: var(--navy-dark) !important;
+  color: white !important;
+}
+
+.btn-orange {
+  background: var(--primary-orange) !important;
+  color: white !important;
+}
+
+.btn-secondary {
+  background: var(--background-white) !important;
+  color: var(--text-primary) !important;
+  border: 1px solid var(--border-light) !important;
+}
+
+.btn-ghost {
+  background: transparent !important;
+  color: var(--text-secondary) !important;
+}
+
+/* Force input backgrounds */
+.input-field,
+input[type="text"],
+input[type="email"],
+input[type="password"],
+textarea,
+select {
+  background: var(--background-white) !important;
+  color: var(--text-primary) !important;
+  border: 1px solid var(--border-light) !important;
+}
+
+/* Force badge backgrounds */
+.badge {
+  /* Badges keep their semantic colors, just ensure text is visible */
+}
+
+/* If you have a header/navbar */
+header,
+nav,
+.header,
+.navbar {
+  background: var(--background-white) !important;
+  color: var(--text-primary) !important;
+  border-bottom: 1px solid var(--border-light) !important;
+}
+
+/* Body and page background */
+body {
+  background-color: var(--background-light) !important;
+  color: var(--text-primary) !important;
+}
+
+/* Container backgrounds */
+.container,
+.max-w-4xl {
+  /* No background needed, transparent */
+}

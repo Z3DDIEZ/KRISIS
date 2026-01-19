@@ -11,19 +11,53 @@
 }
 
 @layer components {
-  .btn-primary {
-    @apply bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-md transition-colors;
+ 
+  .btn-primary-old {
+    background: var(--navy-dark);
+    color: white;
+    font-weight: 500;
+    padding: 0.5rem 1rem;
+    border-radius: var(--radius-lg);
+    transition: all var(--transition-normal);
   }
 
-  .btn-secondary {
-    @apply bg-gray-200 hover:bg-gray-300 text-gray-900 font-medium py-2 px-4 rounded-md transition-colors;
+  .btn-primary-old:hover {
+    background: var(--navy-medium);
   }
 
-  .card {
-    @apply bg-white rounded-lg shadow-sm border border-gray-200;
+  .btn-secondary-old {
+    background: var(--background-white);
+    color: var(--text-primary);
+    font-weight: 500;
+    padding: 0.5rem 1rem;
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--border-light);
+    transition: all var(--transition-normal);
   }
 
-  .input-field {
-    @apply w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500;
+  .btn-secondary-old:hover {
+    background: var(--background-light);
   }
+
+.application-card {
+  background: var(--background-white) !important;
+  border: 1px solid var(--border-light) !important;
+}
+
+.company-name {
+  color: var(--text-primary) !important;
+}
+
+.position-title {
+  color: var(--text-secondary) !important;
+}
+
+/* Ensure ALL cards respect theme */
+.card,
+[class*="card"] {
+  background: var(--background-white) !important;
+  border-color: var(--border-light) !important;
+}
+
+
 }
