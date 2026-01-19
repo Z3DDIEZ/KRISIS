@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useAuthState } from 'react-firebase-hooks/auth'
-import { updateProfile, sendEmailVerification } from 'firebase/auth'
+import { updateProfile, sendEmailVerification, sendPasswordResetEmail, deleteUser } from 'firebase/auth'
 import { auth } from '../lib/firebase'
 import { toast } from 'sonner'
 
@@ -10,6 +10,9 @@ function Profile() {
   const [displayName, setDisplayName] = useState(user?.displayName || '')
   const [isUpdating, setIsUpdating] = useState(false)
   const [isResendingVerification, setIsResendingVerification] = useState(false)
+  const [isResettingPassword, setIsResettingPassword] = useState(false)
+  const [isDeletingAccount, setIsDeletingAccount] = useState(false)
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
 
   const handleUpdateProfile = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -52,6 +55,39 @@ function Profile() {
       toast.error(`Failed to send verification email: ${error.message}`)
     } finally {
       setIsResendingVerification(false)
+    }
+  }
+
+  const handlePasswordReset = async () => {
+    if (!user?.email) return
+
+    setIsResettingPassword(true)
+    try {
+      await sendPasswordResetEmail(auth, user.email)
+      toast.success('Password reset email sent! Please check your inbox.')
+    } catch (error: any) {
+      toast.error(`Failed to send password reset email: ${error.message}`)
+    } finally {
+      setIsResettingPassword(false)
+    }
+  }
+
+  const handleDeleteAccount = async () => {
+    if (!user) return
+
+    setIsDeletingAccount(true)
+    try {
+      // Note: In a production app, you might want to:
+      // 1. Delete user data from Firestore
+      // 2. Call a cloud function to handle cleanup
+      // 3. Require re-authentication before deletion
+      await deleteUser(user)
+      toast.success('Account deleted successfully.')
+    } catch (error: any) {
+      toast.error(`Failed to delete account: ${error.message}`)
+    } finally {
+      setIsDeletingAccount(false)
+      setShowDeleteConfirm(false)
     }
   }
 
@@ -204,13 +240,53 @@ function Profile() {
               </div>
             )}
 
-            <button className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded-md border border-gray-300">
-              Change Password
+            <button
+              onClick={handlePasswordReset}
+              disabled={isResettingPassword}
+              className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded-md border border-gray-300 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {isResettingPassword ? 'Sending...' : 'Change Password'}
             </button>
 
-            <button className="w-full text-left px-4 py-2 text-sm text-red-700 hover:bg-red-50 rounded-md border border-red-300">
-              Delete Account
-            </button>
+            {!showDeleteConfirm ? (
+              <button
+                onClick={() => setShowDeleteConfirm(true)}
+                className="w-full text-left px-4 py-2 text-sm text-red-700 hover:bg-red-50 rounded-md border border-red-300"
+              >
+                Delete Account
+              </button>
+            ) : (
+              <div className="bg-red-50 border border-red-200 rounded-md p-4">
+                <div className="flex">
+                  <div className="flex-shrink-0">
+                    <span className="text-red-400">⚠️</span>
+                  </div>
+                  <div className="ml-3 flex-1">
+                    <h4 className="text-sm font-medium text-red-800">
+                      Delete Account
+                    </h4>
+                    <div className="mt-2 text-sm text-red-700">
+                      <p>This action cannot be undone. This will permanently delete your account and all associated data.</p>
+                    </div>
+                    <div className="mt-4 flex space-x-3">
+                      <button
+                        onClick={handleDeleteAccount}
+                        disabled={isDeletingAccount}
+                        className="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-red-700 bg-red-100 hover:bg-red-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 disabled:opacity-50 disabled:cursor-not-allowed"
+                      >
+                        {isDeletingAccount ? 'Deleting...' : 'Yes, delete my account'}
+                      </button>
+                      <button
+                        onClick={() => setShowDeleteConfirm(false)}
+                        className="inline-flex items-center px-3 py-2 border border-gray-300 text-sm leading-4 font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
+                      >
+                        Cancel
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </div>
