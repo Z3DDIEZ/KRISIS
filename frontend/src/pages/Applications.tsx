@@ -95,8 +95,8 @@ function Applications() {
       if (searchQuery) {
         const query = searchQuery.toLowerCase()
         const matchesSearch = app.company.toLowerCase().includes(query) ||
-                             app.role.toLowerCase().includes(query) ||
-                             (app.notes && app.notes.toLowerCase().includes(query))
+          app.role.toLowerCase().includes(query) ||
+          (app.notes && app.notes.toLowerCase().includes(query))
         if (!matchesSearch) return false
       }
 
@@ -243,11 +243,11 @@ function Applications() {
           </p>
         </div>
         <div className="flex gap-sm">
-          <Link to="/analytics" className="btn btn-ghost">
+          <Link to="/analytics" className="btn btn-ghost" data-track-action="go-to-analytics">
             <Icon name="trending-up" size={16} />
             Analytics
           </Link>
-          <Link to="/applications/new" className="btn btn-orange">
+          <Link to="/applications/new" className="btn btn-orange" data-track-action="add-application">
             <Icon name="add" size={16} />
             Add Application
           </Link>
@@ -255,7 +255,7 @@ function Applications() {
       </div>
 
       {/* Filters and Controls */}
-      <div className="card mb-xl filters-container">
+      <div className="card mb-xl layout__section--filters" data-section="filters">
         <div className="card-body">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-md mb-md">
             {/* Search */}
@@ -267,6 +267,7 @@ function Applications() {
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="input"
+                data-track-filter="search"
               />
             </div>
 
@@ -277,6 +278,7 @@ function Applications() {
                 value={statusFilter}
                 onChange={(e) => setStatusFilter(e.target.value)}
                 className="input"
+                data-track-filter="status"
               >
                 <option value="all">All Statuses</option>
                 <option value="Applied">Applied</option>
@@ -459,14 +461,13 @@ function Applications() {
 
               <div className="application-card-footer">
                 <div className="flex items-center gap-sm">
-                  <div className={`badge hover-scale ${
-                    application.status === 'Applied' ? 'badge-applied' :
+                  <div className={`badge hover-scale ${application.status === 'Applied' ? 'badge-applied' :
                     application.status === 'Phone Screen' ? 'badge-phone-screen' :
-                    application.status === 'Technical Interview' ? 'badge-technical' :
-                    application.status === 'Final Round' ? 'badge-final' :
-                    application.status === 'Offer' ? 'badge-offer badge-pulse' :
-                    'badge-rejected'
-                  }`}>
+                      application.status === 'Technical Interview' ? 'badge-technical' :
+                        application.status === 'Final Round' ? 'badge-final' :
+                          application.status === 'Offer' ? 'badge-offer badge-pulse' :
+                            'badge-rejected'
+                    }`}>
                     {application.status}
                   </div>
                   {application.visaSponsorship && (
@@ -480,6 +481,8 @@ function Applications() {
                   <Link
                     to={`/applications/${application.id}`}
                     className="btn btn-ghost btn-sm btn-ripple"
+                    data-track-action="view-application"
+                    data-application-id={application.id}
                   >
                     <Icon name="visibility" size={14} />
                     View
@@ -487,6 +490,8 @@ function Applications() {
                   <button
                     onClick={() => handleDelete(application.id, application.company)}
                     className="btn btn-ghost btn-sm text-red-600 hover:text-red-700 btn-ripple"
+                    data-track-action="delete-application"
+                    data-application-id={application.id}
                   >
                     <Icon name="delete" size={14} />
                   </button>
@@ -537,14 +542,13 @@ function Applications() {
                     <td className="p-md font-medium">{application.company}</td>
                     <td className="p-md">{application.role}</td>
                     <td className="p-md">
-                      <div className={`badge ${
-                        application.status === 'Applied' ? 'badge-applied' :
+                      <div className={`badge ${application.status === 'Applied' ? 'badge-applied' :
                         application.status === 'Phone Screen' ? 'badge-phone-screen' :
-                        application.status === 'Technical Interview' ? 'badge-technical' :
-                        application.status === 'Final Round' ? 'badge-final' :
-                        application.status === 'Offer' ? 'badge-offer' :
-                        'badge-rejected'
-                      }`}>
+                          application.status === 'Technical Interview' ? 'badge-technical' :
+                            application.status === 'Final Round' ? 'badge-final' :
+                              application.status === 'Offer' ? 'badge-offer' :
+                                'badge-rejected'
+                        }`}>
                         {application.status}
                       </div>
                     </td>
@@ -610,14 +614,13 @@ function Applications() {
                       </div>
                     </div>
                     <div className="flex items-center gap-md">
-                      <div className={`badge ${
-                        application.status === 'Applied' ? 'badge-applied' :
+                      <div className={`badge ${application.status === 'Applied' ? 'badge-applied' :
                         application.status === 'Phone Screen' ? 'badge-phone-screen' :
-                        application.status === 'Technical Interview' ? 'badge-technical' :
-                        application.status === 'Final Round' ? 'badge-final' :
-                        application.status === 'Offer' ? 'badge-offer' :
-                        'badge-rejected'
-                      }`}>
+                          application.status === 'Technical Interview' ? 'badge-technical' :
+                            application.status === 'Final Round' ? 'badge-final' :
+                              application.status === 'Offer' ? 'badge-offer' :
+                                'badge-rejected'
+                        }`}>
                         {application.status}
                       </div>
                       {application.visaSponsorship && (

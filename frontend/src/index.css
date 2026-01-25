@@ -1,4 +1,4 @@
-@import './styles/design-system.css';
+@import './styles/main.css';
 
 @tailwind base;
 @tailwind components;
@@ -11,7 +11,7 @@
 }
 
 @layer components {
- 
+
   .btn-primary-old {
     background: var(--navy-dark);
     color: white;
@@ -39,25 +39,25 @@
     background: var(--background-light);
   }
 
-.application-card {
-  background: var(--background-white) !important;
-  border: 1px solid var(--border-light) !important;
-}
+  .application-card {
+    background: var(--background-white) !important;
+    border: 1px solid var(--border-light) !important;
+  }
 
-.company-name {
-  color: var(--text-primary) !important;
-}
+  .company-name {
+    color: var(--text-primary) !important;
+  }
 
-.position-title {
-  color: var(--text-secondary) !important;
-}
+  .position-title {
+    color: var(--text-secondary) !important;
+  }
 
-/* Ensure ALL cards respect theme */
-.card,
-[class*="card"] {
-  background: var(--background-white) !important;
-  border-color: var(--border-light) !important;
-}
+  /* Ensure ALL cards respect theme */
+  .card,
+  [class*="card"] {
+    background: var(--background-white) !important;
+    border-color: var(--border-light) !important;
+  }
 
 
 }

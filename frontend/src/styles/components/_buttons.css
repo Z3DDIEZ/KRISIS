@@ -1,0 +1,138 @@
+/* ========================================
+   KRISIS Components - Buttons
+   ======================================== */
+
+/* Base Button */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacing-sm);
+    padding: 0.75rem var(--spacing-lg);
+    border-radius: var(--radius-lg);
+    font-weight: var(--font-medium);
+    font-size: var(--text-sm);
+    cursor: pointer;
+    transition: all var(--transition-normal);
+    border: none;
+    text-decoration: none;
+    white-space: nowrap;
+    font-family: var(--font-primary);
+}
+
+.btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* ========================================
+   BUTTON VARIANTS
+   ======================================== */
+
+/* Primary Button */
+.btn--primary,
+.btn-primary {
+    background: var(--navy-dark);
+    color: white;
+}
+
+.btn--primary:hover:not(:disabled),
+.btn-primary:hover:not(:disabled) {
+    background: var(--navy-medium);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(26, 29, 46, 0.3);
+}
+
+/* Orange Button - Key CTAs */
+.btn--orange,
+.btn-orange {
+    background: var(--primary-orange);
+    color: white;
+}
+
+.btn--orange:hover:not(:disabled),
+.btn-orange:hover:not(:disabled) {
+    background: var(--primary-orange-light);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(230, 126, 34, 0.3);
+}
+
+/* Secondary Button */
+.btn--secondary,
+.btn-secondary {
+    background: var(--background-white);
+    color: var(--text-primary);
+    border: 1px solid var(--border-light);
+}
+
+.btn--secondary:hover:not(:disabled),
+.btn-secondary:hover:not(:disabled) {
+    background: var(--background-light);
+    border-color: var(--primary-orange);
+}
+
+/* Ghost Button */
+.btn--ghost,
+.btn-ghost {
+    background: transparent;
+    color: var(--text-secondary);
+}
+
+.btn--ghost:hover:not(:disabled),
+.btn-ghost:hover:not(:disabled) {
+    background: var(--background-light);
+    color: var(--primary-orange);
+}
+
+/* Icon Button */
+.btn--icon,
+.btn-icon {
+    padding: var(--spacing-sm);
+    width: 36px;
+    height: 36px;
+    border-radius: var(--radius-md);
+}
+
+/* ========================================
+   BUTTON SIZES
+   ======================================== */
+
+.btn--sm,
+.btn-sm {
+    padding: var(--spacing-sm) var(--spacing-md);
+    font-size: var(--text-xs);
+}
+
+.btn--lg,
+.btn-lg {
+    padding: var(--spacing-md) var(--spacing-xl);
+    font-size: var(--text-base);
+}
+
+/* Full Width */
+.btn--block,
+.btn-block {
+    width: 100%;
+}
+
+/* ========================================
+   ICON BUTTON (Standalone)
+   ======================================== */
+
+.icon-button {
+    padding: var(--spacing-sm);
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    color: var(--text-secondary);
+    border-radius: var(--radius-md);
+    transition: all var(--transition-fast);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.icon-button:hover {
+    background: var(--background-light);
+    color: var(--primary-orange);
+}

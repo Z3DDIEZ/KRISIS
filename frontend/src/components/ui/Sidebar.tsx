@@ -15,56 +15,15 @@ interface SidebarProps {
   secondaryItems: SidebarItem[]
   isOpen?: boolean
   onClose?: () => void
+  isCollapsed: boolean
+  onToggle: () => void
 }
 
-function Sidebar({ items, primaryItems, secondaryItems, isOpen, onClose }: SidebarProps) {
+function Sidebar({ primaryItems, secondaryItems, isOpen, onClose, isCollapsed, onToggle }: SidebarProps) {
   const location = useLocation()
-  const [isCollapsed, setIsCollapsed] = useState(false)
   const [hoveredItem, setHoveredItem] = useState<string | null>(null)
   const [tooltipPosition, setTooltipPosition] = useState({ x: 0, y: 0 })
   const sidebarRef = useRef<HTMLDivElement>(null)
-
-  // Initialize from localStorage
-  useEffect(() => {
-    const saved = localStorage.getItem('sidebar-collapsed')
-    const initialCollapsed = saved ? JSON.parse(saved) : false
-    setIsCollapsed(initialCollapsed)
-    
-    // Set initial margin on mount
-    setTimeout(() => {
-      const mainContent = document.querySelector('.main-content') as HTMLElement
-      if (mainContent) {
-        mainContent.style.marginLeft = initialCollapsed ? '72px' : '240px'
-      }
-    }, 0)
-  }, [])
-
-  // Update when collapsed state changes
-  useEffect(() => {
-    localStorage.setItem('sidebar-collapsed', JSON.stringify(isCollapsed))
-    // Update body/data attribute for CSS targeting
-    const wrapper = sidebarRef.current?.closest('.sidebar-wrapper')
-    const mainContent = document.querySelector('.main-content') as HTMLElement
-    if (wrapper) {
-      if (isCollapsed) {
-        wrapper.setAttribute('data-collapsed', 'true')
-        document.body.setAttribute('data-sidebar-collapsed', 'true')
-        if (mainContent) {
-          mainContent.style.marginLeft = '72px'
-        }
-      } else {
-        wrapper.removeAttribute('data-collapsed')
-        document.body.removeAttribute('data-sidebar-collapsed')
-        if (mainContent) {
-          mainContent.style.marginLeft = '240px'
-        }
-      }
-    }
-  }, [isCollapsed])
-
-  const handleToggle = () => {
-    setIsCollapsed(!isCollapsed)
-  }
 
   const handleItemHover = (itemName: string, event: React.MouseEvent) => {
     if (isCollapsed) {
@@ -143,7 +102,7 @@ function Sidebar({ items, primaryItems, secondaryItems, isOpen, onClose }: Sideb
             </div>
           )}
           <button
-            onClick={handleToggle}
+            onClick={onToggle}
             className="sidebar-toggle"
             aria-label={isCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
             aria-expanded={!isCollapsed}
@@ -153,23 +112,25 @@ function Sidebar({ items, primaryItems, secondaryItems, isOpen, onClose }: Sideb
         </div>
 
         {/* Primary Navigation */}
-        <div className="sidebar-section">
-          <ul className="sidebar-list">
+        <div className="sidebar__section sidebar__section--primary">
+          <ul className="sidebar__list">
             {primaryItems.map((item) => (
               <li key={item.href}>
                 <Link
                   to={item.href}
                   onClick={onClose}
-                  className={`sidebar-item ${isActive(item.href) ? 'active' : ''}`}
+                  className={`sidebar__item ${isActive(item.href) ? 'sidebar__item--active' : ''}`}
                   onMouseEnter={(e) => handleItemHover(item.name, e)}
                   onMouseLeave={handleItemLeave}
                   aria-current={isActive(item.href) ? 'page' : undefined}
+                  data-track-nav={item.name.toLowerCase().replace(' ', '-')}
+                  data-nav-category="primary"
                 >
-                  <div className="sidebar-item-icon">
+                  <div className="sidebar__item-icon">
                     <Icon name={item.iconName} size={20} />
                   </div>
                   {!isCollapsed && (
-                    <span className="sidebar-item-label">{item.name}</span>
+                    <span className="sidebar__item-label">{item.name}</span>
                   )}
                 </Link>
               </li>
@@ -181,23 +142,25 @@ function Sidebar({ items, primaryItems, secondaryItems, isOpen, onClose }: Sideb
         {!isCollapsed && <div className="sidebar-divider" />}
 
         {/* Secondary Navigation */}
-        <div className="sidebar-section">
-          <ul className="sidebar-list">
+        <div className="sidebar__section sidebar__section--secondary">
+          <ul className="sidebar__list">
             {secondaryItems.map((item) => (
               <li key={item.href}>
                 <Link
                   to={item.href}
                   onClick={onClose}
-                  className={`sidebar-item ${isActive(item.href) ? 'active' : ''}`}
+                  className={`sidebar__item ${isActive(item.href) ? 'sidebar__item--active' : ''}`}
                   onMouseEnter={(e) => handleItemHover(item.name, e)}
                   onMouseLeave={handleItemLeave}
                   aria-current={isActive(item.href) ? 'page' : undefined}
+                  data-track-nav={item.name.toLowerCase().replace(' ', '-')}
+                  data-nav-category="secondary"
                 >
-                  <div className="sidebar-item-icon">
+                  <div className="sidebar__item-icon">
                     <Icon name={item.iconName} size={20} />
                   </div>
                   {!isCollapsed && (
-                    <span className="sidebar-item-label">{item.name}</span>
+                    <span className="sidebar__item-label">{item.name}</span>
                   )}
                 </Link>
               </li>

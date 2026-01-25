@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { useAuthState } from 'react-firebase-hooks/auth'
-import { collection, query, orderBy, limit, onSnapshot } from 'firebase/firestore'
+import { collection, query, orderBy, onSnapshot } from 'firebase/firestore'
 import { auth, db } from '../lib/firebase'
 import { formatDateForDisplay } from '../lib/dateUtils'
 import Icon from '../components/ui/Icon'
@@ -19,6 +19,7 @@ interface Application {
 interface DashboardStats {
   totalApplications: number
   interviews: number
+  offers: number
   aiAnalyses: number
   successRate: number
 }
@@ -29,6 +30,7 @@ function Dashboard() {
   const [stats, setStats] = useState<DashboardStats>({
     totalApplications: 0,
     interviews: 0,
+    offers: 0,
     aiAnalyses: 0,
     successRate: 0
   })
@@ -112,49 +114,49 @@ function Dashboard() {
       {/* Stats Grid */}
       <div className="stats-grid mb-xl">
         {/* Total Applications - Clickable */}
-        <Link to="/applications" className="stat-card group">
-          <div className="stat-icon blue">
+        <Link to="/applications" className="stat-card group" data-track-section="total-apps">
+          <div className="stat-card__icon stat-card__icon--blue">
             <Icon name="work" size={24} />
           </div>
-          <div className="stat-card-content">
-            <div className="stat-value text-primary">{stats.totalApplications}</div>
-            <div className="stat-label text-secondary uppercase tracking-wide">Total Applications</div>
+          <div className="stat-card__content">
+            <div className="stat-card__value">{stats.totalApplications}</div>
+            <div className="stat-card__label">Total Applications</div>
           </div>
         </Link>
 
         {/* Interviews */}
-        <div className="stat-card hover-lift animate-fade-in-scale stagger-2">
-          <div className="stat-icon green hover-scale">
+        <div className="stat-card" data-track-section="interviews">
+          <div className="stat-card__icon stat-card__icon--green">
             <Icon name="call" size={24} />
           </div>
-          <div className="stat-card-content">
-            <div className="stat-value text-primary">{stats.interviews}</div>
-            <div className="stat-label text-secondary uppercase tracking-wide">Interviews</div>
+          <div className="stat-card__content">
+            <div className="stat-card__value">{stats.interviews}</div>
+            <div className="stat-card__label">Interviews</div>
           </div>
         </div>
 
         {/* Offers */}
-        <div className="stat-card hover-lift animate-fade-in-scale stagger-3">
-          <div className="stat-icon purple hover-scale">
+        <div className="stat-card" data-track-section="offers">
+          <div className="stat-card__icon stat-card__icon--purple">
             <Icon name="offer" size={24} />
           </div>
-          <div className="stat-card-content">
-            <div className="stat-value text-primary">{stats.offers || 0}</div>
-            <div className="stat-label text-secondary uppercase tracking-wide">Offers</div>
+          <div className="stat-card__content">
+            <div className="stat-card__value">{stats.offers || 0}</div>
+            <div className="stat-card__label">Offers</div>
           </div>
           {(stats.offers || 0) > 0 && (
-            <div className="absolute -top-1 -right-1 w-3 h-3 bg-purple-500 rounded-full animate-pulse-glow" />
+            <div className="absolute -top-1 -right-1 w-3 h-3 bg-purple-500 rounded-full animate-pulse" />
           )}
         </div>
 
         {/* Success Rate */}
-        <div className="stat-card hover-lift animate-fade-in-scale stagger-4">
-          <div className="stat-icon orange hover-scale">
+        <div className="stat-card" data-track-section="success-rate">
+          <div className="stat-card__icon stat-card__icon--orange">
             <Icon name="trending-up" size={24} />
           </div>
-          <div className="stat-card-content">
-            <div className="stat-value text-primary">{stats.successRate}%</div>
-            <div className="stat-label text-secondary uppercase tracking-wide">Success Rate</div>
+          <div className="stat-card__content">
+            <div className="stat-card__value">{stats.successRate}%</div>
+            <div className="stat-card__label">Success Rate</div>
           </div>
           <div className="absolute bottom-2 left-2 right-2 h-1 bg-background-light rounded-full overflow-hidden">
             <div
@@ -190,41 +192,43 @@ function Dashboard() {
             </div>
           ) : (
             <div className="space-y-md">
-              {applications.slice(0, 10).map((application, index) => (
+              {applications.slice(0, 10).map((application) => (
                 <div
                   key={application.id}
-                  className={`application-card hover-lift animate-slide-in-up stagger-${(index % 5) + 1}`}
+                  className="application-card"
+                  data-track-action="view-application"
+                  data-application-id={application.id}
                 >
-                  <div className="application-card-header">
-                    <div className="company-logo bg-gradient-to-br from-primary-orange-bg to-primary-orange/20 hover-scale">
+                  <div className="application-card__header">
+                    <div className="application-card__logo bg-gradient-to-br from-primary-orange-bg to-primary-orange/20">
                       <span className="text-primary-orange font-semibold">
                         {application.company.charAt(0).toUpperCase()}
                       </span>
                     </div>
-                    <div className="company-info">
-                      <div className="company-name font-medium text-primary">
+                    <div className="application-card__info">
+                      <div className="application-card__company">
                         {application.company} - {application.role}
                       </div>
-                      <div className="position-title text-secondary">
+                      <div className="application-card__role">
                         Applied {formatDateForDisplay(application.dateApplied)}
                       </div>
                     </div>
                   </div>
 
-                  <div className="application-card-footer">
-                    <div className={`badge hover-scale ${
-                      application.status === 'Applied' ? 'badge-applied' :
-                      application.status === 'Phone Screen' ? 'badge-phone' :
-                      application.status === 'Technical Interview' ? 'badge-technical' :
-                      application.status === 'Final Round' ? 'badge-final' :
-                      application.status === 'Offer' ? 'badge-offer badge-pulse' :
-                      'badge-rejected'
-                    }`}>
+                  <div className="application-card__footer">
+                    <div className={`badge ${application.status === 'Applied' ? 'badge--applied' :
+                      application.status === 'Phone Screen' ? 'badge--phone' :
+                        application.status === 'Technical Interview' ? 'badge--technical' :
+                          application.status === 'Final Round' ? 'badge--final' :
+                            application.status === 'Offer' ? 'badge--offer' :
+                              'badge--rejected'
+                      }`}>
                       {application.status}
                     </div>
                     <Link
                       to={`/applications/${application.id}`}
-                      className="btn btn-ghost btn-sm btn-ripple"
+                      className="btn btn--ghost btn--sm"
+                      data-track-action="view-details"
                     >
                       <Icon name="visibility" size={14} />
                       View Details

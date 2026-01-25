@@ -1,0 +1,94 @@
+/* ========================================
+   KRISIS Components - Badges
+   ======================================== */
+
+.badge {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+    padding: 0.375rem 0.75rem;
+    border-radius: var(--radius-md);
+    font-size: var(--text-xs);
+    font-weight: var(--font-medium);
+    text-transform: capitalize;
+    white-space: nowrap;
+}
+
+/* ========================================
+   STATUS BADGES
+   ======================================== */
+
+.badge--applied,
+.badge-applied {
+    background: rgba(52, 152, 219, 0.1);
+    color: #1976D2;
+}
+
+.badge--phone,
+.badge-phone-screen {
+    background: rgba(155, 89, 182, 0.1);
+    color: #7B1FA2;
+}
+
+.badge--technical,
+.badge-technical {
+    background: rgba(243, 156, 18, 0.1);
+    color: #E65100;
+}
+
+.badge--final,
+.badge-final {
+    background: rgba(230, 126, 34, 0.1);
+    color: #E65100;
+}
+
+.badge--offer,
+.badge-offer {
+    background: rgba(46, 204, 113, 0.1);
+    color: #2E7D32;
+}
+
+.badge--rejected,
+.badge-rejected {
+    background: rgba(231, 76, 60, 0.1);
+    color: #C62828;
+}
+
+/* ========================================
+   PRIORITY BADGES
+   ======================================== */
+
+.badge--high,
+.badge-high {
+    background: rgba(231, 76, 60, 0.1);
+    color: var(--status-rejected);
+}
+
+.badge--medium,
+.badge-medium {
+    background: rgba(243, 156, 18, 0.1);
+    color: var(--primary-orange-light);
+}
+
+.badge--low,
+.badge-low {
+    background: rgba(149, 165, 166, 0.1);
+    color: var(--text-muted);
+}
+
+/* Visa Sponsorship Badge */
+.badge--visa,
+.badge-visa {
+    background: var(--primary-orange-bg);
+    color: var(--primary-orange);
+}
+
+/* Badge with dot indicator */
+.badge--dot::before,
+.badge-dot::before {
+    content: '';
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: currentColor;
+}

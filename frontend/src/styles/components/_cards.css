@@ -1,0 +1,354 @@
+/* ========================================
+   KRISIS Components - Cards
+   ======================================== */
+
+/* ========================================
+   BASE CARD
+   ======================================== */
+.card {
+    background: var(--background-white);
+    border-radius: var(--radius-xl);
+    padding: var(--spacing-lg);
+    box-shadow: var(--shadow-md);
+    transition: all var(--transition-normal);
+    border: 1px solid var(--border-light);
+}
+
+.card:hover {
+    box-shadow: var(--shadow-lg);
+    transform: translateY(-2px);
+}
+
+.card__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--spacing-md);
+    padding-bottom: var(--spacing-md);
+    border-bottom: 1px solid var(--border-light);
+}
+
+.card__title {
+    font-size: var(--text-lg);
+    font-weight: var(--font-semibold);
+    color: var(--text-primary);
+    margin: 0;
+}
+
+.card__body {
+    padding: var(--spacing-lg);
+    color: var(--text-primary);
+    font-size: var(--text-base);
+    background: none;
+    border-radius: var(--radius-lg);
+    flex: 1 1 auto;
+    min-width: 0;
+    overflow: visible;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+}
+
+.card__footer {
+    margin-top: var(--spacing-md);
+    padding-top: var(--spacing-md);
+    border-top: 1px solid var(--border-light);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* Legacy class compatibility */
+.card-header {
+    composes: card__header;
+}
+
+.card-title {
+    composes: card__title;
+}
+
+.card-body {
+    composes: card__body;
+}
+
+.card-footer {
+    composes: card__footer;
+}
+
+
+/* ========================================
+   STAT CARD (Dashboard Metrics)
+   ======================================== */
+.stat-card {
+    background: var(--background-white);
+    border-radius: var(--radius-xl);
+    padding: var(--spacing-lg);
+    box-shadow: var(--shadow-md);
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    transition: all var(--transition-normal);
+    border: 1px solid var(--border-light);
+}
+
+.stat-card:hover {
+    box-shadow: var(--shadow-lg);
+    transform: translateY(-2px);
+}
+
+/* Colored left border accent */
+.stat-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 4px;
+    height: 100%;
+    background: var(--primary-orange);
+}
+
+.stat-card__content {
+    flex: 1;
+    padding-left: var(--spacing-sm);
+}
+
+.stat-card__value {
+    font-size: var(--text-4xl);
+    font-weight: var(--font-bold);
+    color: var(--text-primary);
+    line-height: 1;
+    margin-bottom: var(--spacing-sm);
+}
+
+.stat-card__label {
+    font-size: var(--text-sm);
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-weight: var(--font-medium);
+}
+
+.stat-card__change {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+    font-size: var(--text-sm);
+    font-weight: var(--font-medium);
+    margin-top: var(--spacing-sm);
+}
+
+.stat-card__change--positive {
+    color: var(--status-offer);
+}
+
+.stat-card__change--positive::before {
+    content: '↗';
+}
+
+.stat-card__change--negative {
+    color: var(--status-rejected);
+}
+
+.stat-card__change--negative::before {
+    content: '↘';
+}
+
+/* Icon container in top-right */
+.stat-card__icon {
+    position: absolute;
+    top: var(--spacing-lg);
+    right: var(--spacing-lg);
+    width: 48px;
+    height: 48px;
+    border-radius: var(--radius-xl);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+}
+
+.stat-card__icon--orange {
+    background: rgba(230, 126, 34, 0.1);
+    color: var(--primary-orange);
+}
+
+.stat-card__icon--green {
+    background: rgba(46, 204, 113, 0.1);
+    color: var(--status-offer);
+}
+
+.stat-card__icon--blue {
+    background: rgba(52, 152, 219, 0.1);
+    color: var(--status-applied);
+}
+
+.stat-card__icon--purple {
+    background: rgba(155, 89, 182, 0.1);
+    color: var(--status-phone);
+}
+
+/* Legacy class compatibility */
+.stat-card-content {
+    composes: stat-card__content;
+}
+
+.stat-value {
+    composes: stat-card__value;
+}
+
+.stat-label {
+    composes: stat-card__label;
+}
+
+.stat-change {
+    composes: stat-card__change;
+}
+
+.stat-change.positive {
+    composes: stat-card__change--positive;
+}
+
+.stat-change.negative {
+    composes: stat-card__change--negative;
+}
+
+.stat-icon {
+    composes: stat-card__icon;
+}
+
+.stat-icon.orange {
+    composes: stat-card__icon--orange;
+}
+
+.stat-icon.green {
+    composes: stat-card__icon--green;
+}
+
+.stat-icon.blue {
+    composes: stat-card__icon--blue;
+}
+
+.stat-icon.purple {
+    composes: stat-card__icon--purple;
+}
+
+
+/* ========================================
+   APPLICATION CARD
+   ======================================== */
+.application-card {
+    background: var(--background-white);
+    border-radius: var(--radius-xl);
+    padding: var(--spacing-lg);
+    box-shadow: var(--shadow-md);
+    transition: all var(--transition-normal);
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    border: 1px solid var(--border-light);
+}
+
+.application-card:hover {
+    box-shadow: var(--shadow-lg);
+    transform: translateY(-2px);
+}
+
+.application-card__header {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--spacing-md);
+    margin-bottom: var(--spacing-md);
+}
+
+.application-card__logo {
+    width: 48px;
+    height: 48px;
+    border-radius: var(--radius-lg);
+    background: var(--background-light);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    overflow: hidden;
+}
+
+.application-card__logo img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.application-card__info {
+    flex: 1;
+    min-width: 0;
+}
+
+.application-card__company {
+    font-weight: var(--font-semibold);
+    font-size: var(--text-base);
+    color: var(--text-primary);
+    margin-bottom: 0.25rem;
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+}
+
+.application-card__role {
+    font-size: var(--text-sm);
+    color: var(--text-secondary);
+    line-height: 1.4;
+}
+
+.application-card__meta {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+    margin-bottom: var(--spacing-md);
+}
+
+.application-card__footer {
+    margin-top: auto;
+    padding-top: var(--spacing-md);
+    border-top: 1px solid var(--border-light);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.application-card__actions {
+    display: flex;
+    gap: var(--spacing-xs);
+}
+
+/* Legacy class compatibility */
+.application-card-header {
+    composes: application-card__header;
+}
+
+.company-logo {
+    composes: application-card__logo;
+}
+
+.company-info {
+    composes: application-card__info;
+}
+
+.company-name {
+    composes: application-card__company;
+}
+
+.position-title {
+    composes: application-card__role;
+}
+
+.application-meta {
+    composes: application-card__meta;
+}
+
+.application-card-footer {
+    composes: application-card__footer;
+}
+
+.card-actions {
+    composes: application-card__actions;
+}

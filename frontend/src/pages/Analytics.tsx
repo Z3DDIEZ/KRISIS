@@ -3,11 +3,11 @@ import { useAuthState } from 'react-firebase-hooks/auth'
 import { collection, query, orderBy, onSnapshot } from 'firebase/firestore'
 import { auth, db } from '../lib/firebase'
 import { exportChartToPng } from '../utils/exportHelpers'
-import { formatDateForDisplay } from '../lib/dateUtils'
 import { toast } from 'sonner'
 import Icon from '../components/ui/Icon'
 import BarChart from '../components/ui/BarChart'
 import LineChart from '../components/ui/LineChart'
+import LazyLoad from '../components/ui/LazyLoad'
 import BackToTop from '../components/ui/BackToTop'
 
 interface Application {
@@ -172,7 +172,7 @@ function Analytics() {
     })
 
     const topCompanies = Object.entries(companyCounts)
-      .sort(([,a], [,b]) => b - a)
+      .sort(([, a], [, b]) => b - a)
       .slice(0, 5)
       .map(([company, count]) => ({ company, count }))
 
@@ -341,168 +341,197 @@ function Analytics() {
           {/* Charts Grid */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-2xl mb-2xl">
             {/* Status Distribution */}
-            <div className="card hover-lift animate-fade-in-scale">
-              <div className="card-header">
-                <h3 className="card-title flex items-center gap-sm">
-                  <Icon name="pie-chart" size={20} />
-                  Application Status Distribution
-                </h3>
-                <button
-                  onClick={() => handleExportChart('status-chart', 'status-distribution.png')}
-                  className="btn btn-ghost btn-sm btn-ripple"
-                >
-                  <Icon name="download" size={16} />
-                </button>
-              </div>
-              <div className="card-body p-lg">
-                {/* Interactive Bar Chart - Larger */}
-                <div className="mb-lg" id="status-chart">
-                  <BarChart
-                    data={Object.entries(analytics.statusBreakdown).map(([status, count]) => ({
-                      label: status,
-                      value: count,
-                      color: getStatusColor(status)
-                    }))}
-                    height={400}
-                    animate={true}
-                  />
+            <LazyLoad
+              data-track-lazy="status-chart"
+              placeholder={
+                <div className="card animate-pulse" style={{ minHeight: '500px' }}>
+                  <div className="card-header">
+                    <div className="h-6 bg-background-light rounded w-48"></div>
+                  </div>
+                  <div className="card-body">
+                    <div className="h-64 bg-background-light rounded"></div>
+                  </div>
                 </div>
+              }
+            >
+              <div className="card" data-section="status-chart">
+                <div className="card-header">
+                  <h3 className="card-title flex items-center gap-sm">
+                    <Icon name="pie-chart" size={20} />
+                    Application Status Distribution
+                  </h3>
+                  <button
+                    onClick={() => handleExportChart('status-chart', 'status-distribution.png')}
+                    className="btn btn-ghost btn-sm btn-ripple"
+                  >
+                    <Icon name="download" size={16} />
+                  </button>
+                </div>
+                <div className="card-body p-lg">
+                  {/* Interactive Bar Chart - Larger */}
+                  <div className="mb-lg" id="status-chart">
+                    <BarChart
+                      data={Object.entries(analytics.statusBreakdown).map(([status, count]) => ({
+                        label: status,
+                        value: count,
+                        color: getStatusColor(status)
+                      }))}
+                      height={400}
+                      animate={true}
+                    />
+                  </div>
 
-                {/* Enhanced Status Breakdown - Compact */}
-                <div className="space-y-sm">
-                  {Object.entries(analytics.statusBreakdown)
-                    .sort(([,a], [,b]) => b - a)
-                    .map(([status, count], index) => {
-                      const percentage = analytics.totalApplications > 0
-                        ? Math.round((count / analytics.totalApplications) * 100)
-                        : 0
-                      const statusColor = getStatusColor(status)
-                      return (
-                      <div
-                        key={status}
-                        className="status-breakdown-item"
-                      >
-                        <div className="flex items-center justify-between gap-md mb-xs">
-                          <div className="flex items-center gap-sm flex-1 min-w-0">
-                            <div
-                              className="w-4 h-4 rounded-full flex-shrink-0 border border-border-light"
-                              style={{ background: statusColor }}
-                            />
-                            <span 
-                              className="font-semibold text-sm"
-                              style={{ color: statusColor }}
-                            >
-                              {status}
-                            </span>
-                          </div>
-                          <div className="flex items-center gap-md flex-shrink-0">
-                            <div className="text-right">
-                              <div className="font-bold text-base" style={{ color: statusColor }}>{count}</div>
-                              <div className="text-xs text-secondary font-medium">{percentage}%</div>
+                  {/* Enhanced Status Breakdown - Compact */}
+                  <div className="space-y-sm">
+                    {Object.entries(analytics.statusBreakdown)
+                      .sort(([, a], [, b]) => b - a)
+                      .map(([status, count], index) => {
+                        const percentage = analytics.totalApplications > 0
+                          ? Math.round((count / analytics.totalApplications) * 100)
+                          : 0
+                        const statusColor = getStatusColor(status)
+                        return (
+                          <div
+                            key={status}
+                            className="status-breakdown-item"
+                          >
+                            <div className="flex items-center justify-between gap-md mb-xs">
+                              <div className="flex items-center gap-sm flex-1 min-w-0">
+                                <div
+                                  className="w-4 h-4 rounded-full flex-shrink-0 border border-border-light"
+                                  style={{ background: statusColor }}
+                                />
+                                <span
+                                  className="font-semibold text-sm"
+                                  style={{ color: statusColor }}
+                                >
+                                  {status}
+                                </span>
+                              </div>
+                              <div className="flex items-center gap-md flex-shrink-0">
+                                <div className="text-right">
+                                  <div className="font-bold text-base" style={{ color: statusColor }}>{count}</div>
+                                  <div className="text-xs text-secondary font-medium">{percentage}%</div>
+                                </div>
+                              </div>
+                            </div>
+                            {/* Enhanced Progress Bar */}
+                            <div className="w-full h-4 bg-background-light rounded-full overflow-hidden relative border border-border-light">
+                              <div
+                                className="h-full transition-all duration-1000 ease-out rounded-full relative flex items-center"
+                                style={{
+                                  width: `${percentage}%`,
+                                  background: `linear-gradient(90deg, ${statusColor}, ${statusColor}dd)`,
+                                  transitionDelay: `${index * 100}ms`,
+                                  minWidth: percentage > 0 ? '24px' : '0',
+                                  boxShadow: `0 2px 4px ${statusColor}40`
+                                }}
+                              >
+                                {percentage > 10 && (
+                                  <span className="absolute inset-0 flex items-center justify-center text-xs font-semibold text-white px-1 whitespace-nowrap">
+                                    {percentage}%
+                                  </span>
+                                )}
+                              </div>
+                              {percentage <= 10 && percentage > 0 && (
+                                <span className="absolute right-2 top-1/2 -translate-y-1/2 text-xs font-semibold whitespace-nowrap" style={{ color: statusColor }}>
+                                  {percentage}%
+                                </span>
+                              )}
                             </div>
                           </div>
-                        </div>
-                        {/* Enhanced Progress Bar */}
-                        <div className="w-full h-4 bg-background-light rounded-full overflow-hidden relative border border-border-light">
-                          <div
-                            className="h-full transition-all duration-1000 ease-out rounded-full relative flex items-center"
-                            style={{
-                              width: `${percentage}%`,
-                              background: `linear-gradient(90deg, ${statusColor}, ${statusColor}dd)`,
-                              transitionDelay: `${index * 100}ms`,
-                              minWidth: percentage > 0 ? '24px' : '0',
-                              boxShadow: `0 2px 4px ${statusColor}40`
-                            }}
-                          >
-                            {percentage > 10 && (
-                              <span className="absolute inset-0 flex items-center justify-center text-xs font-semibold text-white px-1 whitespace-nowrap">
-                                {percentage}%
-                              </span>
-                            )}
-                          </div>
-                          {percentage <= 10 && percentage > 0 && (
-                            <span className="absolute right-2 top-1/2 -translate-y-1/2 text-xs font-semibold whitespace-nowrap" style={{ color: statusColor }}>
-                              {percentage}%
-                            </span>
-                          )}
-                        </div>
-                      </div>
-                    )})}
+                        )
+                      })}
+                  </div>
                 </div>
               </div>
-            </div>
+            </LazyLoad>
 
             {/* Monthly Trend */}
-            <div className="card hover-lift animate-fade-in-scale">
-              <div className="card-header">
-                <h3 className="card-title flex items-center gap-sm">
-                  <Icon name="trending-up" size={20} />
-                  Application Trends
-                </h3>
-                <button
-                  onClick={() => handleExportChart('trend-chart', 'application-trends.png')}
-                  className="btn btn-ghost btn-sm btn-ripple"
-                >
-                  <Icon name="download" size={16} />
-                </button>
-              </div>
-              <div className="card-body p-lg">
-                {/* Interactive Monthly Line Chart */}
-                <div className="mb-lg" id="trend-chart">
-                  <LineChart
-                    data={analytics.monthlyTrend.map(month => ({
-                      label: month.month,
-                      value: month.count,
-                      color: month.count > 0 ? 'var(--primary-orange)' : 'var(--background-light)'
-                    }))}
-                    height={400}
-                    animate={true}
-                  />
+            <LazyLoad
+              data-track-lazy="trend-chart"
+              placeholder={
+                <div className="card animate-pulse" style={{ minHeight: '500px' }}>
+                  <div className="card-header">
+                    <div className="h-6 bg-background-light rounded w-48"></div>
+                  </div>
+                  <div className="card-body">
+                    <div className="h-64 bg-background-light rounded"></div>
+                  </div>
                 </div>
+              }
+            >
+              <div className="card" data-section="trend-chart">
+                <div className="card-header">
+                  <h3 className="card-title flex items-center gap-sm">
+                    <Icon name="trending-up" size={20} />
+                    Application Trends
+                  </h3>
+                  <button
+                    onClick={() => handleExportChart('trend-chart', 'application-trends.png')}
+                    className="btn btn-ghost btn-sm btn-ripple"
+                  >
+                    <Icon name="download" size={16} />
+                  </button>
+                </div>
+                <div className="card-body p-lg">
+                  {/* Interactive Monthly Line Chart */}
+                  <div className="mb-lg" id="trend-chart">
+                    <LineChart
+                      data={analytics.monthlyTrend.map(month => ({
+                        label: month.month,
+                        value: month.count,
+                        color: month.count > 0 ? 'var(--primary-orange)' : 'var(--background-light)'
+                      }))}
+                      height={400}
+                      animate={true}
+                    />
+                  </div>
 
-                {/* Enhanced Monthly Summary - Compact */}
-                <div className="grid grid-cols-3 md:grid-cols-6 gap-sm">
-                  {analytics.monthlyTrend.slice(-6).map((month, index) => {
-                    const maxCount = Math.max(...analytics.monthlyTrend.map(m => m.count), 1)
-                    const percentage = maxCount > 0 ? (month.count / maxCount) * 100 : 0
-                    return (
-                      <div
-                        key={month.month}
-                        className="text-center p-sm bg-background-light rounded-lg"
-                      >
-                        <div className="text-lg font-bold text-primary mb-1">{month.count}</div>
-                        <div className="text-secondary text-xs font-medium truncate">{month.month}</div>
-                        <div className="w-full h-1 bg-background-white rounded-full mt-2 overflow-hidden">
-                          <div
-                            className="h-full bg-gradient-to-r from-primary-orange to-primary-orange-light transition-all duration-1000 ease-out"
-                            style={{
-                              width: `${percentage}%`,
-                              transitionDelay: `${index * 50}ms`
-                            }}
-                          />
+                  {/* Enhanced Monthly Summary - Compact */}
+                  <div className="grid grid-cols-3 md:grid-cols-6 gap-sm">
+                    {analytics.monthlyTrend.slice(-6).map((month, index) => {
+                      const maxCount = Math.max(...analytics.monthlyTrend.map(m => m.count), 1)
+                      const percentage = maxCount > 0 ? (month.count / maxCount) * 100 : 0
+                      return (
+                        <div
+                          key={month.month}
+                          className="text-center p-sm bg-background-light rounded-lg"
+                        >
+                          <div className="text-lg font-bold text-primary mb-1">{month.count}</div>
+                          <div className="text-secondary text-xs font-medium truncate">{month.month}</div>
+                          <div className="w-full h-1 bg-background-white rounded-full mt-2 overflow-hidden">
+                            <div
+                              className="h-full bg-gradient-to-r from-primary-orange to-primary-orange-light transition-all duration-1000 ease-out"
+                              style={{
+                                width: `${percentage}%`,
+                                transitionDelay: `${index * 50}ms`
+                              }}
+                            />
+                          </div>
                         </div>
-                      </div>
-                    )
-                  })}
-                </div>
+                      )
+                    })}
+                  </div>
 
-                {/* Trend Insights */}
-                <div className="mt-lg p-md bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-lg">
-                  <div className="flex items-start gap-sm">
-                    <Icon name="trending-up" size={20} className="text-blue-600 mt-0.5" />
-                    <div>
-                      <div className="font-medium text-blue-900">Trend Analysis</div>
-                      <div className="text-blue-700 text-sm">
-                        {analytics.monthlyTrend.slice(-3).reduce((sum, month) => sum + month.count, 0) >
-                         analytics.monthlyTrend.slice(-6, -3).reduce((sum, month) => sum + month.count, 0)
-                          ? 'Your application activity is increasing! 📈'
-                          : 'Consider increasing your application volume to improve opportunities.'}
+                  {/* Trend Insights */}
+                  <div className="mt-lg p-md bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-lg">
+                    <div className="flex items-start gap-sm">
+                      <Icon name="trending-up" size={20} className="text-blue-600 mt-0.5" />
+                      <div>
+                        <div className="font-medium text-blue-900">Trend Analysis</div>
+                        <div className="text-blue-700 text-sm">
+                          {analytics.monthlyTrend.slice(-3).reduce((sum, month) => sum + month.count, 0) >
+                            analytics.monthlyTrend.slice(-6, -3).reduce((sum, month) => sum + month.count, 0)
+                            ? 'Your application activity is increasing! 📈'
+                            : 'Consider increasing your application volume to improve opportunities.'}
+                        </div>
                       </div>
                     </div>
                   </div>
                 </div>
               </div>
-            </div>
+            </LazyLoad>
           </div>
 
           {/* Top Companies */}
@@ -515,12 +544,11 @@ function Analytics() {
                 {analytics.topCompanies.map((company, index) => (
                   <div key={company.company} className="flex items-center justify-between">
                     <div className="flex items-center gap-md">
-                      <div className={`w-8 h-8 rounded-lg flex items-center justify-center font-semibold ${
-                        index === 0 ? 'bg-yellow-100 text-yellow-800' :
+                      <div className={`w-8 h-8 rounded-lg flex items-center justify-center font-semibold ${index === 0 ? 'bg-yellow-100 text-yellow-800' :
                         index === 1 ? 'bg-gray-100 text-gray-800' :
-                        index === 2 ? 'bg-orange-100 text-orange-800' :
-                        'bg-background-light text-secondary'
-                      }`}>
+                          index === 2 ? 'bg-orange-100 text-orange-800' :
+                            'bg-background-light text-secondary'
+                        }`}>
                         {index + 1}
                       </div>
                       <span className="text-primary font-medium">{company.company}</span>

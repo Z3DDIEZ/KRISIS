@@ -1,8 +1,7 @@
 import { useState, useEffect } from 'react'
-import { Link, useLocation, useNavigate } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
 import UserMenu from '../components/ui/UserMenu'
 import DarkModeToggle from '../components/ui/DarkModeToggle'
-import Icon from '../components/ui/Icon'
 import BackToTop from '../components/ui/BackToTop'
 import Sidebar from '../components/ui/Sidebar'
 
@@ -12,8 +11,23 @@ interface MainLayoutProps {
 
 function MainLayout({ children }: MainLayoutProps) {
   const location = useLocation()
-  const navigate = useNavigate()
-  const [sidebarOpen, setSidebarOpen] = useState(false)
+  // "expanded" or "collapsed"
+  const [sidebarState, setSidebarState] = useState<'expanded' | 'collapsed'>('expanded')
+  const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false)
+
+  // Initialize sidebar state from localStorage
+  useEffect(() => {
+    const savedState = localStorage.getItem('sidebar-state')
+    if (savedState === 'collapsed' || savedState === 'expanded') {
+      setSidebarState(savedState)
+    }
+  }, [])
+
+  const toggleSidebar = () => {
+    const newState = sidebarState === 'expanded' ? 'collapsed' : 'expanded'
+    setSidebarState(newState)
+    localStorage.setItem('sidebar-state', newState)
+  }
 
   const primaryItems = [
     { name: 'Dashboard', href: '/', iconName: 'dashboard' },
@@ -29,123 +43,120 @@ function MainLayout({ children }: MainLayoutProps) {
 
   const allItems = [...primaryItems, ...secondaryItems]
 
-  // Handle ESC key to close mobile sidebar
-  useEffect(() => {
-    const handleEscape = (e: KeyboardEvent) => {
-      if (e.key === 'Escape' && sidebarOpen) {
-        setSidebarOpen(false)
-      }
-    }
-    window.addEventListener('keydown', handleEscape)
-    return () => window.removeEventListener('keydown', handleEscape)
-  }, [sidebarOpen])
+  // Breadcrumb logic (simple version)
+  const getBreadcrumbs = () => {
+    const path = location.pathname
+    if (path === '/') return [{ label: 'Home', href: '/' }]
+
+    // Split path into segments
+    const segments = path.split('/').filter(Boolean)
+    const crumbs = [{ label: 'Home', href: '/' }]
+
+    let currentPath = ''
+    segments.forEach(segment => {
+      currentPath += `/${segment}`
+      // Capitalize first letter
+      const label = segment.charAt(0).toUpperCase() + segment.slice(1)
+      crumbs.push({ label, href: currentPath })
+    })
+
+    return crumbs
+  }
+
+  const breadcrumbs = getBreadcrumbs()
 
   return (
-    <div className="min-h-screen bg-background-light">
-      {/* Sticky Navigation Bar with Blur Backdrop */}
-      <nav className="sticky top-0 z-40 navbar header-gradient backdrop-blur-md bg-background-white/80 border-b border-border-light">
-        <div className="nav-container">
-          {/* Logo */}
-          <div className="logo group">
-            <div className="logo-icon hover-scale">
-              <Icon name="dashboard" size={24} />
-            </div>
-            <div>
-              <div className="font-bold group-hover:text-primary-orange transition-colors duration-300">
-                KRISIS
-              </div>
-              <div className="text-xs text-secondary hidden sm:block">
-                Job Application Intelligence
-              </div>
-            </div>
-          </div>
+    <div className="layout" data-sidebar-state={sidebarState} data-page={location.pathname}>
 
-          {/* Desktop Navigation Links */}
-          <div className="hidden lg:flex items-center gap-lg">
-            {primaryItems.map((item) => (
-              <Link
-                key={item.name}
-                to={item.href}
-                className={`nav-link transition-all duration-300 hover:text-primary-orange flex items-center gap-1 ${
-                  location.pathname === item.href ? 'active text-primary-orange' : ''
-                }`}
-              >
-                <Icon name={item.iconName} size={18} />
-                <span className="hidden xl:inline">{item.name}</span>
-              </Link>
-            ))}
-          </div>
+      {/* Skip Link for Accessibility */}
+      <a href="#main-content" className="skip-link" data-track-action="skip-to-content">
+        Skip to main content
+      </a>
 
-          {/* Theme Toggle & User Menu */}
-          <div className="flex items-center gap-sm">
-            <DarkModeToggle />
-            <UserMenu />
-          </div>
-        </div>
-      </nav>
-
-      <div className="flex relative">
-        {/* New Modern Sidebar */}
-        <div className={`sidebar-wrapper ${sidebarOpen ? 'sidebar-open' : ''}`}>
-          <Sidebar
-            items={allItems}
-            primaryItems={primaryItems}
-            secondaryItems={secondaryItems}
-            isOpen={sidebarOpen}
-            onClose={() => setSidebarOpen(false)}
-          />
-        </div>
-
-        {/* Mobile Overlay */}
-        {sidebarOpen && (
-          <div
-            className="fixed inset-0 z-40 bg-black/60 backdrop-blur-sm lg:hidden"
-            onClick={() => setSidebarOpen(false)}
-            aria-hidden="true"
-          />
-        )}
-
-        {/* Main Content with Page Transitions */}
-        <main 
-          className="main-content flex-1 min-h-screen transition-all duration-300 w-full" 
-          style={{ 
-            marginTop: '4rem',
-            marginLeft: '240px'
-          }}
+      {/* Header (Breadcrumbs, Actions) */}
+      <header className="layout__header" role="banner">
+        {/* Mobile Sidebar Toggle */}
+        <button
+          className="lg:hidden mr-4 p-2 text-text-secondary hover:text-primary-orange transition-colors"
+          onClick={() => setMobileSidebarOpen(true)}
+          aria-label="Open menu"
         >
-          <div className="p-md md:p-lg lg:p-xl w-full">
-            <div className="w-full max-w-7xl mx-auto">
-              {/* Enhanced Mobile Header */}
-              <div className="lg:hidden mb-lg">
-                <div className="flex items-center justify-between p-md bg-background-white/80 backdrop-blur-md rounded-xl border border-border-light shadow-lg">
-                  <button
-                    onClick={() => setSidebarOpen(true)}
-                    className="btn btn-ghost btn-ripple"
-                    aria-label="Open menu"
-                    aria-expanded={sidebarOpen}
-                  >
-                    <Icon name="settings" size={20} />
-                    <span className="ml-2">Menu</span>
-                  </button>
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <line x1="3" y1="12" x2="21" y2="12"></line>
+            <line x1="3" y1="6" x2="21" y2="6"></line>
+            <line x1="3" y1="18" x2="21" y2="18"></line>
+          </svg>
+        </button>
 
-                  {/* Mobile breadcrumb or current page */}
-                  <div className="text-sm text-secondary">
-                    {allItems.find(item => item.href === location.pathname)?.name || 'Dashboard'}
-                  </div>
-                </div>
-              </div>
+        {/* Breadcrumb Navigation */}
+        <nav className="navbar__breadcrumb" aria-label="Breadcrumb">
+          <ol>
+            {breadcrumbs.map((crumb, index) => {
+              const isLast = index === breadcrumbs.length - 1
+              return (
+                <li key={crumb.href}>
+                  {isLast ? (
+                    <span aria-current="page">{crumb.label}</span>
+                  ) : (
+                    <Link to={crumb.href} data-track-breadcrumb={crumb.label.toLowerCase()}>
+                      {crumb.label}
+                    </Link>
+                  )}
+                </li>
+              )
+            })}
+          </ol>
+        </nav>
 
-              {/* Page Content with Transition */}
-              <div className="page-transition">
-                {children}
-              </div>
+        {/* Header Actions */}
+        <div className="ml-auto flex items-center gap-4">
+          <div className="hidden sm:block">
+            <div className="relative">
+              <input
+                type="search"
+                placeholder="Search..."
+                className="input-field py-1.5 px-3 text-sm rounded-full w-48 focus:w-64 transition-all"
+                aria-label="Search applications"
+                data-track-action="search"
+              />
             </div>
           </div>
+          <DarkModeToggle />
+          <UserMenu />
+        </div>
+      </header>
 
-          {/* Back to Top Button */}
-          <BackToTop />
-        </main>
-      </div>
+      {/* Sidebar */}
+      <aside
+        className="layout__sidebar"
+        data-mobile-open={mobileSidebarOpen}
+        aria-label="Main menu"
+      >
+        <Sidebar
+          items={allItems}
+          primaryItems={primaryItems}
+          secondaryItems={secondaryItems}
+          isCollapsed={sidebarState === 'collapsed'}
+          onToggle={toggleSidebar}
+          isOpen={mobileSidebarOpen}
+          onClose={() => setMobileSidebarOpen(false)}
+        />
+      </aside>
+
+      {/* Mobile Overlay */}
+      <div
+        className="layout__overlay"
+        data-mobile-open={mobileSidebarOpen}
+        onClick={() => setMobileSidebarOpen(false)}
+        aria-hidden="true"
+      />
+
+      {/* Main Content */}
+      <main className="layout__main" id="main-content" role="main">
+        {/* Dynamic page content */}
+        {children}
+        <BackToTop />
+      </main>
     </div>
   )
 }

@@ -1,0 +1,73 @@
+/* ========================================
+   KRISIS Design Tokens - Colors
+   ======================================== */
+
+:root {
+    /* ===== PRIMARY COLORS ===== */
+    --primary-orange: #E67E22;
+    --primary-orange-light: #F39C12;
+    --primary-orange-bg: #FFF3E0;
+
+    /* Navy/Dark */
+    --navy-dark: #1A1D2E;
+    --navy-medium: #2C3E50;
+
+    /* ===== STATUS COLORS (Semantic) ===== */
+    --status-applied: #3498DB;
+    --status-phone: #9B59B6;
+    --status-technical: #F39C12;
+    --status-final: #E67E22;
+    --status-offer: #2ECC71;
+    --status-rejected: #E74C3C;
+
+    /* Status Aliases */
+    --status-info: #3498DB;
+    --status-success: #2ECC71;
+    --status-warning: #F39C12;
+    --primary-blue: #3498DB;
+
+    /* ===== BACKGROUND & NEUTRAL COLORS ===== */
+    --background-light: #F8F9FA;
+    --background-white: #FFFFFF;
+
+    /* Text Hierarchy */
+    --text-primary: #2C3E50;
+    --text-secondary: #7F8C8D;
+    --text-muted: #95A5A6;
+
+    /* Borders */
+    --border-light: #E8EAED;
+    --border-medium: #D1D5DB;
+}
+
+/* Dark mode color overrides */
+[data-theme="dark"] {
+    --primary-orange: #F39C12;
+    --primary-orange-light: #F5B041;
+    --primary-orange-bg: #3E2723;
+
+    --navy-dark: #FFFFFF;
+    --navy-medium: #E8EAED;
+
+    --status-applied: #5DADE2;
+    --status-phone: #AF7AC5;
+    --status-technical: #F5B041;
+    --status-final: #F39C12;
+    --status-offer: #52BE80;
+    --status-rejected: #EC7063;
+
+    --status-info: #5DADE2;
+    --status-success: #52BE80;
+    --status-warning: #F5B041;
+    --primary-blue: #5DADE2;
+
+    --background-light: #121212;
+    --background-white: #1E1E1E;
+
+    --text-primary: #E8EAED;
+    --text-secondary: #B0B3B8;
+    --text-muted: #8E8E93;
+
+    --border-light: #2C2C2E;
+    --border-medium: #3A3A3C;
+}

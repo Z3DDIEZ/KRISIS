@@ -1,0 +1,24 @@
+/* ========================================
+   KRISIS Design System - Main Entry Point
+   ======================================== */
+
+/* ===== Design Tokens ===== */
+@import './tokens/_colors.css';
+@import './tokens/_typography.css';
+@import './tokens/_spacing.css';
+@import './tokens/_shadows.css';
+@import './tokens/_breakpoints.css';
+
+/* ===== Layout System ===== */
+@import './layout.css';
+
+/* ===== Components ===== */
+@import './components/_cards.css';
+@import './components/_buttons.css';
+@import './components/_badges.css';
+@import './components/_inputs.css';
+@import './components/_navigation.css';
+
+/* ===== Legacy Design System (to be phased out) ===== */
+/* Contains remaining styles not yet modularized */
+@import './design-system.css';
