@@ -7,6 +7,7 @@ import { formatDateForDisplay } from '../lib/dateUtils'
 import { toast } from 'sonner'
 import Icon from '../components/ui/Icon'
 import BarChart from '../components/ui/BarChart'
+import LineChart from '../components/ui/LineChart'
 import BackToTop from '../components/ui/BackToTop'
 
 interface Application {
@@ -37,18 +38,19 @@ function Analytics() {
   const [applications, setApplications] = useState<Application[]>([])
   const [analytics, setAnalytics] = useState<AnalyticsData | null>(null)
   const [isLoading, setIsLoading] = useState(true)
-  const [selectedTimeframe, setSelectedTimeframe] = useState<'all' | '6months' | '3months' | '1month'>('all')
+  const [selectedTimeframe, setSelectedTimeframe] = useState<'all' | '6months' | '3months' | '1month' | 'custom'>('all')
+  const [customDateRange, setCustomDateRange] = useState<{ start: string; end: string }>({ start: '', end: '' })
 
   const getStatusColor = (status: string) => {
     const colors: Record<string, string> = {
-      'Applied': 'var(--primary-blue)',
-      'Phone Screen': 'var(--status-info)',
-      'Technical Interview': 'var(--primary-orange)',
-      'Final Round': 'var(--status-warning)',
-      'Offer': 'var(--status-success)',
+      'Applied': 'var(--status-applied)',
+      'Phone Screen': 'var(--status-phone)',
+      'Technical Interview': 'var(--status-technical)',
+      'Final Round': 'var(--status-final)',
+      'Offer': 'var(--status-offer)',
       'Rejected': 'var(--status-rejected)'
     }
-    return colors[status] || 'var(--primary-blue)'
+    return colors[status] || 'var(--status-applied)'
   }
 
   // Load applications data
@@ -90,7 +92,14 @@ function Analytics() {
     })
 
     return () => unsubscribe()
-  }, [user])
+  }, [user, selectedTimeframe, customDateRange])
+
+  // Recalculate when timeframe changes
+  useEffect(() => {
+    if (applications.length > 0) {
+      calculateAnalytics(applications)
+    }
+  }, [selectedTimeframe, customDateRange])
 
   const calculateAnalytics = (apps: Application[]) => {
     if (apps.length === 0) {
@@ -107,23 +116,33 @@ function Analytics() {
     }
 
     // Filter by timeframe
-    const now = new Date()
-    const cutoffDate = new Date()
-    switch (selectedTimeframe) {
-      case '1month':
-        cutoffDate.setMonth(now.getMonth() - 1)
-        break
-      case '3months':
-        cutoffDate.setMonth(now.getMonth() - 3)
-        break
-      case '6months':
-        cutoffDate.setMonth(now.getMonth() - 6)
-        break
-      default:
-        cutoffDate.setFullYear(2000) // Include all
+    let filteredApps = apps
+    if (selectedTimeframe === 'custom' && customDateRange.start && customDateRange.end) {
+      const startDate = new Date(customDateRange.start)
+      const endDate = new Date(customDateRange.end)
+      endDate.setHours(23, 59, 59, 999) // Include entire end date
+      filteredApps = apps.filter(app => {
+        const appDate = new Date(app.dateApplied)
+        return appDate >= startDate && appDate <= endDate
+      })
+    } else {
+      const now = new Date()
+      const cutoffDate = new Date()
+      switch (selectedTimeframe) {
+        case '1month':
+          cutoffDate.setMonth(now.getMonth() - 1)
+          break
+        case '3months':
+          cutoffDate.setMonth(now.getMonth() - 3)
+          break
+        case '6months':
+          cutoffDate.setMonth(now.getMonth() - 6)
+          break
+        default:
+          cutoffDate.setFullYear(2000) // Include all
+      }
+      filteredApps = apps.filter(app => new Date(app.dateApplied) >= cutoffDate)
     }
-
-    const filteredApps = apps.filter(app => new Date(app.dateApplied) >= cutoffDate)
 
     // Status breakdown
     const statusBreakdown: Record<string, number> = {}
@@ -220,23 +239,68 @@ function Analytics() {
       </div>
 
       {/* Timeframe Selector */}
-      <div className="mb-2xl">
-        <div className="flex flex-wrap gap-sm">
+      <div className="mb-xl">
+        <div className="flex flex-wrap items-center gap-sm mb-md">
           {[
             { key: 'all', label: 'All Time' },
             { key: '6months', label: 'Last 6 Months' },
             { key: '3months', label: 'Last 3 Months' },
-            { key: '1month', label: 'Last Month' }
+            { key: '1month', label: 'Last Month' },
+            { key: 'custom', label: 'Custom Range' }
           ].map(({ key, label }) => (
             <button
               key={key}
-              onClick={() => setSelectedTimeframe(key as any)}
+              onClick={() => {
+                setSelectedTimeframe(key as any)
+                if (key !== 'custom') {
+                  setCustomDateRange({ start: '', end: '' })
+                }
+              }}
               className={`btn ${selectedTimeframe === key ? 'btn-primary' : 'btn-ghost'} btn-sm`}
             >
               {label}
             </button>
           ))}
+          {(selectedTimeframe !== 'all' || customDateRange.start || customDateRange.end) && (
+            <button
+              onClick={() => {
+                setSelectedTimeframe('all')
+                setCustomDateRange({ start: '', end: '' })
+              }}
+              className="btn btn-ghost btn-sm text-secondary hover:text-primary"
+            >
+              <Icon name="clear" size={14} />
+              Clear Filters
+            </button>
+          )}
         </div>
+
+        {/* Custom Date Range Input */}
+        {selectedTimeframe === 'custom' && (
+          <div className="flex flex-wrap items-center gap-md p-md bg-background-light rounded-lg">
+            <div className="flex items-center gap-sm">
+              <label className="text-sm text-secondary whitespace-nowrap">From:</label>
+              <input
+                type="date"
+                value={customDateRange.start}
+                onChange={(e) => setCustomDateRange({ ...customDateRange, start: e.target.value })}
+                className="input"
+                max={customDateRange.end || new Date().toISOString().split('T')[0]}
+              />
+            </div>
+            <div className="flex items-center gap-sm">
+              <label className="text-sm text-secondary whitespace-nowrap">To:</label>
+              <input
+                type="date"
+                value={customDateRange.end}
+                onChange={(e) => setCustomDateRange({ ...customDateRange, end: e.target.value })}
+                className="input"
+                min={customDateRange.start}
+                max={new Date().toISOString().split('T')[0]}
+              />
+            </div>
+          </div>
+        )}
       </div>
 
       {analytics && (
@@ -290,59 +354,80 @@ function Analytics() {
                   <Icon name="download" size={16} />
                 </button>
               </div>
-              <div className="card-body p-xl">
-                {/* Interactive Bar Chart */}
-                <div className="mb-xl">
+              <div className="card-body p-lg">
+                {/* Interactive Bar Chart - Larger */}
+                <div className="mb-lg" id="status-chart">
                   <BarChart
                     data={Object.entries(analytics.statusBreakdown).map(([status, count]) => ({
                       label: status,
                       value: count,
                       color: getStatusColor(status)
                     }))}
-                    height={320}
+                    height={400}
                     animate={true}
                   />
                 </div>
 
-                {/* Enhanced Status Breakdown */}
-                <div className="space-y-lg mt-xl">
+                {/* Enhanced Status Breakdown - Compact */}
+                <div className="space-y-sm">
                   {Object.entries(analytics.statusBreakdown)
                     .sort(([,a], [,b]) => b - a)
-                    .map(([status, count], index) => (
-                    <div
-                      key={status}
-                      className={`flex justify-between items-center p-sm rounded-lg hover:bg-background-light transition-all duration-300 animate-slide-in-up stagger-${index + 1}`}
-                    >
-                      <div className="flex items-center gap-sm">
-                        <div
-                          className="w-3 h-3 rounded-full"
-                          style={{ background: getStatusColor(status) }}
-                        />
-                        <span className="text-primary font-medium">{status}</span>
-                      </div>
-                      <div className="flex items-center gap-sm">
-                        <div className="text-right">
-                          <div className="text-primary font-semibold">{count}</div>
-                          <div className="text-xs text-secondary">
-                            {analytics.totalApplications > 0
-                              ? `${Math.round((count / analytics.totalApplications) * 100)}%`
-                              : '0%'
-                            }
+                    .map(([status, count], index) => {
+                      const percentage = analytics.totalApplications > 0
+                        ? Math.round((count / analytics.totalApplications) * 100)
+                        : 0
+                      const statusColor = getStatusColor(status)
+                      return (
+                      <div
+                        key={status}
+                        className="status-breakdown-item"
+                      >
+                        <div className="flex items-center justify-between gap-md mb-xs">
+                          <div className="flex items-center gap-sm flex-1 min-w-0">
+                            <div
+                              className="w-4 h-4 rounded-full flex-shrink-0 border border-border-light"
+                              style={{ background: statusColor }}
+                            />
+                            <span 
+                              className="font-semibold text-sm"
+                              style={{ color: statusColor }}
+                            >
+                              {status}
+                            </span>
+                          </div>
+                          <div className="flex items-center gap-md flex-shrink-0">
+                            <div className="text-right">
+                              <div className="font-bold text-base" style={{ color: statusColor }}>{count}</div>
+                              <div className="text-xs text-secondary font-medium">{percentage}%</div>
+                            </div>
                           </div>
                         </div>
-                        <div className="w-16 h-2 bg-background-light rounded-full overflow-hidden">
+                        {/* Enhanced Progress Bar */}
+                        <div className="w-full h-4 bg-background-light rounded-full overflow-hidden relative border border-border-light">
                           <div
-                            className="h-full transition-all duration-1000 ease-out rounded-full"
+                            className="h-full transition-all duration-1000 ease-out rounded-full relative flex items-center"
                             style={{
-                              width: `${analytics.totalApplications > 0 ? (count / analytics.totalApplications) * 100 : 0}%`,
-                              background: getStatusColor(status),
-                              transitionDelay: `${index * 200}ms`
+                              width: `${percentage}%`,
+                              background: `linear-gradient(90deg, ${statusColor}, ${statusColor}dd)`,
+                              transitionDelay: `${index * 100}ms`,
+                              minWidth: percentage > 0 ? '24px' : '0',
+                              boxShadow: `0 2px 4px ${statusColor}40`
                             }}
-                          />
+                          >
+                            {percentage > 10 && (
+                              <span className="absolute inset-0 flex items-center justify-center text-xs font-semibold text-white px-1 whitespace-nowrap">
+                                {percentage}%
+                              </span>
+                            )}
+                          </div>
+                          {percentage <= 10 && percentage > 0 && (
+                            <span className="absolute right-2 top-1/2 -translate-y-1/2 text-xs font-semibold whitespace-nowrap" style={{ color: statusColor }}>
+                              {percentage}%
+                            </span>
+                          )}
                         </div>
                       </div>
-                    </div>
-                  ))}
+                    )})}
                 </div>
               </div>
             </div>
@@ -361,40 +446,44 @@ function Analytics() {
                   <Icon name="download" size={16} />
                 </button>
               </div>
-              <div className="card-body p-xl">
-                {/* Interactive Monthly Bar Chart */}
-                <div className="mb-xl">
-                  <BarChart
+              <div className="card-body p-lg">
+                {/* Interactive Monthly Line Chart */}
+                <div className="mb-lg" id="trend-chart">
+                  <LineChart
                     data={analytics.monthlyTrend.map(month => ({
                       label: month.month,
                       value: month.count,
                       color: month.count > 0 ? 'var(--primary-orange)' : 'var(--background-light)'
                     }))}
-                    height={320}
+                    height={400}
                     animate={true}
                   />
                 </div>
 
-                {/* Enhanced Monthly Summary */}
-                <div className="grid grid-cols-2 md:grid-cols-3 gap-sm">
-                  {analytics.monthlyTrend.slice(-6).map((month, index) => (
-                    <div
-                      key={month.month}
-                      className={`text-center p-md bg-background-light rounded-xl hover-lift transition-all duration-300 animate-slide-in-up stagger-${index + 1}`}
-                    >
-                      <div className="text-2xl font-bold text-primary mb-1">{month.count}</div>
-                      <div className="text-secondary text-xs font-medium">{month.month}</div>
-                      <div className="w-full h-1 bg-background-white rounded-full mt-2 overflow-hidden">
-                        <div
-                          className="h-full bg-gradient-to-r from-primary-orange to-primary-orange-light transition-all duration-1000 ease-out"
-                          style={{
-                            width: `${month.count > 0 ? Math.min((month.count / Math.max(...analytics.monthlyTrend.map(m => m.count))) * 100, 100) : 0}%`,
-                            transitionDelay: `${index * 100}ms`
-                          }}
-                        />
+                {/* Enhanced Monthly Summary - Compact */}
+                <div className="grid grid-cols-3 md:grid-cols-6 gap-sm">
+                  {analytics.monthlyTrend.slice(-6).map((month, index) => {
+                    const maxCount = Math.max(...analytics.monthlyTrend.map(m => m.count), 1)
+                    const percentage = maxCount > 0 ? (month.count / maxCount) * 100 : 0
+                    return (
+                      <div
+                        key={month.month}
+                        className="text-center p-sm bg-background-light rounded-lg"
+                      >
+                        <div className="text-lg font-bold text-primary mb-1">{month.count}</div>
+                        <div className="text-secondary text-xs font-medium truncate">{month.month}</div>
+                        <div className="w-full h-1 bg-background-white rounded-full mt-2 overflow-hidden">
+                          <div
+                            className="h-full bg-gradient-to-r from-primary-orange to-primary-orange-light transition-all duration-1000 ease-out"
+                            style={{
+                              width: `${percentage}%`,
+                              transitionDelay: `${index * 50}ms`
+                            }}
+                          />
+                        </div>
                       </div>
-                    </div>
-                  ))}
+                    )
+                  })}
                 </div>
 
                 {/* Trend Insights */}

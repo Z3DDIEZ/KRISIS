@@ -75,6 +75,7 @@ function Dashboard() {
       setStats({
         totalApplications: totalApps,
         interviews,
+        offers, // Fixed: Now properly includes offers count
         aiAnalyses: 0, // Will be updated when AI analysis is implemented
         successRate
       })
@@ -138,10 +139,10 @@ function Dashboard() {
             <Icon name="offer" size={24} />
           </div>
           <div className="stat-card-content">
-            <div className="stat-value text-primary">{stats.offers}</div>
+            <div className="stat-value text-primary">{stats.offers || 0}</div>
             <div className="stat-label text-secondary uppercase tracking-wide">Offers</div>
           </div>
-          {stats.offers > 0 && (
+          {(stats.offers || 0) > 0 && (
             <div className="absolute -top-1 -right-1 w-3 h-3 bg-purple-500 rounded-full animate-pulse-glow" />
           )}
         </div>
