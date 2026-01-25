@@ -3,6 +3,7 @@ import { useAuthState } from 'react-firebase-hooks/auth'
 import { updateProfile, sendEmailVerification, sendPasswordResetEmail, deleteUser } from 'firebase/auth'
 import { auth } from '../lib/firebase'
 import { toast } from 'sonner'
+import Icon from '../components/ui/Icon'
 
 function getInitials(displayName: string | null): string {
   if (!displayName || displayName.trim() === '') {
@@ -244,7 +245,7 @@ function Profile() {
                   <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-lg">
                     <div className="flex gap-md">
                       <div className="flex-shrink-0">
-                        <span className="text-yellow-400 text-xl">⚠️</span>
+                        <Icon name="warning" size={20} />
                       </div>
                       <div className="flex-1">
                         <h4 className="text-sm font-semibold text-yellow-800 mb-sm">
@@ -288,7 +289,7 @@ function Profile() {
                   <div className="bg-red-50 border border-red-200 rounded-lg p-lg">
                     <div className="flex gap-md">
                       <div className="flex-shrink-0">
-                        <span className="text-red-400 text-xl">⚠️</span>
+                        <Icon name="warning" size={20} />
                       </div>
                       <div className="flex-1">
                         <h4 className="text-sm font-semibold text-red-800 mb-sm">

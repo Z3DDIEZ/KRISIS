@@ -4,6 +4,7 @@ import { signOut } from 'firebase/auth'
 import { useAuthState } from 'react-firebase-hooks/auth'
 import { auth } from '../../lib/firebase'
 import { toast } from 'sonner'
+import Icon from './Icon'
 
 function getInitials(displayName: string | null): string {
   if (!displayName || displayName.trim() === '') {
@@ -104,7 +105,7 @@ function UserMenu() {
               className="flex items-center gap-sm px-md py-sm text-sm text-primary hover:bg-background-light rounded-md transition-colors"
               onClick={() => setIsOpen(false)}
             >
-              <span>👤</span>
+              <Icon name="person" size={16} />
               View Profile
             </Link>
 
@@ -113,7 +114,7 @@ function UserMenu() {
               className="flex items-center gap-sm px-md py-sm text-sm text-primary hover:bg-background-light rounded-md transition-colors"
               onClick={() => setIsOpen(false)}
             >
-              <span>⚙️</span>
+              <Icon name="settings" size={16} />
               Settings
             </Link>
 
@@ -123,7 +124,7 @@ function UserMenu() {
               onClick={handleSignOut}
               className="flex items-center gap-sm w-full px-md py-sm text-sm text-danger hover:bg-red-50 rounded-md transition-colors"
             >
-              <span>🚪</span>
+              <Icon name="logout" size={16} />
               Sign Out
             </button>
           </div>

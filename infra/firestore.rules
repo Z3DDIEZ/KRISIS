@@ -54,7 +54,8 @@ service cloud.firestore {
       allow create: if isOwner(userId)
         && onlyAllowedFields([
           'company', 'role', 'status', 'dateApplied', 'notes',
-          'resumeUrl', 'createdAt', 'updatedAt', 'requestAnalysis'
+          'resumeUrl', 'visaSponsorship', 'createdAt', 'updatedAt',
+          'requestAnalysis', 'userId'
         ])
         && request.resource.data.company is string
         && request.resource.data.company.size() > 0
@@ -68,12 +69,16 @@ service cloud.firestore {
         ]
         && request.resource.data.dateApplied is string
         && request.resource.data.dateApplied.size() == 10
+        && (!('visaSponsorship' in request.resource.data.keys())
+            || request.resource.data.visaSponsorship is bool)
         && request.resource.data.createdAt is timestamp
         && request.resource.data.updatedAt is timestamp;
 
       allow update: if isOwner(userId)
         && request.resource.data.diff(resource.data).changedKeys()
-           .hasOnly(['status', 'notes', 'resumeUrl', 'updatedAt', 'requestAnalysis'])
+           .hasOnly(['status', 'notes', 'resumeUrl', 'visaSponsorship', 'updatedAt', 'requestAnalysis'])
+        && (!('visaSponsorship' in request.resource.data.diff(resource.data).changedKeys())
+            || request.resource.data.visaSponsorship is bool)
         && request.resource.data.updatedAt is timestamp
         && immutable('createdAt')
         && immutable('company')

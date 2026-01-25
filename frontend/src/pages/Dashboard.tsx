@@ -4,6 +4,7 @@ import { useAuthState } from 'react-firebase-hooks/auth'
 import { collection, query, orderBy, limit, onSnapshot } from 'firebase/firestore'
 import { auth, db } from '../lib/firebase'
 import { formatDateForDisplay } from '../lib/dateUtils'
+import Icon from '../components/ui/Icon'
 
 interface Application {
   id: string
@@ -39,11 +40,10 @@ function Dashboard() {
       return
     }
 
-    // Fetch recent applications (limit to 5 for dashboard)
+    // Fetch all applications for dashboard overview
     const q = query(
       collection(db, `users/${user.uid}/applications`),
-      orderBy('dateApplied', 'desc'),
-      limit(5)
+      orderBy('dateApplied', 'desc')
     )
 
     const unsubscribe = onSnapshot(q, (querySnapshot) => {
@@ -113,7 +113,7 @@ function Dashboard() {
         {/* Total Applications - Clickable */}
         <Link to="/applications" className="stat-card group">
           <div className="stat-icon blue">
-            📋
+            <Icon name="work" size={24} />
           </div>
           <div className="stat-card-content">
             <div className="stat-value text-primary">{stats.totalApplications}</div>
@@ -122,9 +122,9 @@ function Dashboard() {
         </Link>
 
         {/* Interviews */}
-        <div className="stat-card">
-          <div className="stat-icon green">
-            ✅
+        <div className="stat-card hover-lift animate-fade-in-scale stagger-2">
+          <div className="stat-icon green hover-scale">
+            <Icon name="call" size={24} />
           </div>
           <div className="stat-card-content">
             <div className="stat-value text-primary">{stats.interviews}</div>
@@ -132,25 +132,36 @@ function Dashboard() {
           </div>
         </div>
 
-        {/* AI Analyses */}
-        <div className="stat-card">
-          <div className="stat-icon orange">
-            🤖
+        {/* Offers */}
+        <div className="stat-card hover-lift animate-fade-in-scale stagger-3">
+          <div className="stat-icon purple hover-scale">
+            <Icon name="offer" size={24} />
           </div>
           <div className="stat-card-content">
-            <div className="stat-value text-primary">{stats.aiAnalyses}</div>
-            <div className="stat-label text-secondary uppercase tracking-wide">AI Analyses</div>
+            <div className="stat-value text-primary">{stats.offers}</div>
+            <div className="stat-label text-secondary uppercase tracking-wide">Offers</div>
           </div>
+          {stats.offers > 0 && (
+            <div className="absolute -top-1 -right-1 w-3 h-3 bg-purple-500 rounded-full animate-pulse-glow" />
+          )}
         </div>
 
         {/* Success Rate */}
-        <div className="stat-card">
-          <div className="stat-icon blue">
-            📈
+        <div className="stat-card hover-lift animate-fade-in-scale stagger-4">
+          <div className="stat-icon orange hover-scale">
+            <Icon name="trending-up" size={24} />
           </div>
           <div className="stat-card-content">
             <div className="stat-value text-primary">{stats.successRate}%</div>
             <div className="stat-label text-secondary uppercase tracking-wide">Success Rate</div>
+          </div>
+          <div className="absolute bottom-2 left-2 right-2 h-1 bg-background-light rounded-full overflow-hidden">
+            <div
+              className="h-full bg-gradient-to-r from-primary-orange to-primary-orange-light transition-all duration-1000 ease-out"
+              style={{
+                width: `${stats.successRate}%`
+              }}
+            />
           </div>
         </div>
       </div>
@@ -167,7 +178,9 @@ function Dashboard() {
         <div className="card-body">
           {applications.length === 0 ? (
             <div className="empty-state">
-              <div className="empty-icon">📋</div>
+              <div className="empty-icon">
+                <Icon name="work" size={48} />
+              </div>
               <h3 className="empty-title">No applications yet</h3>
               <p className="empty-description">Get started by adding your first job application.</p>
               <Link to="/applications/new" className="btn btn-orange">
@@ -176,16 +189,19 @@ function Dashboard() {
             </div>
           ) : (
             <div className="space-y-md">
-              {applications.map((application) => (
-                <div key={application.id} className="application-card">
+              {applications.slice(0, 10).map((application, index) => (
+                <div
+                  key={application.id}
+                  className={`application-card hover-lift animate-slide-in-up stagger-${(index % 5) + 1}`}
+                >
                   <div className="application-card-header">
-                    <div className="company-logo bg-primary-orange-bg">
+                    <div className="company-logo bg-gradient-to-br from-primary-orange-bg to-primary-orange/20 hover-scale">
                       <span className="text-primary-orange font-semibold">
                         {application.company.charAt(0).toUpperCase()}
                       </span>
                     </div>
                     <div className="company-info">
-                      <div className="company-name">
+                      <div className="company-name font-medium text-primary">
                         {application.company} - {application.role}
                       </div>
                       <div className="position-title text-secondary">
@@ -195,33 +211,37 @@ function Dashboard() {
                   </div>
 
                   <div className="application-card-footer">
-                    <div className={`badge ${
+                    <div className={`badge hover-scale ${
                       application.status === 'Applied' ? 'badge-applied' :
                       application.status === 'Phone Screen' ? 'badge-phone' :
                       application.status === 'Technical Interview' ? 'badge-technical' :
                       application.status === 'Final Round' ? 'badge-final' :
-                      application.status === 'Offer' ? 'badge-offer' :
+                      application.status === 'Offer' ? 'badge-offer badge-pulse' :
                       'badge-rejected'
                     }`}>
                       {application.status}
                     </div>
                     <Link
                       to={`/applications/${application.id}`}
-                      className="btn btn-ghost btn-sm"
+                      className="btn btn-ghost btn-sm btn-ripple"
                     >
+                      <Icon name="visibility" size={14} />
                       View Details
                     </Link>
                   </div>
                 </div>
               ))}
 
-              {applications.length >= 5 && (
+              {applications.length > 10 && (
                 <div className="text-center pt-lg">
+                  <p className="text-secondary text-sm mb-md">
+                    Showing 10 of {applications.length} applications
+                  </p>
                   <Link
                     to="/applications"
-                    className="btn btn-ghost"
+                    className="btn btn-primary"
                   >
-                    View all applications →
+                    View All Applications →
                   </Link>
                 </div>
               )}

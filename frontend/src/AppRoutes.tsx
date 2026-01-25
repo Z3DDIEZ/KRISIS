@@ -4,6 +4,8 @@ import Applications from './pages/Applications'
 import ApplicationDetail from './pages/ApplicationDetail'
 import Settings from './pages/Settings'
 import Profile from './pages/Profile'
+import DataManagement from './pages/DataManagement'
+import Analytics from './pages/Analytics'
 import AuthLayout from './layouts/AuthLayout'
 
 function AppRoutes() {
@@ -13,8 +15,10 @@ function AppRoutes() {
         <Route path="/" element={<Dashboard />} />
         <Route path="/applications" element={<Applications />} />
         <Route path="/applications/:id" element={<ApplicationDetail />} />
+        <Route path="/analytics" element={<Analytics />} />
         <Route path="/settings" element={<Settings />} />
         <Route path="/profile" element={<Profile />} />
+        <Route path="/data" element={<DataManagement />} />
       </Routes>
     </AuthLayout>
   )

@@ -12,6 +12,7 @@ import {
 import { auth, db } from '../lib/firebase'
 import { validateAndNormalizeDate, getTodayDate, formatDateForDisplay } from '../lib/dateUtils'
 import { toast } from 'sonner'
+import Icon from '../components/ui/Icon'
 
 interface ApplicationFormData {
   company: string
@@ -20,6 +21,7 @@ interface ApplicationFormData {
   dateApplied: string
   notes: string
   resumeUrl?: string
+  visaSponsorship: boolean
   requestAnalysis: boolean
 }
 
@@ -52,6 +54,7 @@ function ApplicationDetail() {
     status: 'Applied',
     dateApplied: getTodayDate(),
     notes: '',
+    visaSponsorship: false,
     requestAnalysis: false
   })
 
@@ -85,6 +88,7 @@ function ApplicationDetail() {
           dateApplied: data.dateApplied || getTodayDate(),
           notes: data.notes || '',
           resumeUrl: data.resumeUrl || '',
+          visaSponsorship: Boolean(data.visaSponsorship),
           requestAnalysis: false // Reset to false for edits
         }
         setFormData(loadedData)
@@ -378,6 +382,25 @@ function ApplicationDetail() {
             </div>
           </div>
 
+          {/* Visa Sponsorship */}
+          <div className="input-group">
+            <label className="input-label">
+              Visa Sponsorship
+            </label>
+            <div className="flex items-center gap-sm">
+              <input
+                id="visaSponsorship"
+                type="checkbox"
+                checked={formData.visaSponsorship}
+                onChange={(e) => handleInputChange('visaSponsorship', e.target.checked)}
+                className="checkbox"
+              />
+              <label htmlFor="visaSponsorship" className="text-sm text-secondary">
+                This company sponsors work visas
+              </label>
+            </div>
+          </div>
+
           {/* Notes */}
           <div className="input-group">
             <label htmlFor="notes" className="input-label">
@@ -419,7 +442,8 @@ function ApplicationDetail() {
                 </div>
                 <div className="flex-1">
                   <label htmlFor="requestAnalysis" className="text-sm font-semibold text-status-applied">
-                    🤖 Analyze with AI
+                    <Icon name="technical" size={16} />
+                    Analyze with AI
                   </label>
                   <p className="text-sm text-status-applied mt-sm opacity-80">
                     Get AI-powered insights on your resume-job fit, including matching skills, gaps, and next steps.
