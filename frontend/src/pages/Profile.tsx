@@ -130,194 +130,197 @@ function Profile() {
 
 
   return (
-    <div className="max-w-4xl mx-auto">
+    <div className="max-w-4xl mx-auto animate-fade-in">
       {/* Page Header */}
       <div className="mb-xl">
-        <h1 className="text-3xl font-bold text-primary">Profile</h1>
-        <p className="text-secondary text-base mt-sm">Manage your account information</p>
+        <h1 className="text-3xl font-bold text-primary tracking-tight">Profile</h1>
+        <p className="text-secondary font-medium mt-1">Manage your professional identity and account security</p>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-xl">
         {/* Profile Overview Card */}
         <div className="lg:col-span-1">
-          <div className="card text-center">
-            <div className="card-body">
+          <div className="card text-center border border-border-light hover:shadow-xl transition-all">
+            <div className="card-body p-xl">
               <div
-                className="w-24 h-24 mx-auto rounded-xl flex items-center justify-center text-white font-bold text-3xl mb-lg"
-                style={{ background: 'var(--primary-orange)' }}
+                className="w-24 h-24 mx-auto rounded-2xl flex items-center justify-center text-white font-bold text-3xl mb-6 shadow-lg shadow-primary-orange/20"
+                style={{ background: 'linear-gradient(135deg, var(--primary-orange), var(--primary-orange-light))' }}
               >
                 {getInitials(user.displayName) || user.email?.[0].toUpperCase() || '?'}
               </div>
-              <h3 className="text-xl font-semibold text-primary mb-sm">
-                {user.displayName || 'No display name set'}
+              <h3 className="text-xl font-bold text-primary mb-1">
+                {user.displayName || 'Anonymous User'}
               </h3>
-              <p className="text-secondary text-sm mb-md">{user.email}</p>
-              <div className="text-xs text-muted">
-                Member since {user.metadata.creationTime ? new Date(user.metadata.creationTime).toLocaleDateString() : 'Unknown'}
+              <p className="text-secondary text-sm font-medium mb-6 break-all">{user.email}</p>
+
+              <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-surface-2 rounded-full border border-border-light">
+                <div className={`w-2 h-2 rounded-full ${user.emailVerified ? 'bg-status-success' : 'bg-status-warning animation-pulse'}`} />
+                <span className="text-[10px] font-bold text-secondary uppercase tracking-wider">
+                  {user.emailVerified ? 'Verified Account' : 'Pending Verification'}
+                </span>
+              </div>
+
+              <div className="mt-8 pt-6 border-t border-border-light/50">
+                <div className="text-[10px] font-bold text-muted uppercase tracking-widest">Member Since</div>
+                <div className="text-sm font-bold text-primary mt-1">
+                  {user.metadata.creationTime ? new Date(user.metadata.creationTime).toLocaleDateString('en-US', { month: 'long', year: 'numeric' }) : 'Unknown'}
+                </div>
               </div>
             </div>
           </div>
         </div>
 
         {/* Profile Settings Card */}
-        <div className="lg:col-span-2">
-          <div className="card">
-
-            {/* Profile Information Form */}
-            <form onSubmit={handleUpdateProfile} className="space-y-lg">
-              <div>
-                <label htmlFor="displayName" className="input-label">
-                  Display Name
-                </label>
-                {isEditing ? (
-                  <div className="flex gap-sm">
-                    <input
-                      type="text"
-                      id="displayName"
-                      value={displayName}
-                      onChange={(e) => setDisplayName(e.target.value)}
-                      className="input-field flex-1"
-                      placeholder="Enter your display name"
-                      autoFocus
-                    />
-                    <button
-                      type="submit"
-                      disabled={isUpdating}
-                      className="btn btn-primary"
-                    >
-                      {isUpdating ? 'Saving...' : 'Save'}
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setIsEditing(false)
-                        setDisplayName(user.displayName || '')
-                      }}
-                      className="btn btn-secondary"
-                    >
-                      Cancel
-                    </button>
-                  </div>
-                ) : (
-                  <div className="flex items-center justify-between">
-                    <span className="text-primary">{user.displayName || 'No display name set'}</span>
-                    <button
-                      type="button"
-                      onClick={() => setIsEditing(true)}
-                      className="btn btn-ghost btn-sm"
-                    >
-                      Edit
-                    </button>
-                  </div>
-                )}
-              </div>
-
-              <div>
-                <label className="input-label">
-                  Email Address
-                </label>
-                <div className="text-primary font-medium">{user.email}</div>
-                <p className="input-hint">
-                  Email cannot be changed. Contact support if you need to update your email address.
-                </p>
-              </div>
-
-              <div>
-                <label className="input-label">
-                  Account Status
-                </label>
-                <div className="flex items-center gap-sm">
-                  <span className="badge" style={{ background: 'rgba(46, 204, 113, 0.1)', color: 'var(--status-offer)' }}>
-                    Active
-                  </span>
-                  <span className="text-sm text-secondary">
-                    {user.emailVerified ? 'Email verified' : 'Email not verified'}
-                  </span>
-                </div>
-              </div>
-            </form>
-
-            {/* Account Actions */}
-            <div className="card-footer border-t border-border-light">
-              <h3 className="text-lg font-semibold text-primary mb-md">Account Actions</h3>
-              <div className="space-y-md">
-                {!user.emailVerified && (
-                  <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-lg">
-                    <div className="flex gap-md">
-                      <div className="flex-shrink-0">
-                        <Icon name="warning" size={20} />
-                      </div>
-                      <div className="flex-1">
-                        <h4 className="text-sm font-semibold text-yellow-800 mb-sm">
-                          Email Not Verified
-                        </h4>
-                        <p className="text-sm text-yellow-700 mb-md">
-                          Please check your email and click the verification link to secure your account.
-                        </p>
+        <div className="lg:col-span-2 space-y-xl">
+          <div className="card border border-border-light">
+            <div className="card-header border-b border-border-light">
+              <h3 className="card-title flex items-center gap-2">
+                <Icon name="person" size={18} />
+                Personal Information
+              </h3>
+            </div>
+            <div className="card-body p-xl">
+              {/* Profile Information Form */}
+              <form onSubmit={handleUpdateProfile} className="space-y-xl">
+                <div className="form-group">
+                  <label htmlFor="displayName" className="form-label">
+                    Display Name
+                  </label>
+                  {isEditing ? (
+                    <div className="flex flex-col sm:flex-row gap-3">
+                      <input
+                        type="text"
+                        id="displayName"
+                        value={displayName}
+                        onChange={(e) => setDisplayName(e.target.value)}
+                        className="input flex-1"
+                        placeholder="Your full name"
+                        autoFocus
+                      />
+                      <div className="flex gap-2">
                         <button
-                          onClick={handleResendVerification}
-                          disabled={isResendingVerification}
-                          className="btn"
-                          style={{
-                            background: 'var(--primary-orange)',
-                            color: 'white'
-                          }}
+                          type="submit"
+                          disabled={isUpdating}
+                          className="btn btn-orange flex-1 sm:flex-none px-6"
                         >
-                          {isResendingVerification ? 'Sending...' : 'Resend Verification Email'}
+                          {isUpdating ? 'Saving...' : 'Save'}
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setIsEditing(false)
+                            setDisplayName(user.displayName || '')
+                          }}
+                          className="btn btn--secondary"
+                        >
+                          Cancel
                         </button>
                       </div>
                     </div>
-                  </div>
-                )}
+                  ) : (
+                    <div className="flex items-center justify-between p-3 bg-surface-2 rounded-xl border border-border-light border-dashed">
+                      <span className="text-primary font-bold">{user.displayName || 'Not specified'}</span>
+                      <button
+                        type="button"
+                        onClick={() => setIsEditing(true)}
+                        className="btn btn--ghost btn--sm text-primary-orange font-bold uppercase tracking-tighter"
+                      >
+                        Change
+                      </button>
+                    </div>
+                  )}
+                </div>
 
+                <div className="form-group">
+                  <label className="form-label">Email Address</label>
+                  <div className="flex items-center gap-3 p-3 bg-surface-2 rounded-xl border border-border-light">
+                    <Icon name="mail" size={16} className="text-muted" />
+                    <span className="text-primary font-medium">{user.email}</span>
+                    <span className="ml-auto">
+                      <Icon name="lock" size={14} className="text-muted" />
+                    </span>
+                  </div>
+                  <p className="text-[10px] text-muted font-medium mt-2 flex items-center gap-1">
+                    <Icon name="info" size={12} />
+                    Primary email cannot be changed for security
+                  </p>
+                </div>
+              </form>
+            </div>
+          </div>
+
+          {/* Account Actions Card */}
+          <div className="card border border-border-light overflow-hidden">
+            <div className="card-header border-b border-border-light">
+              <h3 className="card-title flex items-center gap-2">
+                <Icon name="security" size={18} />
+                Security & account
+              </h3>
+            </div>
+            <div className="card-body p-xl space-y-md">
+              {!user.emailVerified && (
+                <div className="bg-primary-orange-bg border border-primary-orange/10 rounded-2xl p-lg flex gap-md">
+                  <div className="p-2 bg-primary-orange/10 rounded-xl text-primary-orange h-fit">
+                    <Icon name="warning" size={24} />
+                  </div>
+                  <div className="flex-1">
+                    <h4 className="text-sm font-bold text-primary mb-1">Email Verification</h4>
+                    <p className="text-xs text-secondary font-medium leading-relaxed mb-4">
+                      Please verify your email to unlock all features and secure your account.
+                    </p>
+                    <button
+                      onClick={handleResendVerification}
+                      disabled={isResendingVerification}
+                      className="btn btn-orange btn--sm"
+                    >
+                      {isResendingVerification ? 'Sending...' : 'Resend Verification Email'}
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <button
                   onClick={handlePasswordReset}
                   disabled={isResettingPassword}
-                  className="btn btn-secondary btn-block justify-start"
+                  className="btn btn--secondary h-auto py-4 flex flex-col items-center gap-2 border border-border-light hover:border-primary-orange/30 group"
                 >
-                  🔑 {isResettingPassword ? 'Sending...' : 'Change Password'}
+                  <div className="p-3 bg-surface-3 rounded-xl text-secondary group-hover:text-primary-orange transition-colors">
+                    <Icon name="lock" size={20} />
+                  </div>
+                  <span className="text-xs font-bold uppercase tracking-wider">Change Password</span>
                 </button>
 
                 {!showDeleteConfirm ? (
                   <button
                     onClick={() => setShowDeleteConfirm(true)}
-                    className="btn btn-ghost btn-block justify-start text-danger hover:bg-red-50"
+                    className="btn btn--secondary h-auto py-4 flex flex-col items-center gap-2 border border-border-light hover:border-red-200 group"
                   >
-                    🗑️ Delete Account
+                    <div className="p-3 bg-red-50 rounded-xl text-red-400 group-hover:text-red-600 transition-colors">
+                      <Icon name="delete" size={20} />
+                    </div>
+                    <span className="text-xs font-bold uppercase tracking-wider text-red-500">Delete Account</span>
                   </button>
                 ) : (
-                  <div className="bg-red-50 border border-red-200 rounded-lg p-lg">
-                    <div className="flex gap-md">
-                      <div className="flex-shrink-0">
-                        <Icon name="warning" size={20} />
-                      </div>
-                      <div className="flex-1">
-                        <h4 className="text-sm font-semibold text-red-800 mb-sm">
-                          Delete Account
-                        </h4>
-                        <p className="text-sm text-red-700 mb-md">
-                          This action cannot be undone. This will permanently delete your account and all associated data.
-                        </p>
-                        <div className="flex gap-sm">
-                          <button
-                            onClick={handleDeleteAccount}
-                            disabled={isDeletingAccount}
-                            className="btn"
-                            style={{
-                              background: 'var(--status-rejected)',
-                              color: 'white'
-                            }}
-                          >
-                            {isDeletingAccount ? 'Deleting...' : 'Yes, delete my account'}
-                          </button>
-                          <button
-                            onClick={() => setShowDeleteConfirm(false)}
-                            className="btn btn-secondary"
-                          >
-                            Cancel
-                          </button>
-                        </div>
-                      </div>
+                  <div className="col-span-full bg-red-50 border border-red-100 rounded-2xl p-lg animate-fade-in">
+                    <h4 className="text-sm font-bold text-red-800 mb-1">Are you absolutely sure?</h4>
+                    <p className="text-xs text-red-600 font-medium mb-4 leading-relaxed">
+                      This will permanently delete your profile and all application data.
+                    </p>
+                    <div className="flex gap-2">
+                      <button
+                        onClick={handleDeleteAccount}
+                        disabled={isDeletingAccount}
+                        className="btn bg-red-600 text-white hover:bg-red-700 btn--sm"
+                      >
+                        {isDeletingAccount ? 'Processing...' : 'Delete Permanently'}
+                      </button>
+                      <button
+                        onClick={() => setShowDeleteConfirm(false)}
+                        className="btn btn--secondary btn--sm bg-white"
+                      >
+                        Cancel
+                      </button>
                     </div>
                   </div>
                 )}

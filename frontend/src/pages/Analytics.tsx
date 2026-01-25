@@ -240,13 +240,13 @@ function Analytics() {
 
       {/* Timeframe Selector */}
       <div className="mb-xl">
-        <div className="flex flex-wrap items-center gap-sm mb-md">
+        <div className="inline-flex p-1 bg-surface-2 rounded-xl border border-border-light shadow-sm mb-md">
           {[
             { key: 'all', label: 'All Time' },
-            { key: '6months', label: 'Last 6 Months' },
-            { key: '3months', label: 'Last 3 Months' },
-            { key: '1month', label: 'Last Month' },
-            { key: 'custom', label: 'Custom Range' }
+            { key: '6months', label: '6 Months' },
+            { key: '3months', label: '3 Months' },
+            { key: '1month', label: '1 Month' },
+            { key: 'custom', label: 'Custom' }
           ].map(({ key, label }) => (
             <button
               key={key}
@@ -256,45 +256,36 @@ function Analytics() {
                   setCustomDateRange({ start: '', end: '' })
                 }
               }}
-              className={`btn ${selectedTimeframe === key ? 'btn-primary' : 'btn-ghost'} btn-sm`}
+              className={`px-4 py-1.5 rounded-lg text-xs font-semibold transition-all ${selectedTimeframe === key
+                ? 'bg-primary-orange text-white shadow-sm'
+                : 'text-secondary hover:text-primary hover:bg-surface-3'
+                }`}
             >
               {label}
             </button>
           ))}
-          {(selectedTimeframe !== 'all' || customDateRange.start || customDateRange.end) && (
-            <button
-              onClick={() => {
-                setSelectedTimeframe('all')
-                setCustomDateRange({ start: '', end: '' })
-              }}
-              className="btn btn-ghost btn-sm text-secondary hover:text-primary"
-            >
-              <Icon name="clear" size={14} />
-              Clear Filters
-            </button>
-          )}
         </div>
 
         {/* Custom Date Range Input */}
         {selectedTimeframe === 'custom' && (
-          <div className="flex flex-wrap items-center gap-md p-md bg-background-light rounded-lg">
+          <div className="flex flex-wrap items-center gap-md p-md bg-surface-2 border border-border-light rounded-xl animate-fade-in">
             <div className="flex items-center gap-sm">
-              <label className="text-sm text-secondary whitespace-nowrap">From:</label>
+              <label className="text-xs font-bold text-secondary uppercase tracking-tight">From:</label>
               <input
                 type="date"
                 value={customDateRange.start}
                 onChange={(e) => setCustomDateRange({ ...customDateRange, start: e.target.value })}
-                className="input"
+                className="input py-1 text-sm bg-background-white"
                 max={customDateRange.end || new Date().toISOString().split('T')[0]}
               />
             </div>
             <div className="flex items-center gap-sm">
-              <label className="text-sm text-secondary whitespace-nowrap">To:</label>
+              <label className="text-xs font-bold text-secondary uppercase tracking-tight">To:</label>
               <input
                 type="date"
                 value={customDateRange.end}
                 onChange={(e) => setCustomDateRange({ ...customDateRange, end: e.target.value })}
-                className="input"
+                className="input py-1 text-sm bg-background-white"
                 min={customDateRange.start}
                 max={new Date().toISOString().split('T')[0]}
               />
@@ -306,138 +297,99 @@ function Analytics() {
       {analytics && (
         <>
           {/* Key Metrics */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-lg mb-2xl">
+          <div className="grid--metrics mb-2xl">
             <div className="stat-card">
-              <div className="stat-card-content">
-                <div className="stat-value text-primary">{analytics.totalApplications}</div>
-                <div className="stat-label text-secondary uppercase tracking-wide">Total Applications</div>
+              <div className="stat-card__content">
+                <div className="stat-card__value">{analytics.totalApplications}</div>
+                <div className="stat-card__label">Total Applications</div>
               </div>
             </div>
 
             <div className="stat-card">
-              <div className="stat-card-content">
-                <div className="stat-value text-primary">{analytics.responseRate}%</div>
-                <div className="stat-label text-secondary uppercase tracking-wide">Response Rate</div>
+              <div className="stat-card__content">
+                <div className="stat-card__value">{analytics.responseRate}%</div>
+                <div className="stat-card__label">Response Rate</div>
               </div>
             </div>
 
             <div className="stat-card">
-              <div className="stat-card-content">
-                <div className="stat-value text-primary">{analytics.visaSponsorshipRate}%</div>
-                <div className="stat-label text-secondary uppercase tracking-wide">Visa Sponsors</div>
+              <div className="stat-card__content">
+                <div className="stat-card__value">{analytics.visaSponsorshipRate}%</div>
+                <div className="stat-card__label">Visa Sponsors</div>
               </div>
             </div>
 
             <div className="stat-card">
-              <div className="stat-card-content">
-                <div className="stat-value text-primary">
+              <div className="stat-card__content">
+                <div className="stat-card__value">
                   {analytics.statusBreakdown['Offer'] || 0}
                 </div>
-                <div className="stat-label text-secondary uppercase tracking-wide">Offers Received</div>
+                <div className="stat-card__label">Offers Received</div>
               </div>
             </div>
           </div>
 
           {/* Charts Grid */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-2xl mb-2xl">
+          <div className="grid--content mb-2xl">
             {/* Status Distribution */}
             <LazyLoad
               data-track-lazy="status-chart"
-              placeholder={
-                <div className="card animate-pulse" style={{ minHeight: '500px' }}>
-                  <div className="card-header">
-                    <div className="h-6 bg-background-light rounded w-48"></div>
-                  </div>
-                  <div className="card-body">
-                    <div className="h-64 bg-background-light rounded"></div>
-                  </div>
-                </div>
-              }
+              className="h-full"
+              placeholder={<div className="card h-[500px] animate-pulse" />}
             >
-              <div className="card" data-section="status-chart">
-                <div className="card-header">
-                  <h3 className="card-title flex items-center gap-sm">
-                    <Icon name="pie-chart" size={20} />
-                    Application Status Distribution
+              <div className="card h-full flex flex-col" data-section="status-chart">
+                <div className="card__header">
+                  <h3 className="card__title flex items-center gap-2">
+                    <Icon name="pie-chart" size={18} />
+                    Status Distribution
                   </h3>
                   <button
                     onClick={() => handleExportChart('status-chart', 'status-distribution.png')}
-                    className="btn btn-ghost btn-sm btn-ripple"
+                    className="btn btn--ghost btn--sm"
+                    aria-label="Export Chart"
                   >
-                    <Icon name="download" size={16} />
+                    <Icon name="download" size={14} />
                   </button>
                 </div>
-                <div className="card-body p-lg">
-                  {/* Interactive Bar Chart - Larger */}
-                  <div className="mb-lg" id="status-chart">
+                <div className="card__body flex-1 flex flex-col gap-6 overflow-visible">
+                  <div className="flex-1 min-h-[300px]" id="status-chart">
                     <BarChart
                       data={Object.entries(analytics.statusBreakdown).map(([status, count]) => ({
                         label: status,
                         value: count,
                         color: getStatusColor(status)
                       }))}
-                      height={400}
+                      height={300}
                       animate={true}
                     />
                   </div>
 
-                  {/* Enhanced Status Breakdown - Compact */}
-                  <div className="space-y-sm">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4 border-t border-border-light/30">
                     {Object.entries(analytics.statusBreakdown)
                       .sort(([, a], [, b]) => b - a)
-                      .map(([status, count], index) => {
+                      .map(([status, count]) => {
                         const percentage = analytics.totalApplications > 0
                           ? Math.round((count / analytics.totalApplications) * 100)
                           : 0
                         const statusColor = getStatusColor(status)
                         return (
-                          <div
-                            key={status}
-                            className="status-breakdown-item"
-                          >
-                            <div className="flex items-center justify-between gap-md mb-xs">
-                              <div className="flex items-center gap-sm flex-1 min-w-0">
-                                <div
-                                  className="w-4 h-4 rounded-full flex-shrink-0 border border-border-light"
-                                  style={{ background: statusColor }}
-                                />
-                                <span
-                                  className="font-semibold text-sm"
-                                  style={{ color: statusColor }}
-                                >
-                                  {status}
-                                </span>
-                              </div>
-                              <div className="flex items-center gap-md flex-shrink-0">
-                                <div className="text-right">
-                                  <div className="font-bold text-base" style={{ color: statusColor }}>{count}</div>
-                                  <div className="text-xs text-secondary font-medium">{percentage}%</div>
-                                </div>
-                              </div>
+                          <div key={status} className="flex flex-col gap-1.5">
+                            <div className="flex items-center justify-between text-[11px] font-bold uppercase tracking-wider text-secondary">
+                              <span className="flex items-center gap-1.5">
+                                <span className="w-2 h-2 rounded-full" style={{ background: statusColor }} />
+                                {status}
+                              </span>
+                              <span>{count} ({percentage}%)</span>
                             </div>
-                            {/* Enhanced Progress Bar */}
-                            <div className="w-full h-4 bg-background-light rounded-full overflow-hidden relative border border-border-light">
+                            <div className="w-full h-2 bg-surface-3 rounded-full overflow-hidden">
                               <div
-                                className="h-full transition-all duration-1000 ease-out rounded-full relative flex items-center"
+                                className="h-full rounded-full transition-all duration-1000 ease-out"
                                 style={{
                                   width: `${percentage}%`,
-                                  background: `linear-gradient(90deg, ${statusColor}, ${statusColor}dd)`,
-                                  transitionDelay: `${index * 100}ms`,
-                                  minWidth: percentage > 0 ? '24px' : '0',
-                                  boxShadow: `0 2px 4px ${statusColor}40`
+                                  background: statusColor,
+                                  boxShadow: `0 0 8px ${statusColor}40`
                                 }}
-                              >
-                                {percentage > 10 && (
-                                  <span className="absolute inset-0 flex items-center justify-center text-xs font-semibold text-white px-1 whitespace-nowrap">
-                                    {percentage}%
-                                  </span>
-                                )}
-                              </div>
-                              {percentage <= 10 && percentage > 0 && (
-                                <span className="absolute right-2 top-1/2 -translate-y-1/2 text-xs font-semibold whitespace-nowrap" style={{ color: statusColor }}>
-                                  {percentage}%
-                                </span>
-                              )}
+                              />
                             </div>
                           </div>
                         )
@@ -450,63 +402,47 @@ function Analytics() {
             {/* Monthly Trend */}
             <LazyLoad
               data-track-lazy="trend-chart"
-              placeholder={
-                <div className="card animate-pulse" style={{ minHeight: '500px' }}>
-                  <div className="card-header">
-                    <div className="h-6 bg-background-light rounded w-48"></div>
-                  </div>
-                  <div className="card-body">
-                    <div className="h-64 bg-background-light rounded"></div>
-                  </div>
-                </div>
-              }
+              className="h-full"
+              placeholder={<div className="card h-[500px] animate-pulse" />}
             >
-              <div className="card" data-section="trend-chart">
-                <div className="card-header">
-                  <h3 className="card-title flex items-center gap-sm">
-                    <Icon name="trending-up" size={20} />
+              <div className="card h-full flex flex-col" data-section="trend-chart">
+                <div className="card__header">
+                  <h3 className="card__title flex items-center gap-2">
+                    <Icon name="trending-up" size={18} />
                     Application Trends
                   </h3>
                   <button
                     onClick={() => handleExportChart('trend-chart', 'application-trends.png')}
-                    className="btn btn-ghost btn-sm btn-ripple"
+                    className="btn btn--ghost btn--sm"
                   >
-                    <Icon name="download" size={16} />
+                    <Icon name="download" size={14} />
                   </button>
                 </div>
-                <div className="card-body p-lg">
-                  {/* Interactive Monthly Line Chart */}
-                  <div className="mb-lg" id="trend-chart">
+                <div className="card__body flex-1 flex flex-col gap-6 overflow-visible">
+                  <div className="flex-1 min-h-[300px] w-full" id="trend-chart">
                     <LineChart
                       data={analytics.monthlyTrend.map(month => ({
-                        label: month.month,
+                        label: month.month.split(' ')[0], // Short month only
                         value: month.count,
-                        color: month.count > 0 ? 'var(--primary-orange)' : 'var(--background-light)'
+                        color: 'var(--primary-orange)'
                       }))}
-                      height={400}
+                      height={300}
                       animate={true}
                     />
                   </div>
 
-                  {/* Enhanced Monthly Summary - Compact */}
-                  <div className="grid grid-cols-3 md:grid-cols-6 gap-sm">
-                    {analytics.monthlyTrend.slice(-6).map((month, index) => {
+                  <div className="grid grid-cols-3 md:grid-cols-6 gap-3 pt-4 border-t border-border-light/30">
+                    {analytics.monthlyTrend.slice(-6).map((month, _index) => {
                       const maxCount = Math.max(...analytics.monthlyTrend.map(m => m.count), 1)
-                      const percentage = maxCount > 0 ? (month.count / maxCount) * 100 : 0
+                      const percentage = (month.count / maxCount) * 100
                       return (
-                        <div
-                          key={month.month}
-                          className="text-center p-sm bg-background-light rounded-lg"
-                        >
-                          <div className="text-lg font-bold text-primary mb-1">{month.count}</div>
-                          <div className="text-secondary text-xs font-medium truncate">{month.month}</div>
-                          <div className="w-full h-1 bg-background-white rounded-full mt-2 overflow-hidden">
+                        <div key={month.month} className="flex flex-col items-center gap-1">
+                          <span className="text-[10px] font-bold text-secondary uppercase whitespace-nowrap">{month.month.split(' ')[0]}</span>
+                          <span className="text-sm font-bold text-primary">{month.count}</span>
+                          <div className="w-full h-1 bg-surface-3 rounded-full mt-1">
                             <div
-                              className="h-full bg-gradient-to-r from-primary-orange to-primary-orange-light transition-all duration-1000 ease-out"
-                              style={{
-                                width: `${percentage}%`,
-                                transitionDelay: `${index * 50}ms`
-                              }}
+                              className="h-full bg-primary-orange rounded-full"
+                              style={{ width: `${percentage}%` }}
                             />
                           </div>
                         </div>
@@ -514,17 +450,18 @@ function Analytics() {
                     })}
                   </div>
 
-                  {/* Trend Insights */}
-                  <div className="mt-lg p-md bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-lg">
-                    <div className="flex items-start gap-sm">
-                      <Icon name="trending-up" size={20} className="text-blue-600 mt-0.5" />
+                  <div className="mt-2 p-3 bg-primary-orange-bg border border-primary-orange/10 rounded-xl">
+                    <div className="flex items-start gap-3">
+                      <div className="p-1.5 bg-primary-orange/10 rounded-lg text-primary-orange">
+                        <Icon name="trending-up" size={16} />
+                      </div>
                       <div>
-                        <div className="font-medium text-blue-900">Trend Analysis</div>
-                        <div className="text-blue-700 text-sm">
+                        <div className="text-xs font-bold text-primary-orange uppercase tracking-wide">Trend Analysis</div>
+                        <div className="text-sm text-primary font-medium mt-0.5">
                           {analytics.monthlyTrend.slice(-3).reduce((sum, month) => sum + month.count, 0) >
                             analytics.monthlyTrend.slice(-6, -3).reduce((sum, month) => sum + month.count, 0)
-                            ? 'Your application activity is increasing! 📈'
-                            : 'Consider increasing your application volume to improve opportunities.'}
+                            ? 'Application activity is trending up over the last quarter.'
+                            : 'Consider increasing your reach to boost upcoming interview chances.'}
                         </div>
                       </div>
                     </div>
@@ -560,82 +497,92 @@ function Analytics() {
             </div>
           </div>
 
-          {/* Insights */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-2xl">
-            <div className="card">
-              <div className="card-header">
-                <h3 className="card-title">Key Insights</h3>
+          {/* Insights & Actions */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-xl">
+            <div className="card border border-border-light hover:shadow-xl transition-all">
+              <div className="card-header border-b border-border-light">
+                <h3 className="card-title flex items-center gap-2">
+                  <Icon name="bolt" size={18} className="text-primary-orange" />
+                  Key Insights
+                </h3>
               </div>
-              <div className="card-body space-y-md">
-                <div className="p-md bg-blue-50 border border-blue-200 rounded-lg">
-                  <div className="flex items-start gap-sm">
-                    <Icon name="info" size={20} className="text-blue-600 mt-0.5" />
-                    <div>
-                      <div className="font-medium text-blue-900">Response Rate</div>
-                      <div className="text-blue-700 text-sm">
-                        {analytics.responseRate}% of your applications received a response
-                      </div>
+              <div className="card-body p-xl space-y-md">
+                <div className="p-lg bg-surface-2 border border-border-light rounded-2xl flex gap-md group hover:border-primary-orange/20 transition-all">
+                  <div className="p-2.5 bg-background-white shadow-sm rounded-xl text-primary-orange h-fit">
+                    <Icon name="info" size={20} />
+                  </div>
+                  <div>
+                    <div className="text-[10px] font-bold text-muted uppercase tracking-widest mb-1">Response Velocity</div>
+                    <div className="text-xl font-bold text-primary mb-1">{analytics.responseRate}%</div>
+                    <div className="text-xs text-secondary font-medium">
+                      Of your total pipeline successfully advanced beyond initial application stage.
                     </div>
                   </div>
                 </div>
 
-                <div className="p-md bg-green-50 border border-green-200 rounded-lg">
-                  <div className="flex items-start gap-sm">
-                    <Icon name="offer" size={20} className="text-green-600 mt-0.5" />
-                    <div>
-                      <div className="font-medium text-green-900">Success Rate</div>
-                      <div className="text-green-700 text-sm">
-                        {analytics.statusBreakdown['Offer'] || 0} offers from {analytics.totalApplications} applications
-                      </div>
+                <div className="p-lg bg-surface-2 border border-border-light rounded-2xl flex gap-md group hover:border-status-success/20 transition-all">
+                  <div className="p-2.5 bg-background-white shadow-sm rounded-xl text-status-success h-fit">
+                    <Icon name="verified" size={20} />
+                  </div>
+                  <div>
+                    <div className="text-[10px] font-bold text-muted uppercase tracking-widest mb-1">Conversion Rate</div>
+                    <div className="text-xl font-bold text-primary mb-1">
+                      {analytics.statusBreakdown['Offer'] || 0} <span className="text-xs text-secondary font-medium">Offers</span>
+                    </div>
+                    <div className="text-xs text-secondary font-medium">
+                      Final offers generated from your current tracked network.
                     </div>
                   </div>
                 </div>
               </div>
             </div>
 
-            <div className="card">
-              <div className="card-header">
-                <h3 className="card-title">Recommendations</h3>
+            <div className="card border border-border-light hover:shadow-xl transition-all">
+              <div className="card-header border-b border-border-light">
+                <h3 className="card-title flex items-center gap-2">
+                  <Icon name="lightbulb" size={18} className="text-primary-orange" />
+                  Strategic Actions
+                </h3>
               </div>
-              <div className="card-body space-y-md">
+              <div className="card-body p-xl space-y-md">
                 {analytics.responseRate < 30 && (
-                  <div className="p-md bg-yellow-50 border border-yellow-200 rounded-lg">
-                    <div className="flex items-start gap-sm">
-                      <Icon name="warning" size={20} className="text-yellow-600 mt-0.5" />
-                      <div>
-                        <div className="font-medium text-yellow-900">Low Response Rate</div>
-                        <div className="text-yellow-700 text-sm">
-                          Consider improving your application materials or targeting different companies
-                        </div>
-                      </div>
+                  <div className="p-lg bg-primary-orange-bg border border-primary-orange/10 rounded-2xl flex gap-md">
+                    <div className="p-2 bg-primary-orange/10 rounded-xl text-primary-orange h-fit">
+                      <Icon name="warning" size={20} />
+                    </div>
+                    <div>
+                      <h4 className="text-sm font-bold text-primary mb-1">Optimize Materials</h4>
+                      <p className="text-xs text-secondary font-medium leading-relaxed">
+                        Your response rate is below benchmark. Consider refining your resume or cover letter strategy.
+                      </p>
                     </div>
                   </div>
                 )}
 
                 {analytics.visaSponsorshipRate < 50 && (
-                  <div className="p-md bg-purple-50 border border-purple-200 rounded-lg">
-                    <div className="flex items-start gap-sm">
-                      <Icon name="settings" size={20} className="text-purple-600 mt-0.5" />
-                      <div>
-                        <div className="font-medium text-purple-900">Visa Sponsorship Focus</div>
-                        <div className="text-purple-700 text-sm">
-                          Consider applying to more companies that sponsor visas
-                        </div>
-                      </div>
+                  <div className="p-lg bg-surface-2 border border-border-light rounded-2xl flex gap-md">
+                    <div className="p-2 bg-surface-3 rounded-xl text-secondary h-fit">
+                      <Icon name="public" size={20} />
+                    </div>
+                    <div>
+                      <h4 className="text-sm font-bold text-primary mb-1">Expansion Strategy</h4>
+                      <p className="text-xs text-secondary font-medium leading-relaxed">
+                        Currently highlighting {analytics.visaSponsorshipRate}% sponsorship. Cast a wider net for global roles.
+                      </p>
                     </div>
                   </div>
                 )}
 
                 {analytics.totalApplications < 10 && (
-                  <div className="p-md bg-blue-50 border border-blue-200 rounded-lg">
-                    <div className="flex items-start gap-sm">
-                      <Icon name="add" size={20} className="text-blue-600 mt-0.5" />
-                      <div>
-                        <div className="font-medium text-blue-900">Build Your Pipeline</div>
-                        <div className="text-blue-700 text-sm">
-                          Keep applying! More applications increase your chances of success
-                        </div>
-                      </div>
+                  <div className="p-lg bg-blue-50/30 border border-blue-100 rounded-2xl flex gap-md">
+                    <div className="p-2 bg-blue-100/50 rounded-xl text-blue-600 h-fit">
+                      <Icon name="add" size={20} />
+                    </div>
+                    <div>
+                      <h4 className="text-sm font-bold text-primary mb-1">Build Volume</h4>
+                      <p className="text-xs text-secondary font-medium leading-relaxed">
+                        Consistent volume is key. Aim for 5-10 targeted applications weekly to maintain momentum.
+                      </p>
                     </div>
                   </div>
                 )}

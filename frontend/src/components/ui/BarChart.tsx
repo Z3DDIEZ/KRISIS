@@ -52,31 +52,36 @@ function BarChart({
     return () => observer.disconnect()
   }, [])
 
-  const maxValue = Math.max(...data.map(d => d.value), 1) // Ensure at least 1 to avoid division by zero
-  const padding = 60
-  const chartWidth = 100 // percentage
-  const chartHeight = height - (padding * 2)
-  
+  const maxValue = Math.max(...data.map(d => d.value), 0)
+  const padding = 40 // Reduced padding to give more space to chart
+
   // Calculate dynamic Y-axis scale based on max value
   const getYAxisScale = () => {
-    if (maxValue === 0) return [0, 1, 2, 3, 4, 5]
-    if (maxValue <= 5) return [0, 1, 2, 3, 4, 5]
-    if (maxValue <= 10) return [0, 2, 4, 6, 8, 10]
-    if (maxValue <= 20) return [0, 5, 10, 15, 20]
-    if (maxValue <= 50) return [0, 10, 20, 30, 40, 50]
-    if (maxValue <= 100) return [0, 20, 40, 60, 80, 100]
-    // For larger values, use smart rounding
-    const step = Math.ceil(maxValue / 5)
-    const roundedMax = Math.ceil(maxValue / step) * step
+    if (maxValue === 0) return [0, 1, 2, 3, 4]
+
+    // Find a nice round number for the ceiling
+    let ceiling: number
+    if (maxValue <= 5) ceiling = 5
+    else if (maxValue <= 10) ceiling = 10
+    else if (maxValue <= 25) ceiling = 25
+    else if (maxValue <= 50) ceiling = 50
+    else if (maxValue <= 100) ceiling = 100
+    else {
+      // For larger values, find the next power of 10 or multiple of 50/100
+      const magnitude = Math.pow(10, Math.floor(Math.log10(maxValue)))
+      ceiling = Math.ceil(maxValue / (magnitude / 2)) * (magnitude / 2)
+    }
+
     const ticks = []
-    for (let i = 0; i <= 5; i++) {
-      ticks.push(Math.round((roundedMax / 5) * i))
+    const step = ceiling / 4
+    for (let i = 0; i <= 4; i++) {
+      ticks.push(Math.round(step * i))
     }
     return ticks
   }
-  
-  const yAxisTicks = getYAxisScale()
-  const yAxisMax = yAxisTicks[yAxisTicks.length - 1]
+
+  const yAxisTicks = getYAxisScale().reverse() // Show highest at top
+  const yAxisMax = yAxisTicks[0]
 
   const getBarColor = (index: number, customColor?: string) => {
     if (customColor) return customColor
@@ -93,10 +98,10 @@ function BarChart({
     return colors[index % colors.length]
   }
 
-  const handleBarHover = (event: React.MouseEvent, point: DataPoint, index: number) => {
+  const handleBarHover = (_event: React.MouseEvent, point: DataPoint, _index: number) => {
     if (!showTooltips) return
 
-    const rect = event.currentTarget.getBoundingClientRect()
+    const rect = _event.currentTarget.getBoundingClientRect()
     const chartRect = chartRef.current?.getBoundingClientRect()
 
     if (chartRect) {
@@ -126,13 +131,13 @@ function BarChart({
   return (
     <div
       ref={chartRef}
-      className={`relative ${className}`}
+      className={`relative flex flex-col ${className}`}
       style={{ height }}
     >
       {/* Chart Area */}
-      <div className="relative" style={{ padding: `${padding}px` }}>
+      <div className="relative flex-1 flex" style={{ padding: `10px 0 30px ${padding}px` }}>
         {/* Y-axis labels */}
-        <div className="absolute left-0 top-0 bottom-0 flex flex-col justify-between text-xs text-secondary pr-2">
+        <div className="absolute left-0 top-0 bottom-[30px] flex flex-col justify-between text-[10px] font-medium text-secondary pr-3 text-right w-[40px] pointer-events-none">
           {yAxisTicks.map((tick, index) => (
             <span key={index} className="leading-none">
               {formatValue(tick)}
@@ -140,116 +145,102 @@ function BarChart({
           ))}
         </div>
 
-        {/* Grid lines */}
-        {showGrid && (
-          <div className="absolute inset-0 pointer-events-none">
-            {yAxisTicks.map((tick, index) => {
-              const ratio = yAxisMax > 0 ? tick / yAxisMax : 0
+        {/* Chart Content Container */}
+        <div className="relative flex-1 flex items-end">
+          {/* Grid lines */}
+          {showGrid && (
+            <div className="absolute inset-0 pointer-events-none">
+              {yAxisTicks.map((tick, index) => {
+                const ratio = yAxisMax > 0 ? tick / yAxisMax : 0
+                return (
+                  <div
+                    key={index}
+                    className="absolute w-full border-t border-border-light/50"
+                    style={{
+                      bottom: `${ratio * 100}%`,
+                      left: 0
+                    }}
+                  />
+                )
+              })}
+            </div>
+          )}
+
+          {/* Bars */}
+          <div className="relative w-full h-full flex items-end justify-around gap-2 px-2">
+            {data.map((point, index) => {
+              const percentage = yAxisMax > 0 ? (point.value / yAxisMax) * 100 : 0
+              const barColor = getBarColor(index, point.color)
+
               return (
                 <div
-                  key={index}
-                  className="absolute w-full border-t border-border-light opacity-30"
-                  style={{
-                    top: `${(1 - ratio) * 100}%`,
-                    left: '2.5rem'
-                  }}
-                />
+                  key={`${point.label}-${index}`}
+                  className="flex flex-col items-center group flex-1 max-w-[60px] relative h-full justify-end"
+                >
+                  {/* Bar */}
+                  <div
+                    className={`w-full rounded-t-sm transition-all duration-700 ease-out cursor-pointer hover:brightness-110 relative ${animate && isVisible ? 'opacity-100' : 'opacity-0 translate-y-4'
+                      }`}
+                    style={{
+                      height: `${percentage}%`,
+                      background: barColor,
+                      minHeight: point.value > 0 ? '2px' : '0px',
+                      transitionDelay: animate ? `${index * 50}ms` : '0ms'
+                    }}
+                    onMouseEnter={(e) => handleBarHover(e, point, index)}
+                    onMouseLeave={handleBarLeave}
+                  >
+                    {/* Hover value indicator */}
+                    <div className="absolute -top-6 left-1/2 -translate-x-1/2 bg-surface-3 text-[10px] font-bold px-1.5 py-0.5 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none shadow-sm">
+                      {formatValue(point.value)}
+                    </div>
+                  </div>
+
+                  {/* X-axis label */}
+                  <div className="absolute -bottom-6 left-0 right-0 text-[10px] font-medium text-secondary text-center truncate pt-1">
+                    {point.label}
+                  </div>
+                </div>
               )
             })}
           </div>
-        )}
-
-        {/* Bars */}
-        <div
-          className="flex items-end justify-between gap-2"
-          style={{ height: chartHeight, marginLeft: '2.5rem' }}
-        >
-          {data.map((point, index) => {
-            const percentage = yAxisMax > 0 ? (point.value / yAxisMax) * 100 : 0
-            const barColor = getBarColor(index, point.color)
-
-            return (
-              <div
-                key={point.label}
-                className="flex flex-col items-center group flex-1 max-w-16"
-              >
-                {/* Bar */}
-                <div
-                  className={`w-full rounded-t transition-all duration-1000 ease-out cursor-pointer hover:opacity-80 ${
-                    animate && isVisible ? 'chart-bar' : ''
-                  }`}
-                  style={{
-                    height: animate && isVisible ? `${percentage}%` : `${percentage}%`,
-                    background: barColor,
-                    minHeight: percentage > 0 ? '4px' : '0px',
-                    transitionDelay: animate ? `${index * 100}ms` : '0ms'
-                  }}
-                  onMouseEnter={(e) => handleBarHover(e, point, index)}
-                  onMouseLeave={handleBarLeave}
-                  onMouseMove={(e) => handleBarHover(e, point, index)}
-                />
-
-                {/* X-axis label */}
-                <div className="text-xs text-secondary mt-2 text-center leading-tight max-w-full truncate">
-                  {point.label}
-                </div>
-
-                {/* Value label on top of bar */}
-                {point.value > 0 && (
-                  <div
-                    className="absolute text-xs font-medium text-primary transform -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none"
-                    style={{
-                      bottom: `${percentage}%`,
-                      left: '50%',
-                      marginBottom: '4px'
-                    }}
-                  >
-                    {formatValue(point.value)}
-                  </div>
-                )}
-              </div>
-            )
-          })}
         </div>
       </div>
 
       {/* Tooltip */}
       {showTooltips && tooltip.visible && (
         <div
-          className="absolute z-50 pointer-events-none tooltip-enter"
+          className="absolute z-50 pointer-events-none"
           style={{
             left: tooltip.x,
-            top: tooltip.y - 60,
-            transform: 'translateX(-50%)'
+            top: tooltip.y - 10,
+            transform: 'translate(-50%, -100%)'
           }}
         >
-          <div className="bg-background-white border border-border-light rounded-lg shadow-lg px-3 py-2 text-sm">
-            <div className="font-medium text-primary">{tooltip.label}</div>
-            <div className="text-secondary">Value: {formatValue(tooltip.value)}</div>
-            {/* Tooltip arrow */}
-            <div
-              className="absolute top-full left-1/2 transform -translate-x-1/2 border-l-4 border-r-4 border-t-4 border-transparent border-t-background-white"
-              style={{ marginTop: '-1px' }}
-            />
+          <div className="bg-background-white/95 backdrop-blur-md border border-border-light rounded-lg shadow-xl px-3 py-2 text-xs">
+            <div className="font-bold text-primary mb-0.5">{tooltip.label}</div>
+            <div className="flex items-center gap-2">
+              <div className="w-2 h-2 rounded-full bg-primary-orange" />
+              <span className="text-secondary font-medium">Value:</span>
+              <span className="text-primary font-bold">{formatValue(tooltip.value)}</span>
+            </div>
           </div>
         </div>
       )}
 
-      {/* Chart Legend */}
-      {data.length > 0 && (
-        <div className="flex flex-wrap justify-center gap-4 mt-4 text-xs">
-          {data.slice(0, 6).map((point, index) => (
-            <div key={point.label} className="flex items-center gap-1">
+      {/* Chart Legend (Optional - only if many colors) */}
+      {data.length > 5 && (
+        <div className="flex flex-wrap justify-center gap-x-4 gap-y-1 mt-8 text-[10px] font-medium border-t border-border-light/30 pt-3">
+          {data.slice(0, 8).map((point, index) => (
+            <div key={index} className="flex items-center gap-1.5">
               <div
-                className="w-3 h-3 rounded"
+                className="w-2 h-2 rounded-full"
                 style={{ background: getBarColor(index, point.color) }}
               />
-              <span className="text-secondary truncate max-w-20">{point.label}</span>
+              <span className="text-secondary">{point.label}</span>
             </div>
           ))}
-          {data.length > 6 && (
-            <span className="text-secondary">+{data.length - 6} more</span>
-          )}
+          {data.length > 8 && <span className="text-muted">+{data.length - 8} more</span>}
         </div>
       )}
 

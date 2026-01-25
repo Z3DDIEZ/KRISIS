@@ -1,0 +1,225 @@
+/* ========================================
+   KRISIS Components - Top Navigation Bar
+   ======================================== */
+
+/* ========================================
+   TOP NAVBAR SHELL
+   ======================================== */
+.topnav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 64px;
+    background: var(--background-white);
+    border-bottom: 1px solid var(--border-light);
+    z-index: 100;
+    backdrop-filter: blur(12px);
+    background: rgba(var(--background-white-rgb, 255, 255, 255), 0.92);
+}
+
+[data-theme="dark"] .topnav {
+    background: rgba(30, 30, 30, 0.95);
+}
+
+.topnav__container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 100%;
+    max-width: 1600px;
+    margin: 0 auto;
+    padding: 0 var(--spacing-lg);
+    gap: var(--spacing-xl);
+}
+
+/* ========================================
+   LOGO
+   ======================================== */
+.topnav__logo {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    text-decoration: none;
+    flex-shrink: 0;
+}
+
+.topnav__logo-icon {
+    width: 36px;
+    height: 36px;
+    background: linear-gradient(135deg, var(--primary-orange), var(--primary-orange-light));
+    border-radius: var(--radius-lg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    box-shadow: 0 2px 8px rgba(230, 126, 34, 0.3);
+}
+
+.topnav__logo-text {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.2;
+}
+
+.topnav__logo-name {
+    font-weight: var(--font-bold);
+    font-size: var(--text-lg);
+    color: var(--text-primary);
+    letter-spacing: -0.02em;
+}
+
+.topnav__logo-tagline {
+    font-size: var(--text-xs);
+    color: var(--text-secondary);
+    font-weight: var(--font-medium);
+}
+
+/* Hide tagline on mobile */
+@media (max-width: 768px) {
+    .topnav__logo-tagline {
+        display: none;
+    }
+}
+
+/* ========================================
+   SEARCH
+   ======================================== */
+.topnav__search {
+    flex: 1;
+    max-width: 480px;
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.topnav__search-icon {
+    position: absolute;
+    left: var(--spacing-md);
+    color: var(--text-muted);
+    pointer-events: none;
+    transition: color var(--transition-fast);
+}
+
+.topnav__search--focused .topnav__search-icon {
+    color: var(--primary-orange);
+}
+
+.topnav__search-input {
+    width: 100%;
+    height: 40px;
+    padding: 0 var(--spacing-xl) 0 calc(var(--spacing-md) + 24px);
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius-xl);
+    background: var(--background-light);
+    font-size: var(--text-sm);
+    color: var(--text-primary);
+    transition: all var(--transition-fast);
+}
+
+.topnav__search-input::placeholder {
+    color: var(--text-muted);
+}
+
+.topnav__search-input:focus {
+    outline: none;
+    border-color: var(--primary-orange);
+    background: var(--background-white);
+    box-shadow: 0 0 0 3px rgba(230, 126, 34, 0.1);
+}
+
+.topnav__search-shortcut {
+    position: absolute;
+    right: var(--spacing-sm);
+    padding: 2px 6px;
+    background: var(--background-white);
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius-sm);
+    font-size: 10px;
+    color: var(--text-muted);
+    font-family: inherit;
+    pointer-events: none;
+}
+
+/* Hide shortcut on mobile */
+@media (max-width: 768px) {
+    .topnav__search-shortcut {
+        display: none;
+    }
+
+    .topnav__search {
+        max-width: 200px;
+    }
+}
+
+/* ========================================
+   ACTIONS
+   ======================================== */
+.topnav__actions {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    flex-shrink: 0;
+}
+
+.topnav__action-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacing-xs);
+    height: 36px;
+    padding: 0 var(--spacing-md);
+    border-radius: var(--radius-lg);
+    font-size: var(--text-sm);
+    font-weight: var(--font-medium);
+    text-decoration: none;
+    transition: all var(--transition-fast);
+    border: none;
+    cursor: pointer;
+}
+
+.topnav__action-btn--primary {
+    background: linear-gradient(135deg, var(--primary-orange), var(--primary-orange-light));
+    color: white;
+    box-shadow: 0 2px 8px rgba(230, 126, 34, 0.25);
+}
+
+.topnav__action-btn--primary:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(230, 126, 34, 0.35);
+}
+
+.topnav__action-btn--secondary {
+    background: var(--background-light);
+    color: var(--text-primary);
+}
+
+.topnav__action-btn--secondary:hover {
+    background: var(--border-light);
+}
+
+/* Hide label on mobile, show only icon */
+@media (max-width: 640px) {
+    .topnav__action-label {
+        display: none;
+    }
+
+    .topnav__action-btn {
+        padding: 0 var(--spacing-sm);
+        width: 36px;
+    }
+}
+
+/* ========================================
+   RESPONSIVE
+   ======================================== */
+@media (max-width: 480px) {
+    .topnav__container {
+        padding: 0 var(--spacing-md);
+        gap: var(--spacing-sm);
+    }
+
+    .topnav__search {
+        display: none;
+    }
+}

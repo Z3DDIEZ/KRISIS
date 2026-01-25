@@ -19,7 +19,7 @@ interface Application {
 }
 
 function Settings() {
-  const [user, loading] = useAuthState(auth)
+  const [user] = useAuthState(auth)
   const [isDark, setIsDark] = useState(false)
   const [applications, setApplications] = useState<Application[]>([])
   const [isExporting, setIsExporting] = useState(false)
@@ -125,215 +125,215 @@ function Settings() {
   }
 
   return (
-    <div className="max-w-4xl mx-auto" style={{ paddingTop: 'var(--spacing-2xl)', paddingBottom: 'var(--spacing-2xl)' }}>
+    <div className="max-w-4xl mx-auto py-8 animate-fade-in font-primary">
       {/* Page Header */}
       <div className="mb-xl">
-        <h1 className="text-3xl font-bold text-primary">Settings</h1>
-        <p className="text-secondary text-base mt-sm">Manage your account and preferences</p>
+        <h1 className="text-3xl font-bold text-primary tracking-tight">Settings</h1>
+        <p className="text-secondary font-medium mt-1">Configure your workspace and manage your application data</p>
       </div>
 
-      {/* Settings Cards */}
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-xl)' }}>
+      {/* Settings Grid */}
+      <div className="flex flex-col gap-xl">
 
-        {/* Appearance Card */}
-        <div className="card">
-          <div className="card-header">
-            <h3 className="card-title">Appearance</h3>
-          </div>
-          <div style={{ padding: 'var(--spacing-lg)' }}>
-            <div className="input-group">
-              <label className="input-label">Theme</label>
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                <span className="text-secondary text-sm">
-                  {isDark ? 'Currently in dark mode' : 'Currently in light mode'}
-                </span>
+        {/* Main Preferences */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-xl">
+          {/* Appearance Card */}
+          <div className="card border border-border-light hover:shadow-lg transition-all">
+            <div className="card-header border-b border-border-light">
+              <h3 className="card-title flex items-center gap-2">
+                <Icon name="palette" size={18} />
+                Appearance
+              </h3>
+            </div>
+            <div className="card-body p-xl">
+              <div className="flex items-center justify-between p-4 bg-surface-2 rounded-2xl border border-border-light group hover:border-primary-orange/20 transition-all">
+                <div>
+                  <div className="text-sm font-bold text-primary mb-0.5">Interface Theme</div>
+                  <div className="text-xs text-secondary font-medium">
+                    {isDark ? 'Dark mode optimized' : 'Light mode active'}
+                  </div>
+                </div>
                 <DarkModeToggle />
               </div>
             </div>
           </div>
-        </div>
-        
-        {/* Account Settings Card */}
-        <div className="card">
-          <div className="card-header">
-            <h3 className="card-title">Account Settings</h3>
-          </div>
-          <div style={{ padding: 'var(--spacing-lg)' }}>
-            <div className="input-group">
-              <label htmlFor="email-notifications" className="input-label">
-                Email Notifications
-              </label>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--spacing-sm)' }}>
+
+          {/* Account Settings Card */}
+          <div className="card border border-border-light hover:shadow-lg transition-all">
+            <div className="card-header border-b border-border-light">
+              <h3 className="card-title flex items-center gap-2">
+                <Icon name="notifications" size={18} />
+                Global Preferences
+              </h3>
+            </div>
+            <div className="card-body p-xl">
+              <label className="checkbox-group p-4 bg-surface-2 rounded-2xl border border-border-light group hover:border-primary-orange/20 transition-all cursor-pointer">
+                <div className="flex-1">
+                  <div className="text-sm font-bold text-primary mb-0.5">Email Summaries</div>
+                  <div className="text-xs text-secondary font-medium">Weekly progress & AI insights</div>
+                </div>
                 <input
                   type="checkbox"
                   id="email-notifications"
                   className="checkbox"
+                  defaultChecked
                 />
-                <span className="text-sm text-secondary">
-                  Receive weekly progress summaries
-                </span>
-              </div>
-            </div>
-
-            <div className="border-t border-border-light" style={{ paddingTop: 'var(--spacing-lg)', marginTop: 'var(--spacing-lg)' }}>
-              <h4 className="text-sm font-semibold text-primary mb-md">Danger Zone</h4>
-              <button className="btn btn-secondary" style={{ color: 'var(--status-rejected)', borderColor: 'var(--status-rejected)' }}>
-                🗑️ Delete Account
-              </button>
+              </label>
             </div>
           </div>
         </div>
 
         {/* Enhanced Data Export Card */}
-        <div className="card animate-fade-in-scale">
-          <div className="card-header">
-            <h3 className="card-title flex items-center gap-sm">
-              <Icon name="download" size={20} />
-              Data Export & Backup
+        <div className="card border border-border-light overflow-hidden shadow-xl">
+          <div className="card-header border-b border-border-light bg-surface-1">
+            <h3 className="card-title flex items-center gap-2">
+              <Icon name="download" size={20} className="text-primary-orange" />
+              Data Intelligence & Export
             </h3>
           </div>
-          <div style={{ padding: 'var(--spacing-lg)' }}>
-            {/* Export Stats */}
-            <div className="grid grid-cols-4 gap-md mb-lg">
-              <div className="text-center p-md bg-background-light rounded-lg">
-                <div className="text-2xl font-bold text-primary">{applications.length}</div>
-                <div className="text-xs text-secondary uppercase tracking-wide">Total Records</div>
-              </div>
-              <div className="text-center p-md bg-background-light rounded-lg">
-                <div className="text-2xl font-bold text-primary">
-                  {applications.filter(app => app.status === 'Offer').length}
+          <div className="card-body p-xl">
+            {/* Export Stats - Bauhaus Grid */}
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-xl">
+              <div className="p-5 bg-navy-light text-white rounded-2xl border border-white/5 relative overflow-hidden group">
+                <div className="relative z-10">
+                  <div className="text-3xl font-bold mb-1">{applications.length}</div>
+                  <div className="text-[10px] font-bold opacity-70 uppercase tracking-widest">Total Pipeline</div>
                 </div>
-                <div className="text-xs text-secondary uppercase tracking-wide">Offers</div>
+                <Icon name="work" size={60} className="absolute -right-4 -bottom-4 opacity-5 group-hover:opacity-10 transition-opacity" />
               </div>
-              <div className="text-center p-md bg-background-light rounded-lg">
-                <div className="text-2xl font-bold text-primary">
-                  {applications.filter(app => app.visaSponsorship).length}
+
+              <div className="p-5 bg-surface-2 rounded-2xl border border-border-light relative overflow-hidden group">
+                <div className="relative z-10">
+                  <div className="text-3xl font-bold text-primary mb-1">
+                    {applications.filter(app => app.status === 'Offer').length}
+                  </div>
+                  <div className="text-[10px] font-bold text-secondary uppercase tracking-widest">Successful Offers</div>
                 </div>
-                <div className="text-xs text-secondary uppercase tracking-wide">Visa Sponsors</div>
+                <Icon name="verified" size={60} className="absolute -right-4 -bottom-4 opacity-5 group-hover:opacity-10 transition-opacity" />
               </div>
-              <div className="text-center p-md bg-background-light rounded-lg">
-                <div className="text-2xl font-bold text-primary">
-                  {applications.length > 0
-                    ? Math.round((applications.filter(app => app.status !== 'Applied').length / applications.length) * 100)
-                    : 0}%
+
+              <div className="p-5 bg-surface-2 rounded-2xl border border-border-light relative overflow-hidden group">
+                <div className="relative z-10">
+                  <div className="text-3xl font-bold text-primary mb-1">
+                    {applications.filter(app => app.visaSponsorship).length}
+                  </div>
+                  <div className="text-[10px] font-bold text-secondary uppercase tracking-widest">Visa Sponsored</div>
                 </div>
-                <div className="text-xs text-secondary uppercase tracking-wide">Response Rate</div>
+                <Icon name="public" size={60} className="absolute -right-4 -bottom-4 opacity-5 group-hover:opacity-10 transition-opacity" />
+              </div>
+
+              <div className="p-5 bg-primary-orange-bg rounded-2xl border border-primary-orange/10 relative overflow-hidden group">
+                <div className="relative z-10">
+                  <div className="text-3xl font-bold text-primary-orange mb-1">
+                    {applications.length > 0
+                      ? Math.round((applications.filter(app => app.status !== 'Applied').length / applications.length) * 100)
+                      : 0}%
+                  </div>
+                  <div className="text-[10px] font-bold text-primary-orange/70 uppercase tracking-widest">Engagement</div>
+                </div>
+                <Icon name="trending_up" size={60} className="absolute -right-4 -bottom-4 opacity-10 group-hover:opacity-20 transition-opacity" />
               </div>
             </div>
 
-            {/* Export Options */}
-            <div className="space-y-lg">
-              {/* Format Selection */}
-              <div>
-                <label className="block text-sm font-medium text-secondary mb-sm">Export Format</label>
-                <div className="flex gap-sm">
-                  <button
-                    onClick={() => setExportFormat('csv')}
-                    className={`btn ${exportFormat === 'csv' ? 'btn-primary' : 'btn-ghost'} btn-sm`}
-                  >
-                    <Icon name="table" size={16} />
-                    CSV
-                  </button>
-                  <button
-                    onClick={() => setExportFormat('json')}
-                    className={`btn ${exportFormat === 'json' ? 'btn-primary' : 'btn-ghost'} btn-sm`}
-                  >
-                    <Icon name="settings" size={16} />
-                    JSON
-                  </button>
+            {/* Export Controls */}
+            <div className="space-y-xl">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-xl">
+                {/* Format Selection */}
+                <div className="form-group">
+                  <label className="form-label">Export Format</label>
+                  <div className="flex bg-surface-2 p-1 rounded-xl border border-border-light">
+                    <button
+                      onClick={() => setExportFormat('csv')}
+                      className={`flex-1 py-2 rounded-lg text-xs font-bold uppercase transition-all flex items-center justify-center gap-2 ${exportFormat === 'csv' ? 'bg-background-white shadow-sm text-primary-orange border border-border-light' : 'text-secondary hover:text-primary'}`}
+                    >
+                      <Icon name="table" size={16} />
+                      CSV (Excel)
+                    </button>
+                    <button
+                      onClick={() => setExportFormat('json')}
+                      className={`flex-1 py-2 rounded-lg text-xs font-bold uppercase transition-all flex items-center justify-center gap-2 ${exportFormat === 'json' ? 'bg-background-white shadow-sm text-primary-orange border border-border-light' : 'text-secondary hover:text-primary'}`}
+                    >
+                      <Icon name="code" size={16} />
+                      JSON (Data)
+                    </button>
+                  </div>
                 </div>
-              </div>
 
-              {/* Scope Selection */}
-              <div>
-                <label className="block text-sm font-medium text-secondary mb-sm">Export Scope</label>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-sm">
-                  <button
-                    onClick={() => setExportScope('all')}
-                    className={`btn ${exportScope === 'all' ? 'btn-primary' : 'btn-ghost'} btn-sm justify-start`}
-                  >
-                    <Icon name="work" size={16} />
-                    All Applications ({applications.length})
-                  </button>
-                  <button
-                    onClick={() => setExportScope('recent')}
-                    className={`btn ${exportScope === 'recent' ? 'btn-primary' : 'btn-ghost'} btn-sm justify-start`}
-                  >
-                    <Icon name="trending-up" size={16} />
-                    Last 30 Days ({applications.filter(app => {
-                      const thirtyDaysAgo = new Date()
-                      thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30)
-                      return new Date(app.dateApplied) >= thirtyDaysAgo
-                    }).length})
-                  </button>
-                  <button
-                    onClick={() => setExportScope('offers')}
-                    className={`btn ${exportScope === 'offers' ? 'btn-primary' : 'btn-ghost'} btn-sm justify-start`}
-                  >
-                    <Icon name="offer" size={16} />
-                    Offers Only ({applications.filter(app => app.status === 'Offer').length})
-                  </button>
-                </div>
-              </div>
-
-              {/* Export Features */}
-              <div className="bg-background-light p-md rounded-lg">
-                <h4 className="font-medium text-primary mb-sm">Export Includes:</h4>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-sm text-sm text-secondary">
-                  <div className="flex items-center gap-sm">
-                    <Icon name="check" size={14} className="text-green-600" />
-                    <span>Company & role information</span>
-                  </div>
-                  <div className="flex items-center gap-sm">
-                    <Icon name="check" size={14} className="text-green-600" />
-                    <span>Application status & dates</span>
-                  </div>
-                  <div className="flex items-center gap-sm">
-                    <Icon name="check" size={14} className="text-green-600" />
-                    <span>Visa sponsorship flags</span>
-                  </div>
-                  <div className="flex items-center gap-sm">
-                    <Icon name="check" size={14} className="text-green-600" />
-                    <span>Notes & additional data</span>
+                {/* Scope Selection */}
+                <div className="form-group">
+                  <label className="form-label">Export Scope</label>
+                  <div className="select-wrapper">
+                    <select
+                      value={exportScope}
+                      onChange={(e) => setExportScope(e.target.value as any)}
+                      className="input"
+                    >
+                      <option value="all">Entire Application History ({applications.length})</option>
+                      <option value="recent">Recent 30 Days Only</option>
+                      <option value="offers">Successful Offers Only</option>
+                    </select>
                   </div>
                 </div>
               </div>
 
-              {/* Export Button */}
-              <div className="flex items-center justify-between pt-md border-t border-border-light">
-                <div className="text-sm text-secondary">
-                  {exportFormat === 'csv' ? 'UTF-8 encoded CSV with BOM' : 'Structured JSON with metadata'}
+              {/* Action Area */}
+              <div className="p-6 bg-surface-2 border border-border-light rounded-2xl flex flex-col sm:flex-row items-center justify-between gap-6">
+                <div className="flex items-start gap-4">
+                  <div className="w-10 h-10 bg-primary-orange/10 rounded-xl flex items-center justify-center text-primary-orange flex-shrink-0 mt-1">
+                    <Icon name="info" size={20} />
+                  </div>
+                  <div>
+                    <h4 className="text-sm font-bold text-primary">Data Integrity Check</h4>
+                    <p className="text-xs text-secondary font-medium leading-relaxed">
+                      Your export will include all companies, roles, status history, and personal notes.
+                      Encrypted with UTF-8 for maximum compatibility.
+                    </p>
+                  </div>
                 </div>
+
                 <button
                   onClick={handleExportData}
                   disabled={isExporting || applications.length === 0}
-                  className="btn btn-primary"
+                  className="btn btn-orange px-8 py-3 h-auto flex flex-col items-center gap-1 shadow-lg shadow-primary-orange/20 min-w-[200px]"
                 >
                   {isExporting ? (
-                    <>
-                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white border-t-transparent mr-2" />
-                      Exporting...
-                    </>
+                    <div className="flex items-center gap-3">
+                      <div className="animate-spin rounded-full h-4 w-4 border-2 border-white/30 border-t-white" />
+                      <span className="font-bold uppercase tracking-tighter text-xs">Processing...</span>
+                    </div>
                   ) : (
                     <>
-                      <Icon name="download" size={16} />
-                      Export {applications.length > 0 ? applications.length : ''} Records
+                      <div className="flex items-center gap-2">
+                        <Icon name="download" size={18} />
+                        <span className="font-bold uppercase tracking-tight">Generate Backup</span>
+                      </div>
+                      <span className="text-[10px] opacity-70 font-medium">Ready for download</span>
                     </>
                   )}
                 </button>
               </div>
 
               {applications.length === 0 && (
-                <div className="text-center p-md bg-yellow-50 border border-yellow-200 rounded-lg mt-md">
-                  <Icon name="warning" size={16} className="text-yellow-600 mb-sm" />
-                  <p className="text-yellow-800 text-sm font-medium">No data to export</p>
-                  <p className="text-yellow-700 text-xs">Add some applications first to create a backup</p>
+                <div className="p-4 bg-yellow-50 border border-yellow-100 rounded-xl flex items-center gap-3">
+                  <Icon name="warning" size={18} className="text-yellow-500" />
+                  <span className="text-xs font-bold text-yellow-800">No data records found to export.</span>
                 </div>
               )}
             </div>
           </div>
         </div>
 
+        {/* Support & Community Section */}
+        <div className="card border border-border-light bg-surface-2 border-dashed">
+          <div className="card-body p-xl text-center">
+            <h4 className="text-sm font-bold text-primary mb-2">Need Help?</h4>
+            <p className="text-xs text-secondary mb-6 max-w-sm mx-auto">Access our documentation or contact the design team for support with your job intelligence pipeline.</p>
+            <div className="flex justify-center gap-4">
+              <button className="btn btn--secondary btn--sm font-bold">Documentation</button>
+              <button className="btn btn--secondary btn--sm font-bold">Feedback</button>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   )

@@ -1,73 +1,130 @@
 /* ========================================
    KRISIS Design Tokens - Colors
+   Refined palette with softer tones
    ======================================== */
 
 :root {
     /* ===== PRIMARY COLORS ===== */
     --primary-orange: #E67E22;
     --primary-orange-light: #F39C12;
-    --primary-orange-bg: #FFF3E0;
+    --primary-orange-dark: #D35400;
+    --primary-orange-bg: #FFF8F0;
+    --primary-orange-bg-rgb: 255, 248, 240;
 
     /* Navy/Dark */
     --navy-dark: #1A1D2E;
     --navy-medium: #2C3E50;
+    --navy-light: #34495E;
 
     /* ===== STATUS COLORS (Semantic) ===== */
     --status-applied: #3498DB;
     --status-phone: #9B59B6;
     --status-technical: #F39C12;
     --status-final: #E67E22;
-    --status-offer: #2ECC71;
+    --status-offer: #27AE60;
     --status-rejected: #E74C3C;
 
     /* Status Aliases */
     --status-info: #3498DB;
-    --status-success: #2ECC71;
+    --status-success: #27AE60;
     --status-warning: #F39C12;
+    --status-danger: #E74C3C;
     --primary-blue: #3498DB;
+    --primary-purple: #9B59B6;
 
     /* ===== BACKGROUND & NEUTRAL COLORS ===== */
-    --background-light: #F8F9FA;
-    --background-white: #FFFFFF;
+    /* Softer whites to prevent eye strain */
+    --background-light: #F7F8FA;
+    --background-white: #FEFEFE;
+    --background-elevated: #FFFFFF;
+    --background-white-rgb: 254, 254, 254;
+
+    /* Surface variants for depth */
+    --surface-1: var(--background-white);
+    --surface-2: #F9FAFB;
+    --surface-3: #F3F4F6;
 
     /* Text Hierarchy */
-    --text-primary: #2C3E50;
-    --text-secondary: #7F8C8D;
-    --text-muted: #95A5A6;
+    --text-primary: #1F2937;
+    --text-secondary: #6B7280;
+    --text-muted: #9CA3AF;
+    --text-disabled: #D1D5DB;
 
     /* Borders */
-    --border-light: #E8EAED;
+    --border-light: #E5E7EB;
     --border-medium: #D1D5DB;
+    --border-focus: var(--primary-orange);
 }
 
-/* Dark mode color overrides */
+/* ========================================
+   DARK MODE
+   ======================================== */
 [data-theme="dark"] {
+    /* Primary colors - slightly brighter for visibility */
     --primary-orange: #F39C12;
     --primary-orange-light: #F5B041;
-    --primary-orange-bg: #3E2723;
+    --primary-orange-dark: #E67E22;
+    --primary-orange-bg: #2D2419;
+    --primary-orange-bg-rgb: 45, 36, 25;
 
-    --navy-dark: #FFFFFF;
-    --navy-medium: #E8EAED;
+    /* Navy inverted */
+    --navy-dark: #F9FAFB;
+    --navy-medium: #E5E7EB;
+    --navy-light: #D1D5DB;
 
-    --status-applied: #5DADE2;
-    --status-phone: #AF7AC5;
-    --status-technical: #F5B041;
-    --status-final: #F39C12;
-    --status-offer: #52BE80;
-    --status-rejected: #EC7063;
+    /* Status - brighter for dark backgrounds */
+    --status-applied: #60A5FA;
+    --status-phone: #C084FC;
+    --status-technical: #FBBF24;
+    --status-final: #F59E0B;
+    --status-offer: #34D399;
+    --status-rejected: #F87171;
 
-    --status-info: #5DADE2;
-    --status-success: #52BE80;
-    --status-warning: #F5B041;
-    --primary-blue: #5DADE2;
+    --status-info: #60A5FA;
+    --status-success: #34D399;
+    --status-warning: #FBBF24;
+    --status-danger: #F87171;
+    --primary-blue: #60A5FA;
+    --primary-purple: #C084FC;
 
-    --background-light: #121212;
-    --background-white: #1E1E1E;
+    /* Backgrounds - nuanced dark with depth */
+    --background-light: #0F0F0F;
+    --background-white: #171717;
+    --background-elevated: #1F1F1F;
+    --background-white-rgb: 23, 23, 23;
 
-    --text-primary: #E8EAED;
-    --text-secondary: #B0B3B8;
-    --text-muted: #8E8E93;
+    /* Surface variants for depth in dark mode */
+    --surface-1: #171717;
+    --surface-2: #1F1F1F;
+    --surface-3: #262626;
 
-    --border-light: #2C2C2E;
-    --border-medium: #3A3A3C;
+    /* Text - slightly off-white for comfort */
+    --text-primary: #F3F4F6;
+    --text-secondary: #9CA3AF;
+    --text-muted: #6B7280;
+    --text-disabled: #4B5563;
+
+    /* Borders - subtle separation */
+    --border-light: #2E2E2E;
+    --border-medium: #404040;
+    --border-focus: var(--primary-orange);
+}
+
+/* ========================================
+   COLOR UTILITY CLASSES
+   ======================================== */
+
+/* Danger/Error color */
+.text-danger {
+    color: var(--status-danger);
+}
+
+/* Success color */
+.text-success {
+    color: var(--status-success);
+}
+
+/* Warning color */
+.text-warning {
+    color: var(--status-warning);
 }

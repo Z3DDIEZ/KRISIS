@@ -116,7 +116,7 @@ function Dashboard() {
         {/* Total Applications - Clickable */}
         <Link to="/applications" className="stat-card group" data-track-section="total-apps">
           <div className="stat-card__icon stat-card__icon--blue">
-            <Icon name="work" size={24} />
+            <Icon name="work" size={20} />
           </div>
           <div className="stat-card__content">
             <div className="stat-card__value">{stats.totalApplications}</div>
@@ -127,7 +127,7 @@ function Dashboard() {
         {/* Interviews */}
         <div className="stat-card" data-track-section="interviews">
           <div className="stat-card__icon stat-card__icon--green">
-            <Icon name="call" size={24} />
+            <Icon name="call" size={20} />
           </div>
           <div className="stat-card__content">
             <div className="stat-card__value">{stats.interviews}</div>
@@ -138,27 +138,24 @@ function Dashboard() {
         {/* Offers */}
         <div className="stat-card" data-track-section="offers">
           <div className="stat-card__icon stat-card__icon--purple">
-            <Icon name="offer" size={24} />
+            <Icon name="offer" size={20} />
           </div>
           <div className="stat-card__content">
             <div className="stat-card__value">{stats.offers || 0}</div>
-            <div className="stat-card__label">Offers</div>
+            <div className="stat-card__label">Offers Received</div>
           </div>
-          {(stats.offers || 0) > 0 && (
-            <div className="absolute -top-1 -right-1 w-3 h-3 bg-purple-500 rounded-full animate-pulse" />
-          )}
         </div>
 
         {/* Success Rate */}
         <div className="stat-card" data-track-section="success-rate">
           <div className="stat-card__icon stat-card__icon--orange">
-            <Icon name="trending-up" size={24} />
+            <Icon name="trending-up" size={20} />
           </div>
           <div className="stat-card__content">
             <div className="stat-card__value">{stats.successRate}%</div>
             <div className="stat-card__label">Success Rate</div>
           </div>
-          <div className="absolute bottom-2 left-2 right-2 h-1 bg-background-light rounded-full overflow-hidden">
+          <div className="absolute bottom-0 left-0 right-0 h-1 bg-surface-3 overflow-hidden">
             <div
               className="h-full bg-gradient-to-r from-primary-orange to-primary-orange-light transition-all duration-1000 ease-out"
               style={{

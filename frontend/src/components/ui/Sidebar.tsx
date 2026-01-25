@@ -168,6 +168,35 @@ function Sidebar({ primaryItems, secondaryItems, isOpen, onClose, isCollapsed, o
           </ul>
         </div>
 
+        {/* Sidebar Footer / Logout */}
+        <div className="sidebar__footer mt-auto border-t border-border-light pt-sm">
+          <button
+            onClick={async () => {
+              try {
+                const { auth } = await import('../../lib/firebase')
+                const { signOut } = await import('firebase/auth')
+                const { toast } = await import('sonner')
+                await signOut(auth)
+                toast.success('Signed out successfully')
+                window.location.href = '/auth'
+              } catch (error) {
+                console.error('Logout error:', error)
+              }
+            }}
+            className="sidebar__item sidebar__item--danger w-full text-left"
+            onMouseEnter={(e) => handleItemHover('Sign Out', e)}
+            onMouseLeave={handleItemLeave}
+            data-track-nav="logout"
+          >
+            <div className="sidebar__item-icon text-red-500">
+              <Icon name="logout" size={20} />
+            </div>
+            {!isCollapsed && (
+              <span className="sidebar__item-label text-red-500 font-bold">Sign Out</span>
+            )}
+          </button>
+        </div>
+
         {/* Tooltip for collapsed state */}
         {isCollapsed && hoveredItem && (
           <div

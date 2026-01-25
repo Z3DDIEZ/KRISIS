@@ -18,6 +18,8 @@
 @import './components/_badges.css';
 @import './components/_inputs.css';
 @import './components/_navigation.css';
+@import './components/_topnav.css';
+@import './components/_forms-modern.css';
 
 /* ===== Legacy Design System (to be phased out) ===== */
 /* Contains remaining styles not yet modularized */
