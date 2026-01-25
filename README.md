@@ -4,53 +4,67 @@
 
 ## 📊 Project Status
 
-### ✅ **Week 1 Complete** - Project Setup & Infrastructure
-- ✅ React 18 + TypeScript + Vite project initialized
-- ✅ Firebase project configured with Auth, Firestore, Hosting
-- ✅ Tailwind CSS and component library set up
-- ✅ ESLint, Prettier, Vitest testing framework configured
-- ✅ CI/CD pipeline with GitHub Actions working
-- ✅ Firebase credentials properly configured
-- ✅ Development server running with real Firebase integration
-- ✅ Testing suite established and passing
+**Current Phase: Month 3 - Analytics & Data Pipeline**
 
-### 🚧 **Week 2 In Progress** - Authentication & Security Foundation
-- 🔄 Firebase Auth implementation (Email + Google OAuth)
-- 🔄 Authentication flows (Sign up, Sign in, Sign out)
-- 🔄 Firestore security rules setup
-- 🔄 User profile management
-- 🔄 Session management and token refresh
+The project is currently in active development, focusing on advanced analytics, data visualization, and UI/UX refinement.
+
+### ✅ Completed Modules
+- **Core Infrastructure**: React 18 + TypeScript + Vite setup, Firebase integration (Auth, Firestore, Hosting).
+- **Authentication**: Robust implementation with Email/Password and Google OAuth, including profile management.
+- **Job Tracking**: Full CRUD capabilities for job applications, status tracking (Applied, Interview, Offer, etc.).
+- **Dashboarding**: Key metrics visualization and application overview.
+- **Analytics**: Initial implementation of charts and data insights.
+- **Settings & Profile**: User preference management and profile editing.
+- **Design System**: Implementation of a comprehensive design system with CSS variables and Tailwind configuration for consistent theming.
+
+### 🚧 In Progress
+- **Advanced AI Integration**: Deepening the Gemini AI features for resume-job fit analysis.
+- **Aesthetic Refactor**: Ongoing UI/UX improvements to meet "Premium" design standards (Glassmorphism, Dark Mode).
+- **Data Export**: Enhancing CSV/JSON export capabilities.
 
 ## 🚀 Features
 
-- **Real-time Application Tracking**: Track job applications with status updates
-- **AI-Powered Analysis**: Get resume-job fit scores and improvement suggestions
-- **Smart Analytics**: Visualize application funnel and success patterns
-- **Automated Workflows**: Follow-up reminders and progress tracking
-- **Data Export**: Export your data in multiple formats
-- **Multi-platform**: Web application with mobile-responsive design
+- **Smart Dashboard**: At-a-glance view of your job search progress and key statistics.
+- **Application Tracking**: Detailed tracking of every application with status updates, notes, and company info.
+- **Analytics Suite**: Visual insights into your application funnel, success rates, and activity over time.
+- **Profile Management**: Manage your professional profile and settings.
+- **Secure Authentication**: Enterprise-grade security using Firebase Auth.
+- **Responsive Design**: Mobile-first architecture ensuring access from any device.
+- **Data Privacy**: Granular security rules ensuring user data isolation.
 
 ## 🛠️ Tech Stack
 
 ### Frontend
-- React 18 + TypeScript
-- Vite (build tool)
-- Tailwind CSS (styling)
-- TanStack Query (data fetching)
-- Zustand (state management)
-- Firebase SDK
+- **Framework**: React 18 + TypeScript
+- **Build Tool**: Vite
+- **Styling**: Tailwind CSS + CSS Variables (Custom Design System)
+- **State Management**: Zustand
+- **Data Fetching**: TanStack Query
+- **Routing**: React Router DOM (v6)
+- **Visualization**: Recharts
 
-### Backend
-- Firebase (Auth, Firestore, Hosting)
-- Cloud Functions (2nd Gen)
-- BigQuery (analytics)
-- Gemini AI API
+### Backend & Infrastructure
+- **Platform**: Google Cloud Platform
+- **BaaS**: Firebase (Auth, Firestore, Hosting, Functions)
+- **AI**: Google Gemini Pro API
+- **Analytics**: BigQuery
 
-### Infrastructure
-- Google Cloud Platform
-- Firebase Hosting
-- Secret Manager
-- Cloud Monitoring
+## 📁 Project Structure
+
+```
+krisis/
+├── docs/                    # Detailed documentation & roadmaps
+├── frontend/                # React frontend application
+│   ├── src/
+│   │   ├── components/      # Reusable UI components
+│   │   ├── pages/           # Application views (Dashboard, Analytics, etc.)
+│   │   ├── styles/          # Design system & global styles
+│   │   ├── lib/             # Utilities & Firebase config
+│   │   └── hooks/           # Custom React hooks
+├── functions/               # Cloud Functions for backend logic
+├── infra/                   # Infrastructure configuration (BigQuery, Rules)
+└── scripts/                 # Utility scripts
+```
 
 ## 🏁 Quick Start
 
@@ -75,174 +89,30 @@ cd frontend
 cp env.example .env
 
 # Edit .env with your Firebase project credentials
-# Required variables:
-# VITE_FIREBASE_API_KEY=your_api_key
-# VITE_FIREBASE_AUTH_DOMAIN=your_project.firebaseapp.com
-# VITE_FIREBASE_PROJECT_ID=your_project_id
-# VITE_FIREBASE_STORAGE_BUCKET=your_project.appspot.com
-# VITE_FIREBASE_MESSAGING_SENDER_ID=your_sender_id
-# VITE_FIREBASE_APP_ID=your_app_id
 ```
 
 ### 3. Development
 ```bash
-# Start development server (runs on http://localhost:5173 or next available port)
+# Start development server
 cd frontend
 npm run dev
 ```
 
 ### 4. Build & Test
 ```bash
-# Run tests
 cd frontend
-npm run test:run
-
-# Build for production
-npm run build
-
-# Preview production build
-npm run preview
+npm run test    # Run tests
+npm run build   # Build for production
 ```
-
-### 5. Deploy (when ready)
-```bash
-# Deploy to Firebase Hosting
-firebase deploy --only hosting
-
-# Deploy Firestore configuration (rules + indexes)
-firebase deploy --only firestore --project krisis-6b464
-
-# Deploy everything
-firebase deploy --project krisis-6b464
-```
-
-### Troubleshooting
-
-#### Firestore Permissions Error
-If you get "Missing or insufficient permissions":
-1. Make sure you're signed in: `firebase login`
-2. Deploy the security rules: `firebase deploy --only firestore:rules --project your-project-id`
-3. Check that your Firebase project ID matches your environment variables
-4. Update `.firebaserc` with your actual project IDs
-
-#### Firebase Project Selection Error
-If you get "Invalid project selection" or "Project not found":
-1. Run `firebase projects:list` to see your actual project IDs
-2. Update `.firebaserc` with your actual Firebase project ID
-3. Update your `.env` file with the correct project ID
-4. Use direct project ID: `firebase deploy --project your-actual-project-id`
-5. Make sure your GitHub secret `FIREBASE_TOKEN` is set with a valid Firebase token
-
-#### 403 Permission Denied
-If you get "Project not found or permission denied":
-1. Verify the project ID is correct: `firebase projects:list`
-2. Check that your Firebase token has access to the project
-3. Make sure you're using the project ID, not the display name
-
-#### Firestore Indexes Parse Error
-If you get "Parse Error in firestore.indexes.json":
-1. The indexes file was empty - it's now fixed with a minimal configuration
-2. If you need custom indexes later, they can be added to `infra/firestore.indexes.json`
-
-#### GitHub Pages 404 Errors
-If assets aren't loading on GitHub Pages:
-1. Check that the build completed successfully in GitHub Actions
-2. Verify the base path in `vite.config.ts` matches your repository name
-3. Make sure GitHub Pages is enabled for your repository
-
-## 📁 Project Structure
-
-```
-krisis/
-├── docs/                    # Documentation (private)
-├── frontend/                # React frontend
-│   ├── src/
-│   │   ├── components/      # Reusable UI components
-│   │   ├── layouts/         # Page layouts
-│   │   ├── lib/            # Utilities & Firebase config
-│   │   ├── pages/          # Page components
-│   │   └── test/           # Test utilities
-│   ├── public/             # Static assets
-│   └── *.config.*          # Build configurations
-├── functions/               # Cloud Functions
-├── infra/                   # Infrastructure configs
-│   ├── bigquery/           # BigQuery schemas
-│   ├── firestore.rules     # Database security rules
-│   └── storage.rules       # Storage security rules
-├── firebase.json           # Firebase configuration
-├── .firebaserc            # Firebase project aliases
-└── package.json           # Root dependencies
-```
-
-## 🔧 Development Scripts
-
-### Frontend
-```bash
-cd frontend
-
-npm run dev          # Start development server
-npm run build        # Build for production
-npm run preview      # Preview production build
-npm run lint         # Run ESLint
-npm run test         # Run tests
-npm run test:ui      # Run tests with UI
-```
-
-### Firebase
-```bash
-firebase deploy              # Deploy all services
-firebase deploy --only hosting  # Deploy only hosting
-firebase serve               # Start local emulators
-```
-
-## 🔐 Security & Privacy
-
-- **Data Isolation**: Each user can only access their own data
-- **AI Privacy**: Analysis requests are processed server-side only
-- **GDPR Compliance**: Data export and deletion capabilities
-- **Secure Authentication**: Firebase Auth with email/password and Google OAuth
-
-## 📊 Analytics & Monitoring
-
-- **Cloud Logging**: Comprehensive logging for debugging
-- **Cloud Monitoring**: Performance metrics and alerting
-- **BigQuery**: Advanced analytics and reporting
-- **Error Reporting**: Automatic error tracking
 
 ## 🚀 Deployment
 
-### Firebase Project
-- **Project**: `krisis-6b464` Firebase project (single project setup)
+The project is configured for deployment via Firebase Hosting and GitHub Actions.
 
-### Project Configuration
-Your `.firebaserc` file should be configured as:
-```json
-{
-  "projects": {
-    "default": "krisis-6b464"
-  }
-}
-```
-
-### Finding Your Project ID
-To find your actual Firebase project ID:
 ```bash
-firebase projects:list
+# Manual deployment
+firebase deploy --only hosting
 ```
-Or check the URL in your Firebase Console: `https://console.firebase.google.com/project/YOUR_PROJECT_ID/...`
-
-### CI/CD
-- GitHub Actions for automated testing and deployment
-- Separate pipelines for dev/staging/production
-- Automated testing on pull requests
-
-## 🤝 Contributing
-
-1. Fork the repository
-2. Create a feature branch: `git checkout -b feature/your-feature`
-3. Commit changes: `git commit -am 'Add your feature'`
-4. Push to branch: `git push origin feature/your-feature`
-5. Create a Pull Request
 
 ## 📝 License
 
@@ -251,17 +121,5 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 ## 🙋 Support
 
 For questions or support:
-- Create an issue in the repository
 - Check the documentation in the `docs/` folder
-- Review the development roadmap
-
-## 🎯 Roadmap
-
-- **Phase 1** (Current): Core application tracking and AI analysis
-- **Phase 2**: Advanced analytics and automation
-- **Phase 3**: Mobile apps and enterprise features
-- **Phase 4**: Multi-tenant architecture and scaling
-
----
-
-**Built with ❤️ using Google Cloud Platform**
+- Review the `docs/development-roadmap.md` for future plans
