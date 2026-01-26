@@ -6,7 +6,9 @@
     "functions"
   ],
   "devDependencies": {
-    "@types/mocha": "^10.0.10"
+    "@types/mocha": "^10.0.10",
+    "esbuild": "^0.27.2",
+    "undici": "^7.19.1"
   },
   "dependencies": {
     "jspdf": "^4.0.0",
