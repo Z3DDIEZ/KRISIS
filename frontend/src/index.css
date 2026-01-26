@@ -7,19 +7,21 @@
 @layer base {
   html {
     font-family: 'Inter', system-ui, sans-serif;
+    color: var(--midnight);
+    background-color: var(--signal-white);
   }
 }
 
 @layer components {
-
-
   .application-card {
     background: var(--background-white) !important;
-    border: 1px solid var(--border-light) !important;
+    border: 1px solid var(--industrial-gray) !important;
+    box-shadow: var(--shadow-sm) !important;
   }
 
   .company-name {
-    color: var(--text-primary) !important;
+    color: var(--midnight) !important;
+    font-weight: var(--font-bold);
   }
 
   .position-title {
@@ -30,7 +32,8 @@
   .card,
   [class*="card"] {
     background: var(--background-white) !important;
-    border-color: var(--border-light) !important;
+    border: var(--border-industrial) !important;
+    box-shadow: var(--shadow-card) !important;
   }
 
   /* Auth Page Enhancements */
@@ -42,11 +45,11 @@
     letter-spacing: 0.1em;
     color: var(--text-muted);
     margin-bottom: 0.5rem;
-    transition: color 0.2s ease;
+    transition: color 0.15s ease;
   }
 
   .auth-input-container:focus-within .auth-label {
-    color: var(--primary-500);
+    color: var(--krisis-orange);
   }
 
   .bauhaus-circle-float {
@@ -69,8 +72,8 @@
     appearance: none;
     width: 16px;
     height: 16px;
-    border: 2px solid var(--border-light);
-    border-radius: 4px;
+    border: 2px solid var(--midnight);
+    border-radius: 0;
     background: transparent;
     cursor: pointer;
     position: relative;
@@ -78,8 +81,8 @@
   }
 
   .auth-checkbox:checked {
-    background: var(--primary-500);
-    border-color: var(--primary-500);
+    background: var(--krisis-orange);
+    border-color: var(--krisis-orange);
   }
 
   .auth-checkbox:checked::after {
@@ -95,18 +98,18 @@
 
   /* Premium Visual Touches */
   .swiss-grid-bg {
-    background-image: radial-gradient(var(--border-light) 1px, transparent 1px);
+    background-image: radial-gradient(var(--industrial-gray) 1px, transparent 1px);
     background-size: 32px 32px;
   }
 
   .asymmetric-header {
     position: relative;
     padding-left: 2rem;
-    border-left: 8px solid var(--primary-500);
+    border-left: 8px solid var(--krisis-orange);
   }
 
   .text-outline {
-    -webkit-text-stroke: 1px var(--primary-500);
+    -webkit-text-stroke: 1px var(--krisis-orange);
     color: transparent;
   }
 
@@ -116,7 +119,7 @@
 
   .hover-elevate:hover {
     transform: translateY(-4px) translateX(4px);
-    box-shadow: -8px 8px 0px var(--primary-500/10);
+    box-shadow: -8px 8px 0px rgba(230, 126, 34, 0.1);
   }
 
   .animate-float-slow {

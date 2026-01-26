@@ -107,6 +107,7 @@ function Sidebar({ primaryItems, secondaryItems, isOpen, onClose, isCollapsed }:
                   to={item.href}
                   onClick={onClose}
                   className={`sidebar__item ${isActive(item.href) ? 'sidebar__item--active' : ''}`}
+                  style={isActive(item.href) ? { borderLeft: '4px solid var(--krisis-orange)', backgroundColor: 'rgba(230, 126, 34, 0.05)' } : {}}
                   onMouseEnter={(e) => handleItemHover(item.name, e)}
                   onMouseLeave={handleItemLeave}
                   aria-current={isActive(item.href) ? 'page' : undefined}
@@ -132,6 +133,7 @@ function Sidebar({ primaryItems, secondaryItems, isOpen, onClose, isCollapsed }:
                   to={item.href}
                   onClick={onClose}
                   className={`sidebar__item ${isActive(item.href) ? 'sidebar__item--active' : ''}`}
+                  style={isActive(item.href) ? { borderLeft: '4px solid var(--krisis-orange)', backgroundColor: 'rgba(230, 126, 34, 0.05)' } : {}}
                   onMouseEnter={(e) => handleItemHover(item.name, e)}
                   onMouseLeave={handleItemLeave}
                   aria-current={isActive(item.href) ? 'page' : undefined}

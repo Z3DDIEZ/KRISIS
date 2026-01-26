@@ -26,7 +26,7 @@ const StatCard: React.FC<StatCardProps> = ({
         <div className={`stat-card ${isUrgent ? 'stat-card--urgent' : ''} ${className}`}>
             <div className="flex justify-between items-start mb-2">
                 <span className="stat-label">{label}</span>
-                <div className={`${isUrgent ? 'text-error' : 'text-primary-500'}`}>
+                <div className={`${isUrgent ? 'text-rejected' : 'text-krisis-orange'}`}>
                     <Icon name={isUrgent ? 'warning' : icon} size={isUrgent ? 20 : 24} />
                 </div>
             </div>

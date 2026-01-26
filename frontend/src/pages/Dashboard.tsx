@@ -164,7 +164,7 @@ function Dashboard() {
       </header>
 
       {/* Stats Grid - Asymmetric Pattern (Decision Driven) */}
-      <AsymmetricGrid>
+      <AsymmetricGrid pattern="featured">
         <AsymmetricCard size="large">
           <StatCard
             label="Pipeline Volume"

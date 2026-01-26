@@ -3,7 +3,7 @@
 // Global Styles Bridge
 :root {
     // Ensuring SCSS logic respects CSS variables
-    --spacing-base: #{$spacing-base};
+    --spacing-base: #{$unit};
 }
 
 .asymmetric-page-wrapper {

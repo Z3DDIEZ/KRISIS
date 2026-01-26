@@ -13,8 +13,14 @@ export const AsymmetricGrid: React.FC<AsymmetricGridProps> = ({
     pattern = 'mixed',
     className = ''
 }) => {
+    const patternClasses = {
+        featured: 'grid grid-cols-1 md:grid-cols-[2fr_1fr] gap-spacing-lg',
+        analytics: 'grid grid-cols-1 md:grid-cols-12 gap-spacing-md',
+        mixed: 'asymmetric-grid asymmetric-grid--mixed'
+    };
+
     return (
-        <div className={`asymmetric-grid asymmetric-grid--${pattern} ${className}`}>
+        <div className={`${patternClasses[pattern]} ${className}`}>
             {children}
         </div>
     );
@@ -32,10 +38,10 @@ export const AsymmetricCard: React.FC<AsymmetricCardProps> = ({
     className = ''
 }) => {
     const sizeClasses = {
-        small: 'grid-span-3',
-        medium: 'grid-span-6',
-        large: 'grid-span-8',
-        full: 'grid-span-12'
+        small: 'md:col-span-3',
+        medium: 'md:col-span-6',
+        large: 'md:col-span-8',
+        full: 'md:col-span-12'
     };
 
     return (
