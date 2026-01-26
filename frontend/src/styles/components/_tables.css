@@ -1,0 +1,112 @@
+/* ========================================
+   KRISIS Components - Data Tables
+   Swiss Grid Precision
+   ======================================== */
+
+.table-container {
+    width: 100%;
+    overflow-x: auto;
+}
+
+.table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+}
+
+.table thead th {
+    font-size: 12px;
+    text-transform: uppercase;
+    color: var(--gray-500);
+    font-weight: 700;
+    letter-spacing: var(--tracking-wide);
+    padding: var(--spacing-4) var(--spacing-4);
+    border-bottom: 2px solid var(--border);
+    white-space: nowrap;
+}
+
+.table tbody tr {
+    height: 64px;
+    border-bottom: 1px solid var(--border);
+    transition: background-color var(--duration-fast) var(--ease-standard);
+}
+
+.table tbody tr:hover {
+    background-color: var(--gray-50);
+}
+
+[data-theme="dark"] .table tbody tr:hover {
+    background-color: var(--gray-800);
+}
+
+.table td {
+    padding: 0 var(--spacing-4);
+    vertical-align: middle;
+}
+
+/* Column Width Asymmetry */
+.table th:nth-child(2),
+.table td:nth-child(2) {
+    width: 40%;
+}
+
+/* Company */
+.table th:nth-child(3),
+.table td:nth-child(3) {
+    width: 25%;
+}
+
+/* Position */
+.table th:nth-child(4),
+.table td:nth-child(4) {
+    width: 15%;
+}
+
+/* Status */
+.table th:nth-child(5),
+.table td:nth-child(5) {
+    width: 10%;
+}
+
+/* Date */
+.table th:nth-child(6),
+.table td:nth-child(6) {
+    width: 10%;
+}
+
+/* Actions */
+
+.table__company {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-3);
+}
+
+.table__logo {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 1px solid var(--border);
+    background: var(--bg-primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    color: var(--primary-500);
+    flex-shrink: 0;
+}
+
+.table__company-name {
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+.table__role {
+    color: var(--text-secondary);
+    font-weight: 500;
+}
+
+.table__date {
+    font-size: var(--text-xs);
+    color: var(--text-muted);
+}

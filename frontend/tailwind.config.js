@@ -8,97 +8,82 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        sans: ['var(--font-primary)', 'Inter', 'system-ui', 'sans-serif'],
-        display: ['var(--font-display)', 'Inter', 'system-ui', 'sans-serif'],
-        mono: ['var(--font-mono)', 'monospace'],
+        sans: ['"Inter"', 'system-ui', 'sans-serif'],
+        display: ['"Inter"', 'system-ui', 'sans-serif'],
+        mono: ['"JetBrains Mono"', '"Fira Code"', 'monospace'],
       },
       colors: {
-        // Brand & System Colors (mapped to 50-900 scale)
         primary: {
-          50: 'var(--primary-50)',
-          100: 'var(--primary-100)',
-          200: 'var(--primary-200)',
-          300: 'var(--primary-300)',
-          400: 'var(--primary-400)',
-          500: 'var(--primary-500)',
-          600: 'var(--primary-600)',
-          700: 'var(--primary-700)',
-          800: 'var(--primary-800)',
-          900: 'var(--primary-900)',
+          50: '#FEF3E7',
+          100: '#FCE3C5',
+          200: '#FAD0A3',
+          300: '#F8BD81',
+          400: '#F6AA5F',
+          500: '#E67E22', // Base brand color
+          600: '#CA6C1E',
+          700: '#AE5A1A',
+          800: '#924816',
+          900: '#763612',
         },
         gray: {
-          50: 'var(--gray-50)',
-          100: 'var(--gray-100)',
-          200: 'var(--gray-200)',
-          300: 'var(--gray-300)',
-          400: 'var(--gray-400)',
-          500: 'var(--gray-500)',
-          600: 'var(--gray-600)',
-          700: 'var(--gray-700)',
-          800: 'var(--gray-800)',
-          900: 'var(--gray-900)',
+          50: '#FAFAFA',
+          100: '#F5F5F5',
+          200: '#E5E5E5',
+          300: '#D4D4D4',
+          400: '#A3A3A3',
+          500: '#737373',
+          600: '#525252',
+          700: '#404040',
+          800: '#262626',
+          900: '#171717',
         },
-        // Semantic aliases
-        success: 'var(--success)',
-        warning: 'var(--warning)',
-        error: 'var(--error)',
-        info: 'var(--info)',
-
-        // Navigation / Theme
-        background: 'var(--background-light)',
-        surface: {
-          1: 'var(--surface-1)',
-          2: 'var(--surface-2)',
-          3: 'var(--surface-3)',
-        },
-        'text-primary': 'var(--text-primary)',
-        'text-secondary': 'var(--text-secondary)',
-        'text-muted': 'var(--text-muted)',
-        'border-primary': 'var(--border-light)',
+        success: '#10B981',
+        warning: '#F59E0B',
+        error: '#EF4444',
+        info: '#3B82F6',
       },
       spacing: {
-        '1': 'var(--spacing-1)',
-        '2': 'var(--spacing-2)',
-        '3': 'var(--spacing-3)',
-        '4': 'var(--spacing-4)',
-        '5': 'var(--spacing-5)',
-        '6': 'var(--spacing-6)',
-        '8': 'var(--spacing-8)',
+        '1': '0.5rem',   // 8px
+        '2': '1rem',     // 16px
+        '3': '1.5rem',   // 24px
+        '4': '2rem',     // 32px
+        '5': '2.5rem',   // 40px
+        '6': '3rem',     // 48px
+        '8': '4rem',     // 64px
       },
       fontSize: {
-        'xs': ['var(--text-xs)', { lineHeight: '1rem', letterSpacing: 'var(--tracking-wide)' }],
-        'sm': ['var(--text-sm)', { lineHeight: '1.25rem', letterSpacing: 'var(--tracking-normal)' }],
-        'base': ['var(--text-base)', { lineHeight: '1.5rem', letterSpacing: 'var(--tracking-normal)' }],
-        'lg': ['var(--text-lg)', { lineHeight: '1.75rem', letterSpacing: 'var(--tracking-tight)' }],
-        'xl': ['var(--text-xl)', { lineHeight: '2rem', letterSpacing: 'var(--tracking-tight)' }],
-        '2xl': ['var(--text-2xl)', { lineHeight: '2.25rem', letterSpacing: 'var(--tracking-tight)' }],
-        '3xl': ['var(--text-3xl)', { lineHeight: '2.5rem', letterSpacing: 'var(--tracking-tight)' }],
-        '4xl': ['var(--text-4xl)', { lineHeight: '3rem', letterSpacing: 'var(--tracking-tight)' }],
+        'xs': ['0.64rem', { lineHeight: '1.2', letterSpacing: '0.025em' }],   // metadata
+        'sm': ['0.8rem', { lineHeight: '1.2', letterSpacing: '0.025em' }],    // labels
+        'base': ['1rem', { lineHeight: '1.6', letterSpacing: '0' }],           // body
+        'lg': ['1.25rem', { lineHeight: '1.2', letterSpacing: '-0.025em' }],   // subheadings
+        'xl': ['1.563rem', { lineHeight: '1.2', letterSpacing: '-0.025em' }],  // headings
+        '2xl': ['1.953rem', { lineHeight: '1.2', letterSpacing: '-0.025em' }], // page titles
+        '3xl': ['2.441rem', { lineHeight: '1.2', letterSpacing: '-0.025em' }], // display/hero
       },
       borderRadius: {
-        'sm': 'var(--radius-sm)',
-        'md': 'var(--radius-md)',
-        'lg': 'var(--radius-lg)',
-        'xl': 'var(--radius-xl)',
-        'full': 'var(--radius-full)',
+        'sm': '0.25rem',  // 4px
+        'md': '0.5rem',   // 8px
+        'lg': '0.75rem',  // 12px
+        'xl': '1rem',     // 16px
+        'full': '9999px',
       },
       boxShadow: {
-        'sm': 'var(--shadow-sm)',
-        'md': 'var(--shadow-md)',
-        'lg': 'var(--shadow-lg)',
-        'xl': 'var(--shadow-xl)',
-        '2xl': 'var(--shadow-2xl)',
-        'orange': 'var(--shadow-orange)',
+        'sm': '0 1px 2px 0 rgba(0, 0, 0, 0.05)',
+        'md': '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
+        'lg': '0 10px 15px -3px rgba(0, 0, 0, 0.1)',
+        'xl': '0 20px 25px -5px rgba(0, 0, 0, 0.1)',
+        '2xl': '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
+        'orange': '0 0 0 3px rgba(230, 126, 34, 0.2)',
       },
       transitionTimingFunction: {
-        'standard': 'var(--ease-standard)',
-        'decelerate': 'var(--ease-decelerate)',
-        'accelerate': 'var(--ease-accelerate)',
+        'standard': 'cubic-bezier(0.4, 0.0, 0.2, 1)',
+        'decelerate': 'cubic-bezier(0.0, 0.0, 0.2, 1)',
+        'accelerate': 'cubic-bezier(0.4, 0.0, 1, 1)',
       },
       transitionDuration: {
-        'fast': 'var(--duration-fast)',
-        'base': 'var(--duration-base)',
-        'slow': 'var(--duration-slow)',
+        'fast': '150ms',
+        'base': '250ms',
+        'slow': '350ms',
       },
     },
   },

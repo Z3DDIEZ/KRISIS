@@ -1878,9 +1878,7 @@ select {
 }
 
 /* Force badge backgrounds */
-.badge {
-  /* Badges keep their semantic colors, just ensure text is visible */
-}
+/* Badges keep their semantic colors, just ensure text is visible */
 
 /* If you have a header/navbar */
 header,
@@ -1992,12 +1990,75 @@ body {
   overflow-wrap: break-word;
 }
 
-/* Prevent text overlap */
-.company-name,
-.company-info,
-.position-title,
-.stat-value,
-.stat-label,
+/* Spacing Utilities - 8px based */
+.gap-spacing-0-5 {
+  gap: var(--spacing-0-5);
+}
+
+.gap-spacing-1 {
+  gap: var(--spacing-1);
+}
+
+.gap-spacing-2 {
+  gap: var(--spacing-2);
+}
+
+.gap-spacing-3 {
+  gap: var(--spacing-3);
+}
+
+.gap-spacing-4 {
+  gap: var(--spacing-4);
+}
+
+.gap-spacing-6 {
+  gap: var(--spacing-6);
+}
+
+.gap-spacing-8 {
+  gap: var(--spacing-8);
+}
+
+.p-spacing-1 {
+  padding: var(--spacing-1);
+}
+
+.p-spacing-2 {
+  padding: var(--spacing-2);
+}
+
+.p-spacing-3 {
+  padding: var(--spacing-3);
+}
+
+.p-spacing-4 {
+  padding: var(--spacing-4);
+}
+
+.mb-spacing-1 {
+  margin-bottom: var(--spacing-1);
+}
+
+.mb-spacing-2 {
+  margin-bottom: var(--spacing-2);
+}
+
+.mb-spacing-3 {
+  margin-bottom: var(--spacing-3);
+}
+
+.mb-spacing-4 {
+  margin-bottom: var(--spacing-4);
+}
+
+.mb-spacing-5 {
+  margin-bottom: 2.5rem;
+}
+
+.mb-spacing-6 {
+  margin-bottom: var(--spacing-6);
+}
+
 .card-title {
   word-wrap: break-word;
   overflow-wrap: break-word;

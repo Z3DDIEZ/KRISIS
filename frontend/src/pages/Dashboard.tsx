@@ -5,6 +5,8 @@ import { collection, query, orderBy, onSnapshot } from 'firebase/firestore'
 import { auth, db } from '../lib/firebase'
 import { formatDateForDisplay } from '../lib/dateUtils'
 import Icon from '../components/ui/Icon'
+import StatCard from '../components/ui/StatCard'
+import { AsymmetricGrid, AsymmetricCard } from '../components/ui/AsymmetricGrid'
 
 interface Application {
   id: string
@@ -42,7 +44,6 @@ function Dashboard() {
       return
     }
 
-    // Fetch all applications for dashboard overview
     const q = query(
       collection(db, `users/${user.uid}/applications`),
       orderBy('dateApplied', 'desc')
@@ -59,26 +60,23 @@ function Dashboard() {
         apps.push(app)
         totalApps++
 
-        // Count interviews (Phone Screen, Technical Interview, Final Round)
         if (['Phone Screen', 'Technical Interview', 'Final Round'].includes(app.status)) {
           interviews++
         }
 
-        // Count offers
         if (app.status === 'Offer') {
           offers++
         }
       })
 
-      // Calculate success rate (offers / total applications)
       const successRate = totalApps > 0 ? Math.round((offers / totalApps) * 100) : 0
 
       setApplications(apps)
       setStats({
         totalApplications: totalApps,
         interviews,
-        offers, // Fixed: Now properly includes offers count
-        aiAnalyses: 0, // Will be updated when AI analysis is implemented
+        offers,
+        aiAnalyses: 0,
         successRate
       })
       setIsLoading(false)
@@ -90,7 +88,7 @@ function Dashboard() {
   if (loading || isLoading) {
     return (
       <div className="flex items-center justify-center min-h-64">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-500"></div>
       </div>
     )
   }
@@ -98,17 +96,17 @@ function Dashboard() {
   if (!user) {
     return (
       <div className="text-center py-12">
-        <p className="text-gray-500">Please sign in to view your dashboard.</p>
+        <p className="text-secondary">Please sign in to view your dashboard.</p>
       </div>
     )
   }
 
   return (
-    <div className="animate-fade-in swiss-grid-bg min-h-screen p-8">
-      <header className="page-header mb-16 relative">
-        <div className="absolute -top-12 -left-12 w-48 h-48 bg-primary-500/5 rounded-full blur-3xl" />
+    <div className="animate-fade-in min-h-screen p-spacing-4 flex flex-col gap-spacing-6">
+      <header className="page-header relative">
+        <div className="absolute -top-spacing-6 -left-spacing-6 w-48 h-48 bg-primary-500/5 rounded-full blur-3xl" />
         <div className="asymmetric-header">
-          <h1 className="text-5xl font-black text-primary tracking-tighter uppercase leading-none mb-4">
+          <h1 className="text-4xl lg:text-5xl font-black text-primary tracking-tighter uppercase leading-none mb-spacing-2">
             Intelligence <br />
             <span className="text-outline">Dashboard</span>
           </h1>
@@ -118,31 +116,48 @@ function Dashboard() {
         </div>
       </header>
 
-      {/* Stats Grid */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-8 mb-16 relative">
-        {[
-          { label: 'Total pipeline', value: stats.totalApplications, icon: 'work', change: '12% increase' },
-          { label: 'Active Interviews', value: stats.interviews, icon: 'person', change: '4 new items' },
-          { label: 'Secured Offers', value: stats.offers, icon: 'check', change: 'High velocity' },
-          { label: 'Success Quotient', value: `${stats.successRate}%`, icon: 'trending-up', change: 'Optimizing flow' }
-        ].map((stat, i) => (
-          <div key={i} className="stat-card group hover-elevate bg-white/80 backdrop-blur-sm border-2 border-transparent hover:border-primary-500/20">
-            <div className="flex justify-between items-start mb-6">
-              <span className="text-[10px] font-black text-muted uppercase tracking-[0.2em]">{stat.label}</span>
-              <div className="bezel-icon text-muted group-hover:bg-primary-500 group-hover:text-white transition-all">
-                <Icon name={stat.icon} size={14} />
-              </div>
-            </div>
-            <div className="text-5xl font-black text-primary mb-2 leading-none tracking-tighter">{stat.value}</div>
-            <div className="text-[10px] font-bold text-primary-500 uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-opacity">
-              {stat.change}
-            </div>
-          </div>
-        ))}
-      </div>
+      {/* Stats Grid - Asymmetric Pattern */}
+      <AsymmetricGrid>
+        <AsymmetricCard size="large">
+          <StatCard
+            label="Total pipeline"
+            value={stats.totalApplications}
+            icon="work"
+            change="12% increase"
+            trend="up"
+          />
+        </AsymmetricCard>
+        <AsymmetricCard size="small">
+          <StatCard
+            label="Active Interviews"
+            value={stats.interviews}
+            icon="person"
+            change="4 new items"
+            trend="up"
+          />
+        </AsymmetricCard>
+        <AsymmetricCard size="small">
+          <StatCard
+            label="Secured Offers"
+            value={stats.offers}
+            icon="check"
+            change="High velocity"
+            trend="up"
+          />
+        </AsymmetricCard>
+        <AsymmetricCard size="large">
+          <StatCard
+            label="Success Quotient"
+            value={`${stats.successRate}%`}
+            icon="trending-up"
+            change="Optimizing flow"
+            trend="neutral"
+          />
+        </AsymmetricCard>
+      </AsymmetricGrid>
 
       <div className="card">
-        <div className="px-6 py-5 border-b border-border-light flex justify-between items-center bg-surface-2/50">
+        <div className="px-6 py-5 border-b border-border-light flex justify-between items-center">
           <h3 className="text-xs font-black text-muted uppercase tracking-widest">Recent Activity</h3>
           <Link to="/applications/new" className="text-[11px] font-black text-primary-500 uppercase tracking-widest hover:text-primary-600 transition-colors">
             Add Entry +
@@ -162,14 +177,14 @@ function Dashboard() {
               </Link>
             </div>
           ) : (
-            <div className="divide-y divide-border-light">
+            <div className="divide-y divide-border">
               {applications.slice(0, 10).map((application) => (
                 <div
                   key={application.id}
-                  className="flex items-center justify-between p-6 hover:bg-surface-2 transition-colors"
+                  className="flex items-center justify-between p-6 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
                 >
                   <div className="flex items-center gap-4">
-                    <div className="w-12 h-12 bg-surface-contrast text-text-on-contrast rounded flex items-center justify-center font-black text-xl">
+                    <div className="w-12 h-12 bg-gray-900 text-white rounded flex items-center justify-center font-black text-xl">
                       {application.company.charAt(0)}
                     </div>
                     <div>
@@ -202,12 +217,13 @@ function Dashboard() {
                 </div>
               ))}
 
-              <div className="p-6 bg-surface-2/30 text-center">
+              <div className="p-6 bg-gray-50/50 dark:bg-gray-800/50 text-center">
                 <Link
                   to="/applications"
-                  className="text-xs font-black text-muted uppercase tracking-widest hover:text-primary transition-colors"
+                  className="text-xs font-black text-muted uppercase tracking-widest hover:text-primary transition-colors flex items-center justify-center gap-2"
                 >
-                  Inspect Full Pipeline ({applications.length} items) →
+                  Inspect Full Pipeline ({applications.length} items)
+                  <Icon name="arrow-forward" size={14} />
                 </Link>
               </div>
             </div>

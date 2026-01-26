@@ -14,6 +14,7 @@ function AppRoutes() {
       <Routes>
         <Route path="/" element={<Dashboard />} />
         <Route path="/applications" element={<Applications />} />
+        <Route path="/applications/new" element={<ApplicationDetail />} />
         <Route path="/applications/:id" element={<ApplicationDetail />} />
         <Route path="/analytics" element={<Analytics />} />
         <Route path="/settings" element={<Settings />} />

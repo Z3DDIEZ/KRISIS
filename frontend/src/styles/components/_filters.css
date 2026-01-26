@@ -1,0 +1,86 @@
+/* ========================================
+   KRISIS Components - Search & Filter Bar
+   Sticky Pattern
+   ======================================== */
+
+.filter-bar {
+    position: sticky;
+    top: 64px;
+    /* Directly below top navbar */
+    z-index: 20;
+    background: var(--bg-secondary);
+    padding: var(--spacing-4);
+    box-shadow: var(--shadow-md);
+    margin-bottom: var(--spacing-6);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-4);
+}
+
+.filter-bar__search {
+    width: 100%;
+    height: 48px;
+    background: var(--gray-50);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: 0 var(--spacing-4);
+    font-size: var(--text-base);
+    color: var(--text-primary);
+    transition: all var(--duration-fast) var(--ease-standard);
+}
+
+[data-theme="dark"] .filter-bar__search {
+    background: var(--gray-900);
+}
+
+.filter-bar__search:focus {
+    outline: none;
+    border-color: var(--primary-500);
+    background: var(--bg-secondary);
+    box-shadow: var(--shadow-orange);
+}
+
+.filter-bar__controls {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--spacing-2);
+}
+
+.filter-button {
+    height: 40px;
+    padding: 0 var(--spacing-3);
+    background: var(--bg-secondary);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    font-size: var(--text-sm);
+    font-weight: 600;
+    color: var(--text-secondary);
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-2);
+    cursor: pointer;
+    transition: all var(--duration-fast) var(--ease-standard);
+}
+
+.filter-button:hover {
+    border-color: var(--primary-500);
+    color: var(--text-primary);
+    background: var(--gray-50);
+}
+
+.filter-button--active {
+    background: var(--primary-50);
+    border-color: var(--primary-500);
+    color: var(--primary-600);
+}
+
+.filter-count {
+    margin-top: var(--spacing-2);
+    font-size: var(--text-xs);
+    color: var(--text-muted);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-wide);
+}

@@ -2,6 +2,7 @@ import { useAuthState } from 'react-firebase-hooks/auth'
 import { auth } from '../lib/firebase'
 import AuthPage from '../pages/AuthPage'
 import MainLayout from './MainLayout'
+import Icon from '../components/ui/Icon'
 import LoadingSpinner from '../components/ui/LoadingSpinner'
 
 interface AuthLayoutProps {
@@ -11,7 +12,7 @@ interface AuthLayoutProps {
 function AuthLayout({ children }: AuthLayoutProps) {
   // Check if Firebase is properly configured
   const isFirebaseConfigured = import.meta.env.VITE_FIREBASE_API_KEY &&
-                               import.meta.env.VITE_FIREBASE_API_KEY !== 'demo-api-key'
+    import.meta.env.VITE_FIREBASE_API_KEY !== 'demo-api-key'
 
   // If Firebase is not configured, show demo mode
   if (!isFirebaseConfigured) {
@@ -20,8 +21,8 @@ function AuthLayout({ children }: AuthLayoutProps) {
         <div className="max-w-4xl mx-auto">
           <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-6 mb-8">
             <div className="flex">
-              <div className="flex-shrink-0">
-                ⚠️
+              <div className="flex-shrink-0 text-yellow-600">
+                <Icon name="warning" size={20} />
               </div>
               <div className="ml-3">
                 <h3 className="text-sm font-medium text-yellow-800">

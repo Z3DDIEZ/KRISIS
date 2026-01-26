@@ -83,20 +83,17 @@ function Sidebar({ primaryItems, secondaryItems, isOpen, onClose, isCollapsed }:
         aria-label="Main navigation"
       >
         {/* Sidebar Header */}
-        <div className="sidebar__header px-6 flex items-center justify-between">
-          {!isCollapsed && (
-            <div className="sidebar__logo flex items-center gap-3">
-              <div className="sidebar__logo-icon bg-surface-contrast text-text-on-contrast w-10 h-10 rounded flex items-center justify-center shadow-lg">
+        <div className="sidebar__header">
+          {!isCollapsed ? (
+            <div className="sidebar__logo flex items-center">
+              <div className="sidebar__logo-icon">
                 <Icon name="work" size={20} />
               </div>
-              <span className="sidebar__logo-text font-black text-primary tracking-tighter text-xl">KRISIS</span>
+              <span className="sidebar__logo-text">KRISIS</span>
             </div>
-          )}
-          {isCollapsed && (
-            <div className="flex justify-center w-full">
-              <div className="sidebar__logo-icon bg-surface-contrast text-text-on-contrast w-10 h-10 rounded flex items-center justify-center shadow-lg">
-                <Icon name="work" size={20} />
-              </div>
+          ) : (
+            <div className="sidebar__logo-icon">
+              <Icon name="work" size={20} />
             </div>
           )}
         </div>

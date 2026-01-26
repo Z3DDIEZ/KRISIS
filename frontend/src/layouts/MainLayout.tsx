@@ -8,7 +8,6 @@ interface MainLayoutProps {
   children: React.ReactNode
 }
 
-// Search context for global search functionality
 interface SearchContextType {
   searchQuery: string
   setSearchQuery: (query: string) => void
@@ -27,7 +26,16 @@ function MainLayout({ children }: MainLayoutProps) {
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
 
-  // Initialize sidebar state from localStorage
+  const getLayoutPattern = () => {
+    const path = location.pathname;
+    if (path === '/settings' || path === '/profile') return 'anchored-nav';
+    // Use power-sidebar for all application paths to ensure consistent grid structure
+    if (path.startsWith('/applications')) return 'power-sidebar';
+    return 'power-sidebar';
+  }
+
+  const layoutPattern = getLayoutPattern();
+
   useEffect(() => {
     const savedState = localStorage.getItem('sidebar-state')
     if (savedState === 'collapsed' || savedState === 'expanded') {
@@ -35,7 +43,6 @@ function MainLayout({ children }: MainLayoutProps) {
     }
   }, [])
 
-  // Close mobile sidebar on route change
   useEffect(() => {
     setMobileSidebarOpen(false)
   }, [location.pathname])
@@ -61,28 +68,24 @@ function MainLayout({ children }: MainLayoutProps) {
   return (
     <SearchContext.Provider value={{ searchQuery, setSearchQuery }}>
       <div
-        className="layout layout--dual-nav"
+        className={`layout layout--${layoutPattern}`}
         data-sidebar-state={sidebarState}
         data-page={location.pathname}
       >
-        {/* Skip Link for Accessibility */}
         <a href="#main-content" className="skip-link" data-track-action="skip-to-content">
           Skip to main content
         </a>
 
-        {/* Top Navigation Bar (Global) */}
         <TopNavbar
           onSearchChange={setSearchQuery}
           searchPlaceholder="Search applications, companies..."
           onToggleSidebar={toggleSidebar}
         />
 
-        {/* Sidebar (Section-specific) */}
         <aside
           className={`layout__sidebar ${mobileSidebarOpen ? 'layout__sidebar--mobile-open' : ''}`}
           aria-label="Main menu"
         >
-          {/* Mobile Close Button */}
           <button
             className="layout__sidebar-close"
             onClick={() => setMobileSidebarOpen(false)}
@@ -103,7 +106,6 @@ function MainLayout({ children }: MainLayoutProps) {
           />
         </aside>
 
-        {/* Mobile Hamburger Button (Fixed Position) */}
         <button
           className="layout__hamburger"
           onClick={() => setMobileSidebarOpen(true)}
@@ -117,14 +119,12 @@ function MainLayout({ children }: MainLayoutProps) {
           </svg>
         </button>
 
-        {/* Mobile Overlay */}
         <div
           className={`layout__overlay ${mobileSidebarOpen ? 'layout__overlay--visible' : ''}`}
           onClick={() => setMobileSidebarOpen(false)}
           aria-hidden="true"
         />
 
-        {/* Main Content */}
         <main className="layout__main" id="main-content" role="main">
           <div className="layout__inner">
             {children}

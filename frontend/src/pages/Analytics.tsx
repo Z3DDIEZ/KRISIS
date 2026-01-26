@@ -6,8 +6,9 @@ import { toast } from 'sonner'
 import Icon from '../components/ui/Icon'
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
-  Cell, AreaChart, Area
+  Cell, AreaChart, Area, PieChart, Pie, Legend
 } from 'recharts'
+import StatCard from '../components/ui/StatCard'
 
 interface Application {
   id: string
@@ -23,17 +24,26 @@ interface AnalyticsData {
   statusBreakdown: Array<{ name: string; value: number; color: string }>
   monthlyTrend: Array<{ name: string; count: number }>
   topCompanies: Array<{ name: string; count: number }>
+  roleBreakdown: Array<{ name: string; count: number }>
+  visaBreakdown: Array<{ name: string; value: number; color: string }>
+  funnelData: Array<{ name: string; value: number }>
+  statusTrend: Array<{ name: string;[key: string]: any }>
+  performanceMetrics: {
+    avgPerWeek: number
+    interviewRate: number
+    offerRate: number
+  }
   responseRate: number
   visaSponsorshipRate: number
 }
 
 const statusColors: Record<string, string> = {
-  'Applied': '#3B82F6',
-  'Phone Screen': '#8B5CF6',
-  'Technical Interview': '#F59E0B',
-  'Final Round': '#EC4899',
-  'Offer': '#10B981',
-  'Rejected': '#EF4444'
+  'Applied': 'var(--info)',
+  'Phone Screen': '#9B59B6',
+  'Technical Interview': 'var(--warning)',
+  'Final Round': 'var(--primary-500)',
+  'Offer': 'var(--success)',
+  'Rejected': 'var(--error)'
 }
 
 function Analytics() {
@@ -90,7 +100,7 @@ function Analytics() {
       filteredApps = applications.filter(app => new Date(app.dateApplied) >= cutoff)
     }
 
-    // Status breakdown for BarChart
+    // Status breakdown
     const breakdownMap: Record<string, number> = {}
     filteredApps.forEach(app => {
       breakdownMap[app.status] = (breakdownMap[app.status] || 0) + 1
@@ -98,23 +108,82 @@ function Analytics() {
     const statusBreakdown = Object.entries(breakdownMap).map(([name, value]) => ({
       name,
       value,
-      color: statusColors[name] || '#94A3B8'
+      color: statusColors[name] || 'var(--gray-400)'
     })).sort((a, b) => b.value - a.value)
 
-    // Monthly trend for AreaChart
+    // Role Breakdown
+    const roleMap: Record<string, number> = {}
+    filteredApps.forEach(app => {
+      const role = app.role || 'Unspecified'
+      roleMap[role] = (roleMap[role] || 0) + 1
+    })
+    const roleBreakdown = Object.entries(roleMap)
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 8)
+      .map(([name, count]) => ({ name, count }))
+
+    // Visa Breakdown
+    const visaMap = { 'Required': 0, 'Standard': 0 }
+    filteredApps.forEach(app => {
+      if (app.visaSponsorship) visaMap['Required']++
+      else visaMap['Standard']++
+    })
+    const visaBreakdown = Object.entries(visaMap).map(([name, value]) => ({
+      name,
+      value,
+      color: name === 'Required' ? 'var(--primary-500)' : 'var(--gray-200)'
+    }))
+
+    // Monthly trend & Status Trend
     const trendMap: Record<string, number> = {}
-    const last6Months = Array.from({ length: 6 }).map((_, i) => {
+    const statusTrendMap: Record<string, Record<string, number>> = {}
+
+    const monthsToShow = 6
+    const last6Months = Array.from({ length: monthsToShow }).map((_, i) => {
       const d = new Date()
-      d.setMonth(now.getMonth() - (5 - i))
+      d.setMonth(now.getMonth() - (monthsToShow - 1 - i))
       return d.toLocaleDateString('en-US', { month: 'short' })
     })
 
-    last6Months.forEach(m => trendMap[m] = 0)
+    last6Months.forEach(m => {
+      trendMap[m] = 0
+      statusTrendMap[m] = { Applied: 0, Interview: 0, Offer: 0, Rejected: 0 }
+    })
+
     applications.forEach(app => {
       const m = new Date(app.dateApplied).toLocaleDateString('en-US', { month: 'short' })
-      if (trendMap[m] !== undefined) trendMap[m]++
+      if (statusTrendMap[m] !== undefined) {
+        trendMap[m]++
+        const statusGroup = ['Phone Screen', 'Technical Interview', 'Final Round'].includes(app.status)
+          ? 'Interview'
+          : app.status === 'Offer'
+            ? 'Offer'
+            : app.status === 'Rejected'
+              ? 'Rejected'
+              : 'Applied'
+        statusTrendMap[m][statusGroup]++
+      }
     })
+
     const monthlyTrend = Object.entries(trendMap).map(([name, count]) => ({ name, count }))
+    const statusTrend = Object.entries(statusTrendMap).map(([name, counts]) => ({ name, ...counts }))
+
+    // Conversion Funnel Data
+    const funnelMap = {
+      'Total Volume': filteredApps.length,
+      'Interviews': filteredApps.filter(a => ['Phone Screen', 'Technical Interview', 'Final Round', 'Offer'].includes(a.status)).length,
+      'Final Rounds': filteredApps.filter(a => ['Final Round', 'Offer'].includes(a.status)).length,
+      'Offers': filteredApps.filter(a => a.status === 'Offer').length
+    }
+    const funnelData = Object.entries(funnelMap).map(([name, value]) => ({ name, value }))
+
+    // Performance Metrics
+    const weeksInTimeframe = selectedTimeframe === 'all' ? 24 : selectedTimeframe === '6months' ? 24 : selectedTimeframe === '3months' ? 12 : 4
+    const performanceMetrics = {
+      avgPerWeek: Number((filteredApps.length / weeksInTimeframe).toFixed(1)),
+      interviewRate: filteredApps.length > 0 ? Math.round((funnelMap['Interviews'] / filteredApps.length) * 100) : 0,
+      offerRate: funnelMap['Interviews'] > 0 ? Math.round((funnelMap['Offers'] / funnelMap['Interviews']) * 100) : 0
+    }
 
     // Top Companies
     const companyMap: Record<string, number> = {}
@@ -139,6 +208,11 @@ function Analytics() {
       statusBreakdown,
       monthlyTrend,
       topCompanies,
+      roleBreakdown,
+      visaBreakdown,
+      funnelData,
+      statusTrend,
+      performanceMetrics,
       responseRate,
       visaSponsorshipRate
     }
@@ -188,81 +262,39 @@ function Analytics() {
           <p className="text-secondary max-w-xs mx-auto font-medium">Start tracking applications to generate architectural insights.</p>
         </div>
       ) : (
-        <div className="space-y-8">
+        <div className="flex flex-col gap-spacing-4">
           {/* Top Metrics Row */}
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-spacing-3">
             {[
-              { label: 'Total Volume', value: analyticsData.totalApplications, icon: 'work', color: 'primary' },
-              { label: 'Engagement Rate', value: `${analyticsData.responseRate}%`, icon: 'bolt', color: 'orange' },
-              { label: 'Visa Velocity', value: `${analyticsData.visaSponsorshipRate}%`, icon: 'public', color: 'blue' },
-              { label: 'Offer Count', value: analyticsData.statusBreakdown.find(s => s.name === 'Offer')?.value || 0, icon: 'check', color: 'success' }
+              { label: 'Pipeline Volume', value: analyticsData.totalApplications, icon: 'work', trend: 'neutral' },
+              { label: 'Interview Velocity', value: `${analyticsData.performanceMetrics.interviewRate}%`, icon: 'bolt', trend: 'up' },
+              { label: 'Success Quotient', value: `${analyticsData.performanceMetrics.offerRate}%`, icon: 'check', trend: 'up' },
+              { label: 'Weekly Intensity', value: analyticsData.performanceMetrics.avgPerWeek, icon: 'trending-up', trend: 'neutral' }
             ].map((stat, i) => (
-              <div key={i} className="stat-card">
-                <div className="flex justify-between items-start mb-4">
-                  <span className="text-[10px] font-black text-muted uppercase tracking-[0.2em]">{stat.label}</span>
-                  <div className={`p-2 rounded-md bg-surface-2 text-muted`}>
-                    <Icon name={stat.icon} size={14} />
-                  </div>
-                </div>
-                <div className="text-4xl font-black text-primary leading-none">{stat.value}</div>
-              </div>
+              <StatCard
+                key={i}
+                label={stat.label}
+                value={stat.value}
+                icon={stat.icon}
+                trend={stat.trend as any}
+              />
             ))}
           </div>
 
-          {/* Charts Grid */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            {/* Trend Analysis */}
-            <div className="card h-[450px] flex flex-col">
-              <div className="flex justify-between items-center mb-10">
+          {/* Core Analytics V3 - Conversion Engine */}
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-spacing-4">
+            {/* Conversion Funnel */}
+            <div className="card lg:col-span-2 h-[450px] flex flex-col p-spacing-4">
+              <div className="flex justify-between items-center mb-spacing-5">
                 <h3 className="text-xs font-black text-primary uppercase tracking-widest flex items-center gap-2">
-                  <Icon name="trending-up" size={16} className="text-primary-500" />
-                  Application Velocity
+                  <Icon name="bolt" size={16} className="text-primary-500" />
+                  Conversion Pipeline Funnel
                 </h3>
+                <span className="text-[10px] font-black text-muted uppercase tracking-widest">Protocol V3.0</span>
               </div>
               <div className="flex-1 w-full">
                 <ResponsiveContainer width="100%" height="100%">
-                  <AreaChart data={analyticsData.monthlyTrend}>
-                    <defs>
-                      <linearGradient id="colorCount" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="5%" stopColor="var(--primary-500)" stopOpacity={0.2} />
-                        <stop offset="95%" stopColor="var(--primary-500)" stopOpacity={0} />
-                      </linearGradient>
-                    </defs>
-                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--border-light)" />
-                    <XAxis
-                      dataKey="name"
-                      axisLine={false}
-                      tickLine={false}
-                      tick={{ fontSize: 10, fontWeight: 900, fill: 'var(--text-muted)' }}
-                      dy={10}
-                    />
-                    <YAxis
-                      axisLine={false}
-                      tickLine={false}
-                      tick={{ fontSize: 10, fontWeight: 900, fill: 'var(--text-muted)' }}
-                    />
-                    <Tooltip
-                      contentStyle={{ background: 'var(--surface-1)', borderRadius: '8px', border: '1px solid var(--border-light)', boxShadow: 'var(--shadow-elevated)', fontSize: '11px', fontWeight: 700 }}
-                      cursor={{ stroke: 'var(--primary-500)', strokeWidth: 2, strokeDasharray: '4 4' }}
-                    />
-                    <Area type="monotone" dataKey="count" stroke="var(--primary-500)" strokeWidth={4} fillOpacity={1} fill="url(#colorCount)" />
-                  </AreaChart>
-                </ResponsiveContainer>
-              </div>
-            </div>
-
-            {/* Status Breakdown */}
-            <div className="card h-[450px] flex flex-col">
-              <div className="flex justify-between items-center mb-10">
-                <h3 className="text-xs font-black text-primary uppercase tracking-widest flex items-center gap-2">
-                  <Icon name="pie-chart" size={16} className="text-primary-500" />
-                  Pipeline Segmentation
-                </h3>
-              </div>
-              <div className="flex-1 w-full">
-                <ResponsiveContainer width="100%" height="100%">
-                  <BarChart data={analyticsData.statusBreakdown} layout="vertical" margin={{ left: 20 }}>
-                    <CartesianGrid strokeDasharray="3 3" horizontal={false} stroke="var(--border-light)" />
+                  <BarChart data={analyticsData.funnelData} layout="vertical" margin={{ left: 20 }}>
                     <XAxis type="number" hide />
                     <YAxis
                       dataKey="name"
@@ -270,20 +302,102 @@ function Analytics() {
                       axisLine={false}
                       tickLine={false}
                       tick={{ fontSize: 10, fontWeight: 900, fill: 'var(--text-secondary)' }}
-                      width={100}
+                      width={120}
                     />
                     <Tooltip
                       cursor={{ fill: 'var(--surface-2)' }}
-                      contentStyle={{ background: 'var(--surface-1)', borderRadius: '8px', border: '1px solid var(--border-light)', boxShadow: 'var(--shadow-elevated)', fontSize: '11px', fontWeight: 700 }}
+                      contentStyle={{ background: 'var(--surface-1)', borderRadius: '8px', border: '1px solid var(--border-light)', fontSize: '11px', fontWeight: 700 }}
                     />
-                    <Bar dataKey="value" radius={[0, 4, 4, 0]} barSize={24}>
-                      {analyticsData.statusBreakdown.map((entry, index) => (
-                        <Cell key={`cell-${index}`} fill={entry.color} />
+                    <Bar dataKey="value" radius={[0, 4, 4, 0]} barSize={40}>
+                      {analyticsData.funnelData.map((_, index) => (
+                        <Cell key={`cell-${index}`} fill={index === 0 ? 'var(--gray-200)' : index === 1 ? 'var(--info)' : index === 2 ? 'var(--warning)' : 'var(--success)'} />
                       ))}
                     </Bar>
                   </BarChart>
                 </ResponsiveContainer>
               </div>
+            </div>
+
+            {/* Residency & Role Context */}
+            <div className="flex flex-col gap-spacing-4 lg:col-span-1">
+              {/* Residency Distribution */}
+              <div className="card flex-1 flex flex-col p-spacing-4 overflow-hidden">
+                <h3 className="text-[10px] font-black text-primary uppercase tracking-widest mb-spacing-3">Residency Matrix</h3>
+                <div className="flex-1 flex items-center justify-center relative">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <PieChart>
+                      <Pie
+                        data={analyticsData.visaBreakdown}
+                        innerRadius={45}
+                        outerRadius={70}
+                        paddingAngle={5}
+                        dataKey="value"
+                      >
+                        {analyticsData.visaBreakdown.map((entry, index) => (
+                          <Cell key={`cell-${index}`} fill={entry.color} stroke="none" />
+                        ))}
+                      </Pie>
+                      <Tooltip contentStyle={{ fontSize: '11px', fontWeight: 700 }} />
+                    </PieChart>
+                  </ResponsiveContainer>
+                  <div className="absolute flex flex-col items-center justify-center pointer-events-none">
+                    <span className="text-xl font-black text-primary leading-none">{analyticsData.visaSponsorshipRate}%</span>
+                    <span className="text-[8px] font-black text-muted uppercase tracking-tighter">Sponsor</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Top Roles */}
+              <div className="card flex-1 p-spacing-4">
+                <h3 className="text-[10px] font-black text-primary uppercase tracking-widest mb-spacing-3">Target Sectors</h3>
+                <div className="space-y-3">
+                  {analyticsData.roleBreakdown.slice(0, 3).map((role, i) => (
+                    <div key={i} className="flex justify-between items-center group">
+                      <span className="text-[11px] font-bold text-secondary truncate mr-2">{role.name}</span>
+                      <div className="flex items-center gap-2">
+                        <div className="h-1.5 bg-gray-100 rounded-full w-20 overflow-hidden">
+                          <div className="h-full bg-primary-500" style={{ width: `${(role.count / analyticsData.totalApplications) * 100}%` }} />
+                        </div>
+                        <span className="text-[10px] font-black text-primary w-4">{role.count}</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Temporal Status Segmentation */}
+          <div className="card h-[450px] flex flex-col p-spacing-4">
+            <div className="flex justify-between items-center mb-spacing-5">
+              <h3 className="text-xs font-black text-primary uppercase tracking-widest flex items-center gap-2">
+                <Icon name="trending-up" size={16} className="text-primary-500" />
+                Temporal Status Architecture
+              </h3>
+            </div>
+            <div className="flex-1 w-full">
+              <ResponsiveContainer width="100%" height="100%">
+                <AreaChart data={analyticsData.statusTrend}>
+                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--border-light)" />
+                  <XAxis
+                    dataKey="name"
+                    axisLine={false}
+                    tickLine={false}
+                    tick={{ fontSize: 10, fontWeight: 800, fill: 'var(--text-muted)' }}
+                  />
+                  <YAxis
+                    axisLine={false}
+                    tickLine={false}
+                    tick={{ fontSize: 10, fontWeight: 800, fill: 'var(--text-muted)' }}
+                  />
+                  <Tooltip contentStyle={{ background: 'var(--surface-1)', borderRadius: '8px', border: '1px solid var(--border-light)', fontSize: '11px', fontWeight: 700 }} />
+                  <Legend iconType="circle" wrapperStyle={{ fontSize: 10, fontWeight: 900, textTransform: 'uppercase', letterSpacing: '0.1em', paddingTop: 20 }} />
+                  <Area type="monotone" dataKey="Applied" stackId="1" stroke="var(--info)" fill="var(--info)" fillOpacity={0.4} />
+                  <Area type="monotone" dataKey="Interview" stackId="1" stroke="var(--warning)" fill="var(--warning)" fillOpacity={0.4} />
+                  <Area type="monotone" dataKey="Offer" stackId="1" stroke="var(--success)" fill="var(--success)" fillOpacity={0.4} />
+                  <Area type="monotone" dataKey="Rejected" stackId="1" stroke="var(--error)" fill="var(--error)" fillOpacity={0.4} />
+                </AreaChart>
+              </ResponsiveContainer>
             </div>
           </div>
 

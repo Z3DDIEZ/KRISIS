@@ -12,32 +12,6 @@
 
 @layer components {
 
-  .btn-primary-old {
-    background: var(--navy-dark);
-    color: white;
-    font-weight: 500;
-    padding: 0.5rem 1rem;
-    border-radius: var(--radius-lg);
-    transition: all var(--transition-normal);
-  }
-
-  .btn-primary-old:hover {
-    background: var(--navy-medium);
-  }
-
-  .btn-secondary-old {
-    background: var(--background-white);
-    color: var(--text-primary);
-    font-weight: 500;
-    padding: 0.5rem 1rem;
-    border-radius: var(--radius-lg);
-    border: 1px solid var(--border-light);
-    transition: all var(--transition-normal);
-  }
-
-  .btn-secondary-old:hover {
-    background: var(--background-light);
-  }
 
   .application-card {
     background: var(--background-white) !important;

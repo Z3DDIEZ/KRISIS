@@ -35,7 +35,7 @@ type SortOrder = 'asc' | 'desc'
 
 function Applications() {
   const [user, loading] = useAuthState(auth)
-  const { searchQuery, setSearchQuery } = useSearch() // Use global search context
+  const { searchQuery, setSearchQuery } = useSearch()
   const [applications, setApplications] = useState<Application[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [viewMode, setViewMode] = useState<ViewMode>('cards')
@@ -77,11 +77,6 @@ function Applications() {
       setIsLoading(false)
     }, (error) => {
       console.error('Error loading applications:', error)
-      console.error('Error details:', {
-        code: error.code,
-        message: error.message,
-        userId: user.uid
-      })
       toast.error(`Failed to load applications`)
       setIsLoading(false)
     })
@@ -89,10 +84,8 @@ function Applications() {
     return () => unsubscribe()
   }, [user])
 
-  // Filter and sort applications
   const filteredApplications = useMemo(() => {
     let filtered = applications.filter(app => {
-      // Search filter using global query
       if (searchQuery) {
         const query = searchQuery.toLowerCase()
         const matchesSearch = app.company.toLowerCase().includes(query) ||
@@ -100,41 +93,21 @@ function Applications() {
           (app.notes && app.notes.toLowerCase().includes(query))
         if (!matchesSearch) return false
       }
-
-      // Status filter
       if (statusFilter !== 'all' && app.status !== statusFilter) return false
-
-      // Visa filter
       if (visaFilter === 'visa' && !app.visaSponsorship) return false
       if (visaFilter === 'no-visa' && app.visaSponsorship) return false
-
       return true
     })
 
-    // Sort
     filtered.sort((a, b) => {
       let aVal: any, bVal: any
-
       switch (sortField) {
-        case 'company':
-          aVal = a.company.toLowerCase()
-          bVal = b.company.toLowerCase()
-          break
-        case 'role':
-          aVal = a.role.toLowerCase()
-          bVal = b.role.toLowerCase()
-          break
-        case 'status':
-          aVal = a.status
-          bVal = b.status
-          break
+        case 'company': aVal = a.company.toLowerCase(); bVal = b.company.toLowerCase(); break
+        case 'role': aVal = a.role.toLowerCase(); bVal = b.role.toLowerCase(); break
+        case 'status': aVal = a.status; bVal = b.status; break
         case 'dateApplied':
-        default:
-          aVal = new Date(a.dateApplied)
-          bVal = new Date(b.dateApplied)
-          break
+        default: aVal = new Date(a.dateApplied); bVal = new Date(b.dateApplied); break
       }
-
       if (aVal < bVal) return sortOrder === 'asc' ? -1 : 1
       if (aVal > bVal) return sortOrder === 'asc' ? 1 : -1
       return 0
@@ -144,24 +117,17 @@ function Applications() {
   }, [applications, searchQuery, statusFilter, visaFilter, sortField, sortOrder])
 
   const handleDelete = async (applicationId: string, company: string) => {
-    if (!user) return
-
-    if (!confirm(`Are you sure you want to delete your application at ${company}?`)) {
-      return
-    }
-
+    if (!user || !confirm(`Are you sure you want to delete your application at ${company}?`)) return
     try {
       await deleteDoc(doc(db, `users/${user.uid}/applications/${applicationId}`))
       toast.success('Application deleted')
     } catch (error) {
-      console.error('Error deleting application:', error)
       toast.error('Failed to delete')
     }
   }
 
   const handleBulkStatusUpdate = async (newStatus: string) => {
     if (!user || selectedApplications.size === 0) return
-
     try {
       const promises = Array.from(selectedApplications).map(appId =>
         updateDoc(doc(db, `users/${user.uid}/applications/${appId}`), {
@@ -169,33 +135,24 @@ function Applications() {
           updatedAt: new Date()
         })
       )
-
       await Promise.all(promises)
       toast.success(`Updated ${selectedApplications.size} applications`)
       setSelectedApplications(new Set())
     } catch (error) {
-      console.error('Error updating applications:', error)
       toast.error('Failed to update')
     }
   }
 
   const handleBulkDelete = async () => {
-    if (!user || selectedApplications.size === 0) return
-
-    if (!confirm(`Are you sure you want to delete ${selectedApplications.size} applications?`)) {
-      return
-    }
-
+    if (!user || selectedApplications.size === 0 || !confirm(`Are you sure you want to delete ${selectedApplications.size} applications?`)) return
     try {
       const promises = Array.from(selectedApplications).map(appId =>
         deleteDoc(doc(db, `users/${user.uid}/applications/${appId}`))
       )
-
       await Promise.all(promises)
       toast.success(`Deleted ${selectedApplications.size} applications`)
       setSelectedApplications(new Set())
     } catch (error) {
-      console.error('Error deleting applications:', error)
       toast.error('Failed to delete')
     }
   }
@@ -219,7 +176,7 @@ function Applications() {
   if (loading || isLoading) {
     return (
       <div className="flex items-center justify-center min-h-64">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-500"></div>
       </div>
     )
   }
@@ -233,189 +190,159 @@ function Applications() {
   }
 
   return (
-    <div className="animate-fade-in">
-      <div className="flex flex-col lg:flex-row lg:justify-between lg:items-center gap-6 mb-0">
+    <div className="animate-fade-in flex flex-col gap-spacing-4">
+      <div className="flex flex-col lg:flex-row lg:justify-between lg:items-center gap-6 mb-spacing-4">
         <header className="page-header">
-          <h1 className="text-3xl font-black text-primary tracking-tighter uppercase page-header__title">Applications</h1>
-          <p className="text-secondary font-medium tracking-tight page-header__subtitle">
+          <h1 className="text-4xl font-black text-primary tracking-tighter uppercase leading-none">Applications</h1>
+          <p className="text-secondary font-medium tracking-tight">
             {filteredApplications.length} cases detected in your active pipeline.
           </p>
         </header>
         <div className="flex gap-4">
-          <Link to="/analytics" className="btn btn--secondary" data-track-action="go-to-analytics">
-            <Icon name="pie-chart" size={16} />
+          <Link to="/analytics" className="btn btn-secondary">
+            <Icon name="bar-chart" size={16} />
             Intelligence
           </Link>
-          <Link to="/applications/new" className="btn btn--orange shadow-elevated" data-track-action="add-application">
+          <Link to="/applications/new" className="btn btn-orange">
             <Icon name="add" size={16} />
             Initialize Record
           </Link>
         </div>
       </div>
 
-      {/* Filters and Controls */}
-      <div className="card mb-12 overflow-hidden">
-        <div className="p-8">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-10">
-            {/* Search */}
-            <div className="flex flex-col gap-1.5">
-              <label className="text-[10px] font-black text-muted uppercase tracking-widest">Global Scan</label>
-              <div className="relative group">
-                <Icon name="search" size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted group-focus-within:text-primary-500 transition-colors" />
-                <input
-                  type="text"
-                  placeholder="Company, role, narrative..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="input pl-9"
-                  data-track-filter="search"
-                />
-              </div>
-            </div>
+      {/* Sticky Filter Bar */}
+      <div className="filter-bar">
+        <div className="relative">
+          <input
+            type="text"
+            placeholder="Search applications (Enter to scan)..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') {
+                toast.success('Scanning complete')
+              }
+            }}
+            className="filter-bar__search"
+          />
+          <Icon name="search" size={18} className="absolute right-4 top-1/2 -translate-y-1/2 text-muted" />
+        </div>
 
-            {/* Status Filter */}
-            <div className="flex flex-col gap-1.5">
-              <label className="text-[10px] font-black text-muted uppercase tracking-widest">Protocol Status</label>
-              <div className="select-wrapper">
-                <select
-                  value={statusFilter}
-                  onChange={(e) => setStatusFilter(e.target.value)}
-                  className="input"
-                  data-track-filter="status"
-                >
-                  <option value="all">All Protocols</option>
-                  <option value="Applied">Applied</option>
-                  <option value="Phone Screen">Phone Screen</option>
-                  <option value="Technical Interview">Technical Interview</option>
-                  <option value="Final Round">Final Round</option>
-                  <option value="Offer">Offer</option>
-                  <option value="Rejected">Rejected</option>
-                </select>
-              </div>
-            </div>
-
-            {/* Visa Filter */}
-            <div className="flex flex-col gap-1.5">
-              <label className="text-[10px] font-black text-muted uppercase tracking-widest">Residency Support</label>
-              <div className="select-wrapper">
-                <select
-                  value={visaFilter}
-                  onChange={(e) => setVisaFilter(e.target.value as any)}
-                  className="input"
-                  data-track-filter="visa"
-                >
-                  <option value="all">Normal Priority</option>
-                  <option value="visa">Sponsorship Required</option>
-                  <option value="no-visa">Local Only</option>
-                </select>
-              </div>
-            </div>
-
-            {/* Sort */}
-            <div className="flex flex-col gap-1.5">
-              <label className="text-[10px] font-black text-muted uppercase tracking-widest">Chronometry</label>
-              <div className="flex gap-2">
-                <div className="select-wrapper flex-1">
-                  <select
-                    value={sortField}
-                    onChange={(e) => setSortField(e.target.value as SortField)}
-                    className="input"
-                  >
-                    <option value="dateApplied">Applied Velocity</option>
-                    <option value="company">Company Depth</option>
-                    <option value="role">Position Identity</option>
-                    <option value="status">Pipeline Flow</option>
-                  </select>
-                </div>
-                <button
-                  onClick={() => setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc')}
-                  className="w-10 h-10 flex items-center justify-center bg-surface-2 hover:bg-surface-3 rounded-md border border-border-light transition-all"
-                  aria-label={`Sort ${sortOrder === 'asc' ? 'descending' : 'ascending'}`}
-                >
-                  <Icon name={sortOrder === 'asc' ? 'arrow-up' : 'arrow-down'} size={14} className="text-secondary" />
-                </button>
-              </div>
-            </div>
+        <div className="filter-bar__controls">
+          <div className="flex items-center gap-2 flex-wrap">
+            <span className="text-[10px] font-black text-muted uppercase tracking-widest mr-2">Protocol:</span>
+            {['Applied', 'Phone Screen', 'Technical Interview', 'Final Round', 'Offer', 'Rejected'].map(status => (
+              <button
+                key={status}
+                onClick={() => setStatusFilter(statusFilter === status ? 'all' : status)}
+                className={`filter-button ${statusFilter === status ? 'filter-button--active' : ''}`}
+              >
+                {status}
+              </button>
+            ))}
           </div>
 
-          {/* View Mode Toggle & Bulk Actions */}
-          <div className="flex flex-wrap items-center justify-between gap-4 border-t border-gray-100 pt-6">
-            <div className="flex items-center gap-3">
-              <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">View Mode</span>
-              <div className="flex bg-gray-100 p-1 rounded-md">
-                <button
-                  onClick={() => setViewMode('cards')}
-                  className={`flex items-center justify-center w-8 h-8 rounded transition-all ${viewMode === 'cards' ? 'bg-white shadow-sm text-primary-500' : 'text-gray-500 hover:text-gray-900'}`}
-                >
-                  <Icon name="grid" size={14} />
-                </button>
-                <button
-                  onClick={() => setViewMode('table')}
-                  className={`flex items-center justify-center w-8 h-8 rounded transition-all ${viewMode === 'table' ? 'bg-white shadow-sm text-primary-500' : 'text-gray-500 hover:text-gray-900'}`}
-                >
-                  <Icon name="table" size={14} />
-                </button>
-                <button
-                  onClick={() => setViewMode('list')}
-                  className={`flex items-center justify-center w-8 h-8 rounded transition-all ${viewMode === 'list' ? 'bg-white shadow-sm text-primary-500' : 'text-gray-500 hover:text-gray-900'}`}
-                >
-                  <Icon name="list" size={14} />
-                </button>
-              </div>
-            </div>
+          <div className="h-6 w-px bg-border mx-2 hidden lg:block" />
 
-            {/* Bulk Actions */}
-            <div className="flex items-center gap-3">
-              {selectedApplications.size > 0 && (
-                <>
-                  <span className="text-xs font-bold text-primary-500 px-2 py-1 bg-primary-50 rounded-full border border-primary-100">
-                    {selectedApplications.size} Selected
-                  </span>
-                  <div className="relative">
-                    <select
-                      onChange={(e) => e.target.value && handleBulkStatusUpdate(e.target.value)}
-                      className="h-9 px-3 pr-8 bg-white border border-gray-200 rounded-md text-xs font-bold uppercase transition-all appearance-none cursor-pointer hover:border-gray-300"
-                      defaultValue=""
-                    >
-                      <option value="">Update Status</option>
-                      <option value="Applied">Applied</option>
-                      <option value="Phone Screen">Phone Screen</option>
-                      <option value="Technical Interview">Technical Interview</option>
-                      <option value="Final Round">Final Round</option>
-                      <option value="Offer">Offer</option>
-                      <option value="Rejected">Rejected</option>
-                    </select>
-                    <Icon name="arrow-down" size={10} className="absolute right-2.5 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
-                  </div>
-                  <button
-                    onClick={handleBulkDelete}
-                    className="w-9 h-9 flex items-center justify-center text-red-500 hover:bg-red-50 rounded-md transition-colors border border-transparent hover:border-red-100"
-                  >
-                    <Icon name="delete" size={16} />
-                  </button>
-                </>
-              )}
+          <div className="flex items-center gap-2">
+            <span className="text-[10px] font-black text-muted uppercase tracking-widest mr-2">Residency:</span>
+            <button
+              onClick={() => setVisaFilter(visaFilter === 'visa' ? 'all' : 'visa')}
+              className={`filter-button ${visaFilter === 'visa' ? 'filter-button--active' : ''}`}
+            >
+              Visa Required
+            </button>
+            <button
+              onClick={() => setVisaFilter(visaFilter === 'no-visa' ? 'all' : 'no-visa')}
+              className={`filter-button ${visaFilter === 'no-visa' ? 'filter-button--active' : ''}`}
+            >
+              Local
+            </button>
+          </div>
 
-              {(searchQuery || statusFilter !== 'all' || visaFilter !== 'all') && (
-                <button
-                  onClick={clearFilters}
-                  className="h-9 px-4 text-xs font-bold text-gray-500 uppercase tracking-tight hover:text-gray-900 transition-colors"
-                >
-                  Clear All
-                </button>
-              )}
+          <div className="flex items-center gap-2">
+            <span className="text-[10px] font-black text-muted uppercase tracking-widest mr-2">Sort:</span>
+            <select
+              value={sortField}
+              onChange={(e) => setSortField(e.target.value as SortField)}
+              className="filter-button bg-transparent outline-none"
+            >
+              <option value="dateApplied">Applied Date</option>
+              <option value="company">Company</option>
+              <option value="role">Position</option>
+              <option value="status">Status</option>
+            </select>
+            <button
+              onClick={() => setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc')}
+              className="filter-button"
+              aria-label={`Sort ${sortOrder === 'asc' ? 'descending' : 'ascending'}`}
+            >
+              <Icon name={sortOrder === 'asc' ? 'arrow-up' : 'arrow-down'} size={14} />
+            </button>
+          </div>
+
+          <div className="ml-auto flex items-center gap-4">
+            {(searchQuery || statusFilter !== 'all' || visaFilter !== 'all') && (
+              <button onClick={clearFilters} className="text-xs font-bold text-primary-500 uppercase tracking-tight hover:underline">
+                Reset
+              </button>
+            )}
+            <div className="filter-count">
+              Showing {filteredApplications.length} of {applications.length} cases
             </div>
           </div>
         </div>
       </div>
 
+      {/* View Mode Toggle & Bulk Actions */}
+      <div className="flex flex-wrap items-center justify-between gap-4 mb-8">
+        <div className="flex items-center gap-3">
+          <span className="text-[10px] font-bold text-muted uppercase tracking-widest">View Mode</span>
+          <div className="flex bg-gray-100 dark:bg-gray-800 p-1 rounded-md">
+            {(['cards', 'table', 'list'] as ViewMode[]).map(mode => (
+              <button
+                key={mode}
+                onClick={() => setViewMode(mode)}
+                className={`flex items-center justify-center w-8 h-8 rounded transition-all ${viewMode === mode ? 'bg-white dark:bg-gray-700 shadow-sm text-primary-500' : 'text-text-secondary hover:text-text-primary'}`}
+              >
+                <Icon name={mode === 'cards' ? 'grid' : mode === 'table' ? 'table' : 'list'} size={14} />
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {selectedApplications.size > 0 && (
+          <div className="flex items-center gap-3 animate-fade-in">
+            <span className="text-xs font-bold text-primary-500 px-3 py-1 bg-primary-50 dark:bg-primary-900/20 rounded-full border border-primary-100 dark:border-primary-900/30">
+              {selectedApplications.size} Selected
+            </span>
+            <select
+              onChange={(e) => e.target.value && handleBulkStatusUpdate(e.target.value)}
+              className="h-9 px-3 bg-white dark:bg-gray-800 border border-border rounded-md text-xs font-bold uppercase"
+              defaultValue=""
+            >
+              <option value="">Update Status</option>
+              {['Applied', 'Phone Screen', 'Technical Interview', 'Final Round', 'Offer', 'Rejected'].map(s => (
+                <option key={s} value={s}>{s}</option>
+              ))}
+            </select>
+            <button
+              onClick={handleBulkDelete}
+              className="w-9 h-9 flex items-center justify-center text-error hover:bg-error/10 rounded-md transition-colors border border-border"
+            >
+              <Icon name="delete" size={16} />
+            </button>
+          </div>
+        )}
+      </div>
+
       {/* Applications Display */}
       {applications.length === 0 ? (
         <div className="card py-32 text-center">
-          <div className="bg-surface-2 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6">
+          <div className="bg-gray-100 dark:bg-gray-800 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6">
             <Icon name="work" size={40} className="text-muted" />
           </div>
-          <h3 className="text-xl font-bold text-primary mb-2">Build Your Pipeline</h3>
+          <h3 className="text-xl font-bold text-primary mb-2 uppercase">Build Your Pipeline</h3>
           <p className="text-secondary max-w-sm mx-auto mb-8">Start tracking your job applications to get AI-powered insights and stay organized.</p>
           <Link to="/applications/new" className="btn btn-orange px-8">
             Add Your First Application
@@ -423,93 +350,64 @@ function Applications() {
         </div>
       ) : filteredApplications.length === 0 ? (
         <div className="card py-24 text-center">
-          <div className="bg-surface-2 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+          <div className="bg-gray-100 dark:bg-gray-800 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
             <Icon name="search" size={32} className="text-muted" />
           </div>
-          <h3 className="text-lg font-bold text-primary mb-1">No matches found</h3>
+          <h3 className="text-lg font-bold text-primary mb-1 uppercase">No matches found</h3>
           <p className="text-secondary mb-6">Try adjusting your filters or search term.</p>
-          <button
-            onClick={clearFilters}
-            className="btn btn-ghost text-primary-500 font-black text-[10px] uppercase tracking-widest"
-          >
+          <button onClick={clearFilters} className="btn btn-ghost text-primary-500 font-black text-[10px] uppercase tracking-widest">
             RESET PROTOCOLS
           </button>
         </div>
       ) : viewMode === 'cards' ? (
-        <div className="grid--cards">
-          {filteredApplications.map((application, index) => (
-            <div
-              key={application.id}
-              className={`card flex flex-col p-6 hover:shadow-elevated transition-all animate-fade-in stagger-${(index % 5) + 1}`}
-            >
-              <div className="application-card-header mb-4">
-                <div className="company-info flex-1">
-                  <div className="flex items-start justify-between">
-                    <div className="company-logo bg-surface-contrast text-text-on-contrast w-12 h-12 rounded flex items-center justify-center font-black text-2xl shadow-lg border-2 border-primary-500/20">
-                      {application.company.charAt(0).toUpperCase()}
-                    </div>
-                    <label className="checkbox-group">
-                      <input
-                        type="checkbox"
-                        checked={selectedApplications.has(application.id)}
-                        onChange={() => toggleApplicationSelection(application.id)}
-                        className="checkbox"
-                      />
-                    </label>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {filteredApplications.map((application) => (
+            <div key={application.id} className="card flex flex-col group hover:border-primary-500 transition-all">
+              <div className="flex items-start justify-between mb-4">
+                <div className="flex items-center gap-4">
+                  <div className="w-12 h-12 bg-gray-900 text-white rounded flex items-center justify-center font-black text-xl">
+                    {application.company.charAt(0)}
                   </div>
-                  <div className="mt-3">
-                    <h4 className="company-name font-bold text-primary group-hover:text-primary-orange transition-colors">
-                      {application.company}
-                    </h4>
-                    <p className="position-title text-sm text-secondary font-medium mt-0.5">
-                      {application.role}
-                    </p>
+                  <div>
+                    <h4 className="font-bold text-primary group-hover:text-primary-500 transition-colors uppercase text-sm">{application.company}</h4>
+                    <p className="text-xs text-secondary font-medium">{application.role}</p>
                   </div>
                 </div>
+                <input
+                  type="checkbox"
+                  checked={selectedApplications.has(application.id)}
+                  onChange={() => toggleApplicationSelection(application.id)}
+                  className="checkbox mt-1"
+                />
               </div>
 
-              <div className="application-meta mb-4">
-                <div className="flex items-center gap-1.5 text-[11px] font-bold text-muted uppercase tracking-tighter">
-                  <Icon name="calendar" size={12} />
+              <div className="flex items-center gap-2 mb-6">
+                <div className={`badge ${application.status === 'Applied' ? 'badge-applied' :
+                  application.status === 'Phone Screen' ? 'badge-phone-screen' :
+                    application.status === 'Technical Interview' ? 'badge-technical' :
+                      application.status === 'Final Round' ? 'badge-final' :
+                        application.status === 'Offer' ? 'badge-offer' :
+                          'badge-rejected'
+                  }`}>
+                  {application.status}
+                </div>
+                {application.visaSponsorship && (
+                  <div className="badge border border-primary-500/20 text-primary-500 bg-primary-500/5">
+                    <Icon name="check" size={10} /> Visa
+                  </div>
+                )}
+              </div>
+
+              <div className="mt-auto pt-4 border-t border-border flex items-center justify-between">
+                <span className="text-[10px] font-black text-muted uppercase tracking-widest">
                   Applied {formatDateForDisplay(application.dateApplied)}
-                </div>
-              </div>
-
-              <div className="application-card-footer">
-                <div className="flex items-center gap-sm">
-                  <div className={`badge hover-scale ${application.status === 'Applied' ? 'badge-applied' :
-                    application.status === 'Phone Screen' ? 'badge-phone-screen' :
-                      application.status === 'Technical Interview' ? 'badge-technical' :
-                        application.status === 'Final Round' ? 'badge-final' :
-                          application.status === 'Offer' ? 'badge-offer badge-pulse' :
-                            'badge-rejected'
-                    }`}>
-                    {application.status}
-                  </div>
-                  {application.visaSponsorship && (
-                    <div className="badge badge-visa hover-scale">
-                      <Icon name="check" size={12} />
-                      Visa
-                    </div>
-                  )}
-                </div>
-                <div className="flex gap-sm">
-                  <Link
-                    to={`/applications/${application.id}`}
-                    className="btn btn-ghost btn-sm btn-ripple"
-                    data-track-action="view-application"
-                    data-application-id={application.id}
-                  >
-                    <Icon name="visibility" size={14} />
-                    View
+                </span>
+                <div className="flex gap-2">
+                  <Link to={`/applications/${application.id}`} className="p-2 text-muted hover:text-primary transition-colors">
+                    <Icon name="visibility" size={16} />
                   </Link>
-                  <button
-                    onClick={() => handleDelete(application.id, application.company)}
-                    className="btn btn-ghost btn-sm text-red-600 hover:text-red-700 btn-ripple"
-                    data-track-action="delete-application"
-                    data-application-id={application.id}
-                  >
-                    <Icon name="delete" size={14} />
+                  <button onClick={() => handleDelete(application.id, application.company)} className="p-2 text-muted hover:text-error transition-colors">
+                    <Icon name="delete" size={16} />
                   </button>
                 </div>
               </div>
@@ -518,7 +416,7 @@ function Applications() {
         </div>
       ) : viewMode === 'table' ? (
         <div className="card overflow-hidden">
-          <div className="overflow-x-auto">
+          <div className="table-container">
             <table className="table">
               <thead>
                 <tr>
@@ -534,7 +432,7 @@ function Applications() {
                     />
                   </th>
                   <th>Company</th>
-                  <th>Role</th>
+                  <th>Position</th>
                   <th>Status</th>
                   <th>Date Applied</th>
                   <th className="text-right">Actions</th>
@@ -542,7 +440,7 @@ function Applications() {
               </thead>
               <tbody>
                 {filteredApplications.map(application => (
-                  <tr key={application.id} className={selectedApplications.has(application.id) ? 'bg-primary-500/10' : ''}>
+                  <tr key={application.id} className={selectedApplications.has(application.id) ? 'bg-primary-50 dark:bg-primary-900/10' : ''}>
                     <td>
                       <input
                         type="checkbox"
@@ -551,25 +449,34 @@ function Applications() {
                         className="checkbox"
                       />
                     </td>
-                    <td className="font-bold text-primary">{application.company}</td>
-                    <td className="text-secondary">{application.role}</td>
                     <td>
-                      <span className={`badge badge--${application.status.toLowerCase().replace(' ', '-')}`}>
+                      <div className="table__company">
+                        <div className="table__logo">
+                          {application.company.charAt(0).toUpperCase()}
+                        </div>
+                        <span className="table__company-name">{application.company}</span>
+                      </div>
+                    </td>
+                    <td className="table__role">{application.role}</td>
+                    <td>
+                      <span className={`badge ${application.status === 'Applied' ? 'badge-applied' :
+                        application.status === 'Phone Screen' ? 'badge-phone-screen' :
+                          application.status === 'Technical Interview' ? 'badge-technical' :
+                            application.status === 'Final Round' ? 'badge-final' :
+                              application.status === 'Offer' ? 'badge-offer' :
+                                'badge-rejected'
+                        }`}>
                         {application.status}
                       </span>
                     </td>
-                    <td className="text-muted text-xs">{formatDateForDisplay(application.dateApplied)}</td>
+                    <td className="table__date">{formatDateForDisplay(application.dateApplied)}</td>
                     <td className="text-right">
-                      <div className="flex justify-end gap-1">
-                        <button className="btn btn--ghost btn--sm p-1" title="Edit">
-                          <Icon name="edit" size={14} />
-                        </button>
-                        <button
-                          onClick={() => handleDelete(application.id, application.company)}
-                          className="btn btn--ghost btn--sm p-1 text-red-500"
-                          title="Delete"
-                        >
-                          <Icon name="delete" size={14} />
+                      <div className="flex justify-end gap-2">
+                        <Link to={`/applications/${application.id}`} className="p-2 text-muted hover:text-primary transition-colors">
+                          <Icon name="visibility" size={16} />
+                        </Link>
+                        <button onClick={() => handleDelete(application.id, application.company)} className="p-2 text-error hover:bg-error/10 rounded transition-colors">
+                          <Icon name="delete" size={16} />
                         </button>
                       </div>
                     </td>
@@ -580,43 +487,43 @@ function Applications() {
           </div>
         </div>
       ) : (
-        /* List View - Modernist Stack */
         <div className="flex flex-col gap-3">
           {filteredApplications.map(application => (
-            <div
-              key={application.id}
-              className={`card flex items-center p-3 gap-4 hover:shadow-md transition-all ${selectedApplications.has(application.id) ? 'border-primary-500 ring-1 ring-primary-500' : ''}`}
-            >
+            <div key={application.id} className={`card flex items-center p-4 gap-4 hover:shadow-md transition-all ${selectedApplications.has(application.id) ? 'border-primary-500' : ''}`}>
               <input
                 type="checkbox"
                 checked={selectedApplications.has(application.id)}
                 onChange={() => toggleApplicationSelection(application.id)}
                 className="checkbox"
               />
-              <div className="w-10 h-10 rounded-lg bg-surface-2 flex items-center justify-center font-black text-primary-500">
+              <div className="w-10 h-10 rounded bg-gray-900 text-white flex items-center justify-center font-black">
                 {application.company.charAt(0)}
               </div>
               <div className="flex-1 min-w-0">
-                <h4 className="font-bold text-primary truncate">{application.company}</h4>
+                <h4 className="font-bold text-primary truncate uppercase text-sm">{application.company}</h4>
                 <p className="text-xs text-secondary truncate">{application.role}</p>
               </div>
               <div className="hidden md:flex items-center gap-2">
-                <span className={`badge badge--${application.status.toLowerCase().replace(' ', '-')}`}>
+                <span className={`badge ${application.status === 'Applied' ? 'badge-applied' :
+                  application.status === 'Phone Screen' ? 'badge-phone-screen' :
+                    application.status === 'Technical Interview' ? 'badge-technical' :
+                      application.status === 'Final Round' ? 'badge-final' :
+                        application.status === 'Offer' ? 'badge-offer' :
+                          'badge-rejected'
+                  }`}>
                   {application.status}
                 </span>
-                {application.visaSponsorship && (
-                  <span className="text-primary-500">
-                    <Icon name="verified" size={14} />
-                  </span>
-                )}
               </div>
-              <div className="text-right ml-auto">
-                <p className="text-[10px] font-bold text-muted uppercase whitespace-nowrap">{formatDateForDisplay(application.dateApplied)}</p>
-                <div className="flex justify-end gap-1 mt-1">
-                  <button className="btn btn--ghost btn--sm p-1 h-auto" onClick={() => handleDelete(application.id, application.company)}>
-                    <Icon name="delete" size={14} className="text-red-500" />
-                  </button>
-                </div>
+              <div className="text-right ml-auto hidden sm:block">
+                <p className="text-[10px] font-black text-muted uppercase tracking-widest">{formatDateForDisplay(application.dateApplied)}</p>
+              </div>
+              <div className="flex gap-1 ml-4">
+                <Link to={`/applications/${application.id}`} className="p-2 text-muted hover:text-primary transition-colors">
+                  <Icon name="visibility" size={16} />
+                </Link>
+                <button onClick={() => handleDelete(application.id, application.company)} className="p-2 text-muted hover:text-error transition-colors">
+                  <Icon name="delete" size={16} />
+                </button>
               </div>
             </div>
           ))}
