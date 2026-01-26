@@ -1,0 +1,26 @@
+@use 'variables' as *;
+
+// Global Styles Bridge
+:root {
+    // Ensuring SCSS logic respects CSS variables
+    --spacing-base: #{$spacing-base};
+}
+
+.asymmetric-page-wrapper {
+    @include desktop {
+        @include asymmetric-grid;
+        padding: $spacing-4;
+    }
+
+    @include mobile {
+        display: flex;
+        flex-direction: column;
+        gap: $spacing-4;
+        padding: $spacing-3;
+    }
+}
+
+// Scaffolding for Radix UI Primitives
+[data-radix-portal] {
+    font-family: $font-display;
+}

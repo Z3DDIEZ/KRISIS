@@ -1,70 +1,53 @@
-# KRISIS - AI Job Application Intelligence
+# KRISIS - Intelligence Architecture v3.0
 
-**KRISIS** is an AI-augmented SaaS platform that tracks job applications and provides intelligent insights using Google's Gemini AI to help job seekers optimize their application strategy.
+**KRISIS** is a high-fidelity AI-augmented SaaS platform engineered for professional job search intelligence. It leverages Swiss design principles and Google's Gemini Pro AI to transform tracking into a tactical decision protocol.
 
-## 📊 Project Status
-
-**Current Phase: Month 3 - Analytics & Data Pipeline**
-
-The project is currently in active development, focusing on advanced analytics, data visualization, and UI/UX refinement.
+## 📊 Intelligence Status: PHASE 6 - ARCHITECTURE REFACTOR
+The platform has evolved from a simple tracker into a unified, modular Intelligence Architecture.
 
 ### ✅ Completed Modules
-- **Core Infrastructure**: React 18 + TypeScript + Vite setup, Firebase integration (Auth, Firestore, Hosting).
-- **Authentication**: Robust implementation with Email/Password and Google OAuth, including profile management.
-- **Job Tracking**: Full CRUD capabilities for job applications, status tracking (Applied, Interview, Offer, etc.).
-- **Dashboarding**: Key metrics visualization and application overview.
-- **Analytics**: Initial implementation of charts and data insights.
-- **Settings & Profile**: User preference management and profile editing.
-- **Design System**: Implementation of a comprehensive design system with CSS variables and Tailwind configuration for consistent theming.
+- **H2U Design Language**: Full implementation of Swiss/Bauhaus precision with intentional asymmetry.
+- **Decision-Driven UX**: Re-engineered KPI cards and urgent protocol grids for actionable feedback.
+- **Modular Core**: Transitioned to "Bulletproof React" feature-based architecture.
+- **Intelligence Reports**: High-fidelity PDF generation (`jsPDF`) for regional pipeline logic.
+- **Multilingual Support**: Fully wired `react-i18next` for global deployment.
 
-### 🚧 In Progress
-- **Advanced AI Integration**: Deepening the Gemini AI features for resume-job fit analysis.
-- **Aesthetic Refactor**: Ongoing UI/UX improvements to meet "Premium" design standards (Glassmorphism, Dark Mode).
-- **Data Export**: Enhancing CSV/JSON export capabilities.
+## 🛠️ Tech Stack Evolution
 
-## 🚀 Features
+### Frontend Precision
+- **Architecture**: Bulletproof React (Feature-Driven Structure)
+- **UI Primitives**: Radix UI (Accessible & Unstyled)
+- **Styling**: SCSS Modules + Tailwind CSS
+- **State Mgmt**: Zustand (Global) + TanStack Query (Server)
+- **Forms**: React Hook Form + Zod Schema Validation
+- **Engine**: Vite + TypeScript 5.2
 
-- **Smart Dashboard**: At-a-glance view of your job search progress and key statistics.
-- **Application Tracking**: Detailed tracking of every application with status updates, notes, and company info.
-- **Analytics Suite**: Visual insights into your application funnel, success rates, and activity over time.
-- **Profile Management**: Manage your professional profile and settings.
-- **Secure Authentication**: Enterprise-grade security using Firebase Auth.
-- **Responsive Design**: Mobile-first architecture ensuring access from any device.
-- **Data Privacy**: Granular security rules ensuring user data isolation.
+### Infrastructure & Intelligence
+- **Platform**: Google Cloud (Cloud Functions 2nd Gen, BigQuery)
+- **BaaS**: Firebase (Auth, Firestore, Hosting)
+- **AI**: Gemini Pro (Resume Analysis & Behavioral Intelligence)
 
-## 🛠️ Tech Stack
-
-### Frontend
-- **Framework**: React 18 + TypeScript
-- **Build Tool**: Vite
-- **Styling**: Tailwind CSS + CSS Variables (Custom Design System)
-- **State Management**: Zustand
-- **Data Fetching**: TanStack Query
-- **Routing**: React Router DOM (v6)
-- **Visualization**: Recharts
-
-### Backend & Infrastructure
-- **Platform**: Google Cloud Platform
-- **BaaS**: Firebase (Auth, Firestore, Hosting, Functions)
-- **AI**: Google Gemini Pro API
-- **Analytics**: BigQuery
-
-## 📁 Project Structure
+## 📁 Project Structure (Architecture v3)
 
 ```
 krisis/
-├── docs/                    # Detailed documentation & roadmaps
-├── frontend/                # React frontend application
+├── docs/                    # Architectural Blueprints & Roadmaps
+├── frontend/                # Intelligence Dashboard 
 │   ├── src/
-│   │   ├── components/      # Reusable UI components
-│   │   ├── pages/           # Application views (Dashboard, Analytics, etc.)
-│   │   ├── styles/          # Design system & global styles
-│   │   ├── lib/             # Utilities & Firebase config
-│   │   └── hooks/           # Custom React hooks
-├── functions/               # Cloud Functions for backend logic
-├── infra/                   # Infrastructure configuration (BigQuery, Rules)
-└── scripts/                 # Utility scripts
+│   │   ├── components/      # AsymmetricGrid, StatCards, Shared UI
+│   │   ├── providers/       # i18n, Auth, Context Layers
+│   │   ├── stores/          # Zustand Global State (Notifications, UI)
+│   │   ├── lib/             # Zod Schemas, i18n Config, Firebase
+│   │   ├── styles/          # Bauhaus SCSS Core & Variables
+│   │   └── pages/           # Pipeline Views
 ```
+
+## 🛠️ Tactical Implementation Details
+
+- **Neural Schema Validation**: All application data entry is governed by `Zod` schemas, providing strict runtime type safety and high-fidelity error reporting.
+- **Global Signal Processor**: A centralized `Zustand` store manages system-wide notifications and UI states with auto-dismiss logic and tactical slide-in animations.
+- **Linguistic Precision**: `react-i18next` provides a robust translation registry, ready for multi-region deployment.
+- **SCSS Bauhaus Bridge**: A sophisticated SCSS architecture with 8-point vertical rhythm mixins and breakpoints, bridging the gap between Tailwind's utility-first approach and custom grid requirements.
 
 ## 🏁 Quick Start
 

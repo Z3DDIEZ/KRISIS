@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { useAuthState } from 'react-firebase-hooks/auth'
 import {
@@ -10,27 +10,14 @@ import {
   serverTimestamp
 } from 'firebase/firestore'
 import { auth, db } from '../lib/firebase'
-import { validateAndNormalizeDate, getTodayDate, formatDateForDisplay } from '../lib/dateUtils'
-import { toast } from 'sonner'
+import { getTodayDate } from '../lib/dateUtils'
 import Icon from '../components/ui/Icon'
 
-interface ApplicationFormData {
-  company: string
-  role: string
-  status: string
-  dateApplied: string
-  notes: string
-  resumeUrl?: string
-  visaSponsorship: boolean
-  requestAnalysis: boolean
-}
-
-interface FormErrors {
-  company?: string
-  role?: string
-  dateApplied?: string
-  notes?: string
-}
+import { useForm } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { applicationSchema, type ApplicationValues } from '../lib/schemas'
+import { useTranslation } from 'react-i18next'
+import { useUIStore } from '../lib/store'
 
 const statusOptions = [
   { value: 'Applied', label: 'Applied' },
@@ -44,24 +31,33 @@ const statusOptions = [
 function ApplicationDetail() {
   const { id } = useParams()
   const navigate = useNavigate()
-  const [user, loading] = useAuthState(auth)
+  const { t } = useTranslation()
+  const dispatchNotification = useUIStore(state => state.dispatchNotification)
+  const [user, authLoading] = useAuthState(auth)
   const isNewApplication = id === 'new'
 
-
-  const [formData, setFormData] = useState<ApplicationFormData>({
-    company: '',
-    role: '',
-    status: 'Applied',
-    dateApplied: getTodayDate(),
-    notes: '',
-    visaSponsorship: false,
-    requestAnalysis: false
+  const {
+    register,
+    handleSubmit,
+    reset,
+    watch,
+    formState: { errors, isDirty, isSubmitting: hookIsSubmitting }
+  } = useForm<ApplicationValues>({
+    resolver: zodResolver(applicationSchema),
+    defaultValues: {
+      company: '',
+      role: '',
+      status: 'Applied',
+      dateApplied: getTodayDate(),
+      notes: '',
+      visaSponsorship: false,
+      requestAnalysis: false,
+      resumeUrl: ''
+    }
   })
 
-  const [isSubmitting, setIsSubmitting] = useState(false)
   const [isLoading, setIsLoading] = useState(id && id !== 'new')
-  const [errors, setErrors] = useState<FormErrors>({})
-  const [originalData, setOriginalData] = useState<ApplicationFormData | null>(null)
+  const formData = watch()
 
   // Load existing application data
   useEffect(() => {
@@ -81,7 +77,7 @@ function ApplicationDetail() {
 
       if (docSnap.exists()) {
         const data = docSnap.data()
-        const loadedData = {
+        const loadedData: ApplicationValues = {
           company: data.company || '',
           role: data.role || '',
           status: data.status || 'Applied',
@@ -89,144 +85,27 @@ function ApplicationDetail() {
           notes: data.notes || '',
           resumeUrl: data.resumeUrl || '',
           visaSponsorship: Boolean(data.visaSponsorship),
-          requestAnalysis: false // Reset to false for edits
+          requestAnalysis: false
         }
-        setFormData(loadedData)
-        setOriginalData(loadedData)
+        reset(loadedData)
       } else {
-        toast.error('Application not found')
+        dispatchNotification('Application protocol mission: MISSING', 'error')
         navigate('/applications')
       }
     } catch (error) {
       console.error('Error loading application:', error)
-      toast.error('Failed to load application')
+      dispatchNotification(t('common.error'), 'error')
     } finally {
       setIsLoading(false)
     }
   }
 
-  const validateField = (field: keyof ApplicationFormData, value: string | boolean | undefined): string | undefined => {
-    switch (field) {
-      case 'company':
-        if (!value || typeof value === 'string' && !value.trim()) {
-          return 'Company name is required'
-        }
-        if (typeof value === 'string' && value.trim().length < 2) {
-          return 'Company name must be at least 2 characters'
-        }
-        if (typeof value === 'string' && value.trim().length > 100) {
-          return 'Company name must be less than 100 characters'
-        }
-        break
-      case 'role':
-        if (!value || typeof value === 'string' && !value.trim()) {
-          return 'Role is required'
-        }
-        if (typeof value === 'string' && value.trim().length < 2) {
-          return 'Role must be at least 2 characters'
-        }
-        if (typeof value === 'string' && value.trim().length > 100) {
-          return 'Role must be less than 100 characters'
-        }
-        break
-      case 'dateApplied':
-        if (!value || typeof value === 'string' && !value.trim()) {
-          return 'Date applied is required'
-        }
-        try {
-          validateAndNormalizeDate(value as string, false)
-        } catch {
-          return 'Please enter a valid date'
-        }
-        break
-      case 'notes':
-        if (typeof value === 'string' && value.length > 1000) {
-          return 'Notes must be less than 1000 characters'
-        }
-        break
-      // resumeUrl and requestAnalysis don't need validation
-      case 'resumeUrl':
-      case 'requestAnalysis':
-        break
-    }
-    return undefined
-  }
+  const onFormSubmit = async (data: ApplicationValues) => {
+    if (!user) return
 
-  const handleInputChange = (field: keyof ApplicationFormData, value: string | boolean) => {
-    setFormData(prev => ({ ...prev, [field]: value }))
-
-    // Real-time validation
-    const error = validateField(field, value)
-    setErrors(prev => ({ ...prev, [field]: error }))
-  }
-
-  const handleDateChange = (dateString: string) => {
-    try {
-      const normalizedDate = validateAndNormalizeDate(dateString, true)
-      setFormData(prev => ({ ...prev, dateApplied: normalizedDate }))
-      setErrors(prev => ({ ...prev, dateApplied: undefined }))
-    } catch (error) {
-      setErrors(prev => ({ ...prev, dateApplied: 'Please enter a valid date' }))
-    }
-  }
-
-  const validateForm = (): boolean => {
-    const newErrors: FormErrors = {}
-
-    // Only validate fields that can have validation errors
-    const fieldsToValidate: (keyof ApplicationFormData)[] = ['company', 'role', 'dateApplied', 'notes']
-
-    fieldsToValidate.forEach(field => {
-      const error = validateField(field, formData[field])
-      if (error) {
-        newErrors[field as keyof FormErrors] = error
-      }
-    })
-
-    setErrors(newErrors)
-
-    if (Object.keys(newErrors).length > 0) {
-      toast.error('Please fix the errors below')
-      return false
-    }
-
-    return true
-  }
-
-  const hasFormChanged = (): boolean => {
-    if (!originalData) return true // For new applications, always allow submit
-
-    return (
-      formData.company.trim() !== originalData.company.trim() ||
-      formData.role.trim() !== originalData.role.trim() ||
-      formData.status !== originalData.status ||
-      formData.dateApplied !== originalData.dateApplied ||
-      formData.notes.trim() !== originalData.notes.trim() ||
-      formData.resumeUrl !== originalData.resumeUrl
-    )
-  }
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-
-    if (!user || !validateForm()) {
-      return
-    }
-
-    // For existing applications, check if anything actually changed
-    if (!isNewApplication && !hasFormChanged()) {
-      toast.info('No changes detected')
-      return
-    }
-
-    setIsSubmitting(true)
-    console.log('Starting form submission...')
     try {
       const applicationData = {
-        ...formData,
-        company: formData.company.trim(),
-        role: formData.role.trim(),
-        notes: formData.notes.trim(),
+        ...data,
         updatedAt: serverTimestamp(),
         ...(isNewApplication && {
           createdAt: serverTimestamp()
@@ -238,35 +117,28 @@ function ApplicationDetail() {
           collection(db, `users/${user.uid}/applications`),
           applicationData
         )
-        toast.success('Application created successfully!')
+        dispatchNotification('Application localized and registered.', 'success')
         navigate(`/applications/${docRef.id}`)
       } else {
         await updateDoc(
           doc(db, `users/${user.uid}/applications/${id}`),
           applicationData
         )
-        toast.success('Application updated successfully!')
+        dispatchNotification('Intelligence node updated.', 'success')
       }
     } catch (error: any) {
       console.error('Error saving application:', error)
-      console.error('Error details:', {
-        code: error.code,
-        message: error.message,
-        userId: user?.uid
-      })
-      toast.error(`Failed to save application: ${error.message}`)
-    } finally {
-      setIsSubmitting(false)
+      dispatchNotification(`Tactical failure: ${error.message}`, 'error')
     }
   }
 
   // Show loading for existing applications that are still loading
-  if (id && id !== 'new' && (loading || isLoading)) {
+  if (id && id !== 'new' && (authLoading || isLoading)) {
     return (
       <div className="flex items-center justify-center min-h-64">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-        <p className="mt-4 text-gray-600">
-          {loading ? 'Loading authentication...' : 'Loading application...'}
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-orange"></div>
+        <p className="mt-4 text-secondary uppercase text-xs tracking-widest font-bold">
+          {authLoading ? 'Authenticating Signal...' : 'Decrypting Data...'}
         </p>
       </div>
     )
@@ -275,7 +147,7 @@ function ApplicationDetail() {
   if (!user) {
     return (
       <div className="text-center py-12">
-        <p className="text-gray-500">Please sign in to manage applications.</p>
+        <p className="text-muted uppercase text-xs tracking-widest font-black">Access Denied: Please Initiate Session</p>
       </div>
     )
   }
@@ -284,76 +156,69 @@ function ApplicationDetail() {
     <div className="max-w-4xl mx-auto animate-fade-in">
       {/* Page Header */}
       <div className="mb-xl">
-        <h1 className="text-3xl font-bold text-primary mb-sm">
-          {isNewApplication ? 'Add New Application' : 'Edit Application'}
+        <h1 className="text-3xl font-bold text-primary mb-sm uppercase tracking-tighter">
+          {isNewApplication ? t('common.execute') + ': New Pipeline Node' : 'Intelligence Protocol: Update'}
         </h1>
-        <p className="text-secondary text-base">
+        <p className="text-secondary text-base font-medium opacity-80 uppercase text-[10px] tracking-widest">
           {isNewApplication
-            ? 'Track a new job application'
-            : 'Update your application details'
+            ? 'Quantifying a new market engagement node'
+            : 'Synchronizing intelligence parameters'
           }
         </p>
       </div>
 
-      <form onSubmit={handleSubmit} className="card">
-        <div className="card-body">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-lg">
+      <form onSubmit={handleSubmit(onFormSubmit)} className="card shadow-2xl border-l-[6px] border-l-primary-orange">
+        <div className="card-body p-spacing-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-lg mb-lg">
             {/* Company */}
             <div className="input-group">
-              <label htmlFor="company" className="input-label">
-                Company <span className="required">*</span>
+              <label htmlFor="company" className="input-label font-black text-[10px] uppercase tracking-widest text-muted mb-2 block">
+                Target Entity <span className="text-primary-orange">*</span>
               </label>
               <input
+                {...register('company')}
                 type="text"
                 id="company"
-                required
-                maxLength={100}
-                value={formData.company}
-                onChange={(e) => handleInputChange('company', e.target.value)}
-                className={`input-field ${errors.company ? 'error' : ''}`}
+                className={`input-field bg-surface-2 border-border-light focus:border-primary-orange rounded-none h-12 px-4 transition-all ${errors.company ? 'border-red-500' : ''}`}
                 placeholder="e.g., Google, Microsoft"
               />
               {errors.company && (
-                <p className="input-error">{errors.company}</p>
+                <p className="text-[10px] uppercase font-bold text-red-500 mt-2 tracking-wide">{errors.company.message}</p>
               )}
             </div>
 
             {/* Role */}
             <div className="input-group">
-              <label htmlFor="role" className="input-label">
-                Role <span className="required">*</span>
+              <label htmlFor="role" className="input-label font-black text-[10px] uppercase tracking-widest text-muted mb-2 block">
+                Designated Role <span className="text-primary-orange">*</span>
               </label>
               <input
+                {...register('role')}
                 type="text"
                 id="role"
-                required
-                maxLength={100}
-                value={formData.role}
-                onChange={(e) => handleInputChange('role', e.target.value)}
-                className={`input-field ${errors.role ? 'error' : ''}`}
+                className={`input-field bg-surface-2 border-border-light focus:border-primary-orange rounded-none h-12 px-4 transition-all ${errors.role ? 'border-red-500' : ''}`}
                 placeholder="e.g., Software Engineer"
               />
               {errors.role && (
-                <p className="input-error">{errors.role}</p>
+                <p className="text-[10px] uppercase font-bold text-red-500 mt-2 tracking-wide">{errors.role.message}</p>
               )}
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-lg">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-lg mb-lg">
             {/* Status */}
             <div className="input-group">
-              <label htmlFor="status" className="input-label">
-                Status
+              <label htmlFor="status" className="input-label font-black text-[10px] uppercase tracking-widest text-muted mb-2 block">
+                Pipeline Phase
               </label>
               <select
+                {...register('status')}
                 id="status"
-                value={formData.status}
-                onChange={(e) => handleInputChange('status', e.target.value)}
-                className="select-field"
+                className="select-field bg-surface-2 border-border-light focus:border-primary-orange rounded-none h-12 px-4 appearance-none font-bold uppercase text-xs"
               >
-                {statusOptions.map(option => (
+                {statusOptions.map((option) => (
                   <option key={option.value} value={option.value}>
-                    {option.label}
+                    {option.label.toUpperCase()}
                   </option>
                 ))}
               </select>
@@ -361,67 +226,57 @@ function ApplicationDetail() {
 
             {/* Date Applied */}
             <div className="input-group">
-              <label htmlFor="dateApplied" className="input-label">
-                Date Applied <span className="required">*</span>
+              <label htmlFor="dateApplied" className="input-label font-black text-[10px] uppercase tracking-widest text-muted mb-2 block">
+                Submission Timestamp <span className="text-primary-orange">*</span>
               </label>
               <input
+                {...register('dateApplied')}
                 type="date"
                 id="dateApplied"
-                required
-                value={formData.dateApplied}
-                onChange={(e) => handleDateChange(e.target.value)}
-                className={`input-field ${errors.dateApplied ? 'error' : ''}`}
+                className={`input-field bg-surface-2 border-border-light focus:border-primary-orange rounded-none h-12 px-4 transition-all ${errors.dateApplied ? 'border-red-500' : ''}`}
               />
-              {errors.dateApplied ? (
-                <p className="input-error">{errors.dateApplied}</p>
-              ) : formData.dateApplied ? (
-                <p className="input-hint">
-                  {formatDateForDisplay(formData.dateApplied)}
-                </p>
-              ) : null}
+              {errors.dateApplied && (
+                <p className="text-[10px] uppercase font-bold text-red-500 mt-2 tracking-wide">{errors.dateApplied.message}</p>
+              )}
             </div>
           </div>
 
           {/* Visa Sponsorship */}
-          <div className="input-group">
-            <label className="input-label">
-              Visa Sponsorship
-            </label>
+          <div className="input-group mb-lg">
             <div className="flex items-center gap-sm">
-              <input
-                id="visaSponsorship"
-                type="checkbox"
-                checked={formData.visaSponsorship}
-                onChange={(e) => handleInputChange('visaSponsorship', e.target.checked)}
-                className="checkbox"
-              />
-              <label htmlFor="visaSponsorship" className="text-sm text-secondary">
-                This company sponsors work visas
+              <div className="relative">
+                <input
+                  {...register('visaSponsorship')}
+                  id="visaSponsorship"
+                  type="checkbox"
+                  className="w-5 h-5 accent-primary-orange bg-surface-3 border-border rounded-none cursor-pointer"
+                />
+              </div>
+              <label htmlFor="visaSponsorship" className="text-[10px] uppercase font-black tracking-widest text-secondary cursor-pointer select-none">
+                Residency Protocol: Required Support
               </label>
             </div>
           </div>
 
           {/* Notes */}
-          <div className="input-group">
-            <label htmlFor="notes" className="input-label">
-              Notes
+          <div className="input-group mb-lg">
+            <label htmlFor="notes" className="input-label font-black text-[10px] uppercase tracking-widest text-muted mb-2 block">
+              Intelligence Context
             </label>
             <textarea
+              {...register('notes')}
               id="notes"
               rows={4}
-              maxLength={1000}
-              value={formData.notes}
-              onChange={(e) => handleInputChange('notes', e.target.value)}
-              className={`textarea-field ${errors.notes ? 'error' : ''}`}
-              placeholder="Additional details about this application..."
+              className={`textarea-field bg-surface-2 border-border-light focus:border-primary-orange rounded-none px-4 py-3 transition-all ${errors.notes ? 'border-red-500' : ''}`}
+              placeholder="Inject tactical data..."
             />
-            <div className="flex justify-between text-sm">
+            <div className="flex justify-between mt-2">
               {errors.notes ? (
-                <p className="input-error">{errors.notes}</p>
+                <p className="text-[10px] uppercase font-bold text-red-500 tracking-wide">{errors.notes.message}</p>
               ) : (
-                <p className="input-hint">Optional additional details</p>
+                <p className="text-[10px] uppercase font-bold text-muted tracking-widest">Optional Decryption</p>
               )}
-              <p className={`input-hint ${formData.notes.length > 900 ? 'text-orange-600' : ''}`}>
+              <p className={`text-[10px] font-mono font-bold ${formData.notes.length > 900 ? 'text-primary-orange' : 'text-muted'}`}>
                 {formData.notes.length}/1000
               </p>
             </div>
@@ -429,24 +284,24 @@ function ApplicationDetail() {
 
           {/* AI Analysis Request */}
           {isNewApplication && (
-            <div className="bg-status-applied border border-status-applied rounded-lg p-lg" style={{ backgroundColor: 'rgba(52, 152, 219, 0.1)', borderColor: 'rgba(52, 152, 219, 0.2)' }}>
+            <div className="bg-surface-3 border border-border-light p-spacing-4 mb-lg relative overflow-hidden">
+              <div className="absolute top-0 left-0 w-1 h-full bg-primary-orange" />
               <div className="flex items-start gap-sm">
                 <div className="flex items-center h-5 mt-0.5">
                   <input
+                    {...register('requestAnalysis')}
                     id="requestAnalysis"
                     type="checkbox"
-                    checked={formData.requestAnalysis}
-                    onChange={(e) => handleInputChange('requestAnalysis', e.target.checked)}
-                    className="checkbox"
+                    className="w-5 h-5 accent-primary-orange cursor-pointer"
                   />
                 </div>
                 <div className="flex-1">
-                  <label htmlFor="requestAnalysis" className="text-sm font-semibold text-status-applied">
-                    <Icon name="technical" size={16} />
-                    Analyze with AI
+                  <label htmlFor="requestAnalysis" className="text-xs font-black uppercase tracking-widest text-primary-orange flex items-center gap-2">
+                    <Icon name="technical" size={14} />
+                    Gemini Intelligence Protocol
                   </label>
-                  <p className="text-sm text-status-applied mt-sm opacity-80">
-                    Get AI-powered insights on your resume-job fit, including matching skills, gaps, and next steps.
+                  <p className="text-[10px] text-secondary font-medium uppercase mt-1 opacity-70 leading-relaxed tracking-wider">
+                    Engage neural networks to quantify resume-job fit architecture.
                   </p>
                 </div>
               </div>
@@ -454,20 +309,20 @@ function ApplicationDetail() {
           )}
 
           {/* Form Actions */}
-          <div className="card-footer flex gap-sm">
+          <div className="card-footer flex justify-end gap-spacing-3 pt-spacing-4 border-t border-border-light mt-spacing-4">
             <button
               type="button"
               onClick={() => navigate('/applications')}
-              className="btn btn-secondary"
+              className="btn btn-secondary px-8 h-12 rounded-none font-black uppercase text-[10px] tracking-[0.2em]"
             >
-              Cancel
+              Abort
             </button>
             <button
               type="submit"
-              disabled={isSubmitting}
-              className="btn btn-primary"
+              disabled={hookIsSubmitting || !isDirty}
+              className="btn btn-primary px-10 h-12 rounded-none font-black uppercase text-[10px] tracking-[0.2em] bg-primary-orange text-white hover:brightness-110 disabled:grayscale disabled:opacity-50 transition-all shadow-lg"
             >
-              {isSubmitting ? 'Saving...' : (isNewApplication ? 'Create Application' : 'Update Application')}
+              {hookIsSubmitting ? t('common.loading') : (isNewApplication ? 'Deploy Node' : 'Sync Intel')}
             </button>
           </div>
         </div>

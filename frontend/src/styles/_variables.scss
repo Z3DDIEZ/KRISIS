@@ -1,0 +1,56 @@
+// KRISIS Design System - SCSS Architecture
+// Based on Swiss/Bauhaus Principles
+
+// 1. Typography (Modular scale 1.250)
+$font-display: 'Inter', 'Helvetica Neue', system-ui, sans-serif;
+$font-mono: 'JetBrains Mono', 'Fira Code', monospace;
+
+// 2. Colours (Orange Anchor + Swiss Grayscale)
+$primary-orange: #E67E22;
+$surface-1: var(--gray-50);
+$surface-2: var(--gray-100);
+$surface-3: var(--gray-200);
+$surface-contrast: var(--gray-900);
+
+// 3. Spacing (8-Point Foundation)
+$spacing-base: 0.5rem; // 8px
+$spacing-1: $spacing-base;
+$spacing-2: $spacing-base * 2;
+$spacing-3: $spacing-base * 3;
+$spacing-4: $spacing-base * 4;
+$spacing-6: $spacing-base * 6;
+$spacing-8: $spacing-base * 8;
+
+// 4. Animation Curves
+$ease-standard: cubic-bezier(0.4, 0.0, 0.2, 1);
+$ease-decelerate: cubic-bezier(0.0, 0.0, 0.2, 1);
+$ease-accelerate: cubic-bezier(0.4, 0.0, 1, 1);
+
+// 5. Breakpoints
+$breakpoint-mobile: 699px;
+$breakpoint-tablet: 1023px;
+$breakpoint-desktop: 1024px;
+
+@mixin mobile {
+    @media (max-width: #{$breakpoint-mobile}) {
+        @content;
+    }
+}
+
+@mixin tablet {
+    @media (min-width: 700px) and (max-width: #{$breakpoint-tablet}) {
+        @content;
+    }
+}
+
+@mixin desktop {
+    @media (min-width: #{$breakpoint-desktop}) {
+        @content;
+    }
+}
+
+@mixin asymmetric-grid {
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    gap: $spacing-3;
+}
