@@ -1,12 +1,19 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { Link } from 'react-router-dom'
 import { useAuthState } from 'react-firebase-hooks/auth'
-import { collection, query, orderBy, onSnapshot } from 'firebase/firestore'
+import {
+  getDocs,
+  collection,
+  query,
+  orderBy
+} from 'firebase/firestore'
 import { auth, db } from '../lib/firebase'
 import { formatDateForDisplay } from '../lib/dateUtils'
 import Icon from '../components/ui/Icon'
 import StatCard from '../components/ui/StatCard'
+import { handleError } from '../lib/ErrorHandler'
 import { AsymmetricGrid, AsymmetricCard } from '../components/ui/AsymmetricGrid'
+import UrgentActions from '../components/ui/UrgentActions'
 
 interface Application {
   id: string
@@ -22,7 +29,7 @@ interface DashboardStats {
   totalApplications: number
   interviews: number
   offers: number
-  aiAnalyses: number
+  urgentCount: number
   successRate: number
 }
 
@@ -33,57 +40,97 @@ function Dashboard() {
     totalApplications: 0,
     interviews: 0,
     offers: 0,
-    aiAnalyses: 0,
+    urgentCount: 0,
     successRate: 0
   })
   const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
     if (!user) {
-      setIsLoading(false)
+      if (!loading) setIsLoading(false)
       return
     }
 
-    const q = query(
-      collection(db, `users/${user.uid}/applications`),
-      orderBy('dateApplied', 'desc')
-    )
+    const loadDashboardData = async () => {
+      try {
+        const q = query(
+          collection(db, `users/${user.uid}/applications`),
+          orderBy('dateApplied', 'desc')
+        )
 
-    const unsubscribe = onSnapshot(q, (querySnapshot) => {
-      const apps: Application[] = []
-      let totalApps = 0
-      let interviews = 0
-      let offers = 0
+        // H2U Pattern: Parallel async orchestration
+        const [querySnapshot] = await Promise.all([
+          getDocs(q),
+          new Promise(resolve => setTimeout(resolve, 300)) // Baseline check latency simulation
+        ])
 
-      querySnapshot.forEach((doc) => {
-        const app = { id: doc.id, ...doc.data() } as Application
-        apps.push(app)
-        totalApps++
+        const apps: Application[] = []
+        let totalApps = 0
+        let interviews = 0
+        let offers = 0
+        let urgentCount = 0
 
-        if (['Phone Screen', 'Technical Interview', 'Final Round'].includes(app.status)) {
-          interviews++
-        }
+        querySnapshot.forEach((doc) => {
+          const data = doc.data()
+          const app = { id: doc.id, ...data } as Application
+          apps.push(app)
+          totalApps++
 
-        if (app.status === 'Offer') {
-          offers++
+          if (['Phone Screen', 'Technical Interview', 'Final Round'].includes(app.status)) {
+            interviews++
+          }
+
+          if (app.status === 'Offer') {
+            offers++
+          }
+
+          // Urgent Logic: No activity in 14 days
+          const daysOld = Math.floor((new Date().getTime() - new Date(app.dateApplied).getTime()) / (1000 * 3600 * 24))
+          if ((app.status === 'Applied' || app.status.includes('Interview')) && daysOld > 14) {
+            urgentCount++
+          }
+        })
+
+        const successRate = totalApps > 0 ? Math.round((offers / totalApps) * 100) : 0
+
+        setApplications(apps)
+        setStats({
+          totalApplications: totalApps,
+          interviews,
+          offers,
+          urgentCount,
+          successRate
+        })
+      } catch (err) {
+        handleError(err, 'Dashboard Load')
+      } finally {
+        setIsLoading(false)
+      }
+    }
+
+    loadDashboardData()
+  }, [user, loading])
+
+  const urgentActionsData = useMemo(() => {
+    return applications
+      .filter(app => {
+        const daysOld = Math.floor((new Date().getTime() - new Date(app.dateApplied).getTime()) / (1000 * 3600 * 24))
+        return (app.status === 'Applied' || app.status.includes('Interview')) && daysOld > 14
+      })
+      .map(app => {
+        const daysOld = Math.floor((new Date().getTime() - new Date(app.dateApplied).getTime()) / (1000 * 3600 * 24))
+        return {
+          id: `urgent-${app.id}`,
+          priority: (daysOld > 21 ? 'high' : 'medium') as 'high' | 'medium' | 'low',
+          category: (app.status.includes('Interview') ? 'Assessment' : 'Follow-up') as any,
+          description: `Stagnant application at ${app.company}`,
+          impact: `Risk: High - No response for ${daysOld} days`,
+          daysAged: daysOld,
+          appId: app.id
         }
       })
-
-      const successRate = totalApps > 0 ? Math.round((offers / totalApps) * 100) : 0
-
-      setApplications(apps)
-      setStats({
-        totalApplications: totalApps,
-        interviews,
-        offers,
-        aiAnalyses: 0,
-        successRate
-      })
-      setIsLoading(false)
-    })
-
-    return () => unsubscribe()
-  }, [user])
+      .slice(0, 5)
+  }, [applications])
 
   if (loading || isLoading) {
     return (
@@ -116,14 +163,15 @@ function Dashboard() {
         </div>
       </header>
 
-      {/* Stats Grid - Asymmetric Pattern */}
+      {/* Stats Grid - Asymmetric Pattern (Decision Driven) */}
       <AsymmetricGrid>
         <AsymmetricCard size="large">
           <StatCard
-            label="Total pipeline"
+            label="Pipeline Volume"
             value={stats.totalApplications}
             icon="work"
-            change="12% increase"
+            insight="Aggregated across all status nodes"
+            change="1.2% velocity"
             trend="up"
           />
         </AsymmetricCard>
@@ -132,17 +180,18 @@ function Dashboard() {
             label="Active Interviews"
             value={stats.interviews}
             icon="person"
-            change="4 new items"
+            insight="Live assessment protocols"
+            change="4 new slots"
             trend="up"
           />
         </AsymmetricCard>
         <AsymmetricCard size="small">
           <StatCard
-            label="Secured Offers"
-            value={stats.offers}
-            icon="check"
-            change="High velocity"
-            trend="up"
+            label="Stagnant Slots"
+            value={stats.urgentCount}
+            icon="warning"
+            insight="No activity detected in 14d+"
+            isUrgent={stats.urgentCount > 0}
           />
         </AsymmetricCard>
         <AsymmetricCard size="large">
@@ -150,11 +199,15 @@ function Dashboard() {
             label="Success Quotient"
             value={`${stats.successRate}%`}
             icon="trending-up"
-            change="Optimizing flow"
+            insight="Current offer conversion rate"
+            change="Optimizing"
             trend="neutral"
           />
         </AsymmetricCard>
       </AsymmetricGrid>
+
+      {/* Urgent Actions - H2U Pattern */}
+      <UrgentActions actions={urgentActionsData} />
 
       <div className="card">
         <div className="px-6 py-5 border-b border-border-light flex justify-between items-center">
@@ -199,9 +252,9 @@ function Dashboard() {
                       <p className="text-xs font-bold text-primary">{formatDateForDisplay(application.dateApplied)}</p>
                     </div>
                     <div className={`badge ${application.status === 'Applied' ? 'badge-applied' :
-                      application.status === 'Phone Screen' ? 'badge-phone-screen' :
-                        application.status === 'Technical Interview' ? 'badge-technical' :
-                          application.status === 'Final Round' ? 'badge-final' :
+                      application.status.includes('Phone') ? 'badge-phone-screen' :
+                        application.status.includes('Technical') ? 'badge-technical' :
+                          application.status.includes('Final') ? 'badge-final' :
                             application.status === 'Offer' ? 'badge-offer' :
                               'badge-rejected'
                       }`}>

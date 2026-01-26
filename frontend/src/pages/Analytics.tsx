@@ -1,14 +1,15 @@
 import { useState, useEffect, useMemo } from 'react'
 import { useAuthState } from 'react-firebase-hooks/auth'
-import { collection, query, orderBy, onSnapshot } from 'firebase/firestore'
+import { getDocs, collection, query, orderBy } from 'firebase/firestore'
 import { auth, db } from '../lib/firebase'
-import { toast } from 'sonner'
 import Icon from '../components/ui/Icon'
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
   Cell, AreaChart, Area, PieChart, Pie, Legend
 } from 'recharts'
 import StatCard from '../components/ui/StatCard'
+import { exportIntelligenceReport } from '../lib/ReportExporter'
+import { handleError } from '../lib/ErrorHandler'
 
 interface Application {
   id: string
@@ -58,33 +59,40 @@ function Analytics() {
       return
     }
 
-    const q = query(
-      collection(db, `users/${user.uid}/applications`),
-      orderBy('dateApplied', 'desc')
-    )
+    const loadAnalyticsData = async () => {
+      try {
+        const q = query(
+          collection(db, `users/${user.uid}/applications`),
+          orderBy('dateApplied', 'desc')
+        )
 
-    const unsubscribe = onSnapshot(q, (querySnapshot) => {
-      const apps: Application[] = []
-      querySnapshot.forEach((doc) => {
-        const data = doc.data()
-        apps.push({
-          id: doc.id,
-          company: data.company || '',
-          role: data.role || '',
-          dateApplied: data.dateApplied || '',
-          status: data.status || 'Applied',
-          visaSponsorship: Boolean(data.visaSponsorship)
+        // H2U Pattern: Parallel async orchestration
+        const [querySnapshot] = await Promise.all([
+          getDocs(q),
+          new Promise(resolve => setTimeout(resolve, 400)) // Mimic report generation baseline
+        ])
+
+        const apps: Application[] = []
+        querySnapshot.forEach((doc) => {
+          const data = doc.data()
+          apps.push({
+            id: doc.id,
+            company: data.company || '',
+            role: data.role || '',
+            dateApplied: data.dateApplied || '',
+            status: data.status || 'Applied',
+            visaSponsorship: Boolean(data.visaSponsorship)
+          })
         })
-      })
-      setApplications(apps)
-      setIsLoading(false)
-    }, (error) => {
-      console.error('Error loading applications:', error)
-      toast.error('Failed to load analytics data')
-      setIsLoading(false)
-    })
+        setApplications(apps)
+      } catch (error) {
+        handleError(error, 'Analytics Load')
+      } finally {
+        setIsLoading(false)
+      }
+    }
 
-    return () => unsubscribe()
+    loadAnalyticsData()
   }, [user, loading])
 
   const analyticsData = useMemo((): AnalyticsData | null => {
@@ -234,22 +242,32 @@ function Analytics() {
           <p className="text-secondary font-medium tracking-tight page-header__subtitle">Quantifying your pursuit of excellence</p>
         </header>
 
-        {/* Modern Timeframe Switcher */}
-        <div className="flex bg-surface-3 p-1 rounded-lg border border-border-light">
-          {[
-            { id: 'all', label: 'All Time' },
-            { id: '6months', label: '6M' },
-            { id: '3months', label: '3M' },
-            { id: '1month', label: '1M' }
-          ].map(t => (
-            <button
-              key={t.id}
-              onClick={() => setSelectedTimeframe(t.id as any)}
-              className={`px-4 py-1.5 rounded-md text-[10px] font-black uppercase tracking-widest transition-all ${selectedTimeframe === t.id ? 'bg-surface-1 shadow-sm text-primary' : 'text-muted hover:text-secondary'}`}
-            >
-              {t.label}
-            </button>
-          ))}
+        {/* Modern Timeframe Switcher & Export */}
+        <div className="flex items-center gap-spacing-3">
+          <button
+            onClick={() => exportIntelligenceReport(applications, analyticsData!, selectedTimeframe)}
+            className="btn btn-secondary flex items-center gap-2 text-[10px] font-black uppercase tracking-widest px-4 py-2"
+          >
+            <Icon name="download" size={14} />
+            Export Intel
+          </button>
+
+          <div className="flex bg-surface-3 p-1 rounded-lg border border-border-light">
+            {[
+              { id: 'all', label: 'All Time' },
+              { id: '6months', label: '6M' },
+              { id: '3months', label: '3M' },
+              { id: '1month', label: '1M' }
+            ].map(t => (
+              <button
+                key={t.id}
+                onClick={() => setSelectedTimeframe(t.id as any)}
+                className={`px-4 py-1.5 rounded-md text-[10px] font-black uppercase tracking-widest transition-all ${selectedTimeframe === t.id ? 'bg-surface-1 shadow-sm text-primary' : 'text-muted hover:text-secondary'}`}
+              >
+                {t.label}
+              </button>
+            ))}
+          </div>
         </div>
       </div>
 

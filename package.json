@@ -9,6 +9,8 @@
     "@types/mocha": "^10.0.10"
   },
   "dependencies": {
+    "jspdf": "^4.0.0",
+    "jspdf-autotable": "^5.0.7",
     "lucide-react": "^0.563.0",
     "recharts": "^3.7.0"
   }
