@@ -126,7 +126,9 @@ function MainLayout({ children }: MainLayoutProps) {
 
         {/* Main Content */}
         <main className="layout__main" id="main-content" role="main">
-          {children}
+          <div className="layout__inner">
+            {children}
+          </div>
           <BackToTop />
         </main>
       </div>

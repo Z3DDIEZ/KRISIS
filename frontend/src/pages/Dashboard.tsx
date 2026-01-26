@@ -105,148 +105,103 @@ function Dashboard() {
 
   return (
     <div className="animate-fade-in">
-      {/* Page Header */}
-      <div className="mb-xl">
-        <h1 className="text-3xl font-bold text-primary mb-sm">Dashboard</h1>
-        <p className="text-secondary text-base">Welcome to KRISIS - Your job application intelligence platform</p>
-      </div>
+      <header className="page-header">
+        <h1 className="text-3xl font-black text-primary tracking-tighter uppercase page-header__title">Intelligence Dashboard</h1>
+        <p className="text-secondary font-medium tracking-tight page-header__subtitle">Real-time pipeline analytics and application tracking.</p>
+      </header>
 
       {/* Stats Grid */}
-      <div className="stats-grid mb-xl">
-        {/* Total Applications - Clickable */}
-        <Link to="/applications" className="stat-card group" data-track-section="total-apps">
-          <div className="stat-card__icon stat-card__icon--blue">
-            <Icon name="work" size={20} />
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+        {[
+          { label: 'Total pipeline', value: stats.totalApplications, icon: 'work', change: '12% increase' },
+          { label: 'Active Interviews', value: stats.interviews, icon: 'person', change: '4 new items' },
+          { label: 'Secured Offers', value: stats.offers, icon: 'check', change: 'High velocity' },
+          { label: 'Success Quotient', value: `${stats.successRate}%`, icon: 'trending-up', change: 'Optimizing flow' }
+        ].map((stat, i) => (
+          <div key={i} className="stat-card group">
+            <div className="flex justify-between items-start mb-6">
+              <span className="text-[10px] font-black text-muted uppercase tracking-[0.2em]">{stat.label}</span>
+              <div className="p-2.5 bg-surface-2 text-muted group-hover:bg-primary-50 group-hover:text-primary-500 transition-colors rounded-md">
+                <Icon name={stat.icon} size={14} />
+              </div>
+            </div>
+            <div className="text-4xl font-black text-primary mb-2 leading-none">{stat.value}</div>
+            <div className="text-[10px] font-bold text-primary-500 uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-opacity">
+              {stat.change}
+            </div>
           </div>
-          <div className="stat-card__content">
-            <div className="stat-card__value">{stats.totalApplications}</div>
-            <div className="stat-card__label">Total Applications</div>
-          </div>
-        </Link>
-
-        {/* Interviews */}
-        <div className="stat-card" data-track-section="interviews">
-          <div className="stat-card__icon stat-card__icon--green">
-            <Icon name="call" size={20} />
-          </div>
-          <div className="stat-card__content">
-            <div className="stat-card__value">{stats.interviews}</div>
-            <div className="stat-card__label">Interviews</div>
-          </div>
-        </div>
-
-        {/* Offers */}
-        <div className="stat-card" data-track-section="offers">
-          <div className="stat-card__icon stat-card__icon--purple">
-            <Icon name="offer" size={20} />
-          </div>
-          <div className="stat-card__content">
-            <div className="stat-card__value">{stats.offers || 0}</div>
-            <div className="stat-card__label">Offers Received</div>
-          </div>
-        </div>
-
-        {/* Success Rate */}
-        <div className="stat-card" data-track-section="success-rate">
-          <div className="stat-card__icon stat-card__icon--orange">
-            <Icon name="trending-up" size={20} />
-          </div>
-          <div className="stat-card__content">
-            <div className="stat-card__value">{stats.successRate}%</div>
-            <div className="stat-card__label">Success Rate</div>
-          </div>
-          <div className="absolute bottom-0 left-0 right-0 h-1 bg-surface-3 overflow-hidden">
-            <div
-              className="h-full bg-gradient-to-r from-primary-orange to-primary-orange-light transition-all duration-1000 ease-out"
-              style={{
-                width: `${stats.successRate}%`
-              }}
-            />
-          </div>
-        </div>
+        ))}
       </div>
 
-      {/* Recent Applications */}
       <div className="card">
-        <div className="card-header">
-          <h3 className="card-title">Recent Applications</h3>
-          <Link to="/applications/new" className="btn btn-orange">
-            Add Application
+        <div className="px-6 py-5 border-b border-border-light flex justify-between items-center bg-surface-2/50">
+          <h3 className="text-xs font-black text-muted uppercase tracking-widest">Recent Activity</h3>
+          <Link to="/applications/new" className="text-[11px] font-black text-primary-500 uppercase tracking-widest hover:text-primary-600 transition-colors">
+            Add Entry +
           </Link>
         </div>
 
-        <div className="card-body">
+        <div className="p-0">
           {applications.length === 0 ? (
-            <div className="empty-state">
-              <div className="empty-icon">
-                <Icon name="work" size={48} />
+            <div className="p-20 text-center">
+              <div className="w-16 h-16 bg-surface-2 rounded-full flex items-center justify-center mx-auto mb-6">
+                <Icon name="work" size={32} className="text-muted" />
               </div>
-              <h3 className="empty-title">No applications yet</h3>
-              <p className="empty-description">Get started by adding your first job application.</p>
-              <Link to="/applications/new" className="btn btn-orange">
-                Add Your First Application
+              <h3 className="text-lg font-black text-primary mb-2 uppercase">Zero Records Detected</h3>
+              <p className="text-secondary mb-8 max-w-xs mx-auto font-medium">Initiate your pipeline by adding your first job application record.</p>
+              <Link to="/applications/new" className="btn btn-primary px-8">
+                GENERATE FIRST RECORD
               </Link>
             </div>
           ) : (
-            <div className="space-y-md">
+            <div className="divide-y divide-border-light">
               {applications.slice(0, 10).map((application) => (
                 <div
                   key={application.id}
-                  className="application-card"
-                  data-track-action="view-application"
-                  data-application-id={application.id}
+                  className="flex items-center justify-between p-6 hover:bg-surface-2 transition-colors"
                 >
-                  <div className="application-card__header">
-                    <div className="application-card__logo bg-gradient-to-br from-primary-orange-bg to-primary-orange/20">
-                      <span className="text-primary-orange font-semibold">
-                        {application.company.charAt(0).toUpperCase()}
-                      </span>
+                  <div className="flex items-center gap-4">
+                    <div className="w-12 h-12 bg-surface-contrast text-text-on-contrast rounded flex items-center justify-center font-black text-xl">
+                      {application.company.charAt(0)}
                     </div>
-                    <div className="application-card__info">
-                      <div className="application-card__company">
-                        {application.company} - {application.role}
-                      </div>
-                      <div className="application-card__role">
-                        Applied {formatDateForDisplay(application.dateApplied)}
-                      </div>
+                    <div>
+                      <h4 className="font-bold text-primary uppercase text-xs tracking-tight">{application.company}</h4>
+                      <p className="text-[10px] font-black text-muted uppercase tracking-widest">{application.role}</p>
                     </div>
                   </div>
 
-                  <div className="application-card__footer">
-                    <div className={`badge ${application.status === 'Applied' ? 'badge--applied' :
-                      application.status === 'Phone Screen' ? 'badge--phone' :
-                        application.status === 'Technical Interview' ? 'badge--technical' :
-                          application.status === 'Final Round' ? 'badge--final' :
-                            application.status === 'Offer' ? 'badge--offer' :
-                              'badge--rejected'
+                  <div className="flex items-center gap-6">
+                    <div className="hidden md:block text-right">
+                      <p className="text-[10px] font-black text-muted uppercase tracking-widest mb-1">Applied</p>
+                      <p className="text-xs font-bold text-primary">{formatDateForDisplay(application.dateApplied)}</p>
+                    </div>
+                    <div className={`badge ${application.status === 'Applied' ? 'badge-applied' :
+                      application.status === 'Phone Screen' ? 'badge-phone-screen' :
+                        application.status === 'Technical Interview' ? 'badge-technical' :
+                          application.status === 'Final Round' ? 'badge-final' :
+                            application.status === 'Offer' ? 'badge-offer' :
+                              'badge-rejected'
                       }`}>
                       {application.status}
                     </div>
                     <Link
                       to={`/applications/${application.id}`}
-                      className="btn btn--ghost btn--sm"
-                      data-track-action="view-details"
+                      className="p-2 text-muted hover:text-primary transition-colors"
                     >
-                      <Icon name="visibility" size={14} />
-                      View Details
+                      <Icon name="visibility" size={18} />
                     </Link>
                   </div>
                 </div>
               ))}
 
-              {applications.length > 10 && (
-                <div className="text-center pt-lg">
-                  <p className="text-secondary text-sm mb-md">
-                    Showing 10 of {applications.length} applications
-                  </p>
-                  <Link
-                    to="/applications"
-                    className="btn btn-primary"
-                  >
-                    View All Applications →
-                  </Link>
-                </div>
-              )}
+              <div className="p-6 bg-surface-2/30 text-center">
+                <Link
+                  to="/applications"
+                  className="text-xs font-black text-muted uppercase tracking-widest hover:text-primary transition-colors"
+                >
+                  Inspect Full Pipeline ({applications.length} items) →
+                </Link>
+              </div>
             </div>
           )}
         </div>

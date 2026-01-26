@@ -1,242 +1,114 @@
 /* ========================================
    KRISIS Components - Navigation (Sidebar)
+   Swiss Minimalist Sidebar
    ======================================== */
 
-/* ========================================
-   SIDEBAR SHELL
-   ======================================== */
 .sidebar {
     display: flex;
     flex-direction: column;
     height: 100%;
     background: var(--background-white);
-    border-right: 1px solid var(--border-light);
+    border-right: 1px solid var(--gray-200);
     transition: width var(--transition-normal);
-    width: 240px;
+    width: 260px;
 }
 
-.sidebar--collapsed,
-.sidebar-collapsed {
-    width: 72px;
+.sidebar--collapsed {
+    width: 80px;
 }
 
-/* ========================================
-   SIDEBAR HEADER
-   ======================================== */
-.sidebar__header,
-.sidebar-header {
+/* HEADER */
+.sidebar__header {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: var(--spacing-md);
-    border-bottom: 1px solid var(--border-light);
-    min-height: 64px;
+    padding: var(--spacing-6) var(--spacing-md);
+    min-height: 80px;
 }
 
-.sidebar__logo,
-.sidebar-logo {
-    display: flex;
-    align-items: center;
-    gap: var(--spacing-sm);
-}
-
-.sidebar__logo-icon,
-.sidebar-logo-icon {
-    width: 36px;
-    height: 36px;
-    background: var(--primary-orange);
-    border-radius: var(--radius-lg);
+.sidebar__logo-icon {
+    width: 44px;
+    height: 44px;
+    background: var(--gray-900);
+    border-radius: var(--radius-sm);
     display: flex;
     align-items: center;
     justify-content: center;
     color: white;
+    flex-shrink: 0;
 }
 
-.sidebar__logo-text,
-.sidebar-logo-text {
+.sidebar__logo-text {
+    font-weight: var(--font-bold);
+    font-size: 18px;
+    letter-spacing: var(--tracking-tighter);
+    color: var(--gray-900);
+}
+
+/* NAVIGATION LIST */
+.sidebar__section {
+    padding: var(--spacing-md) var(--spacing-sm);
+}
+
+.sidebar__item {
     display: flex;
-    flex-direction: column;
+    align-items: center;
+    gap: var(--spacing-md);
+    padding: 0 var(--spacing-md);
+    height: 48px;
+    color: var(--gray-500);
+    text-decoration: none;
+    border-radius: var(--radius-md);
+    transition: all var(--transition-fast);
+    font-weight: var(--font-bold);
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-wide);
+    margin-bottom: 2px;
 }
 
-.sidebar__logo-collapsed,
-.sidebar-logo-collapsed {
+.sidebar__item:hover {
+    background: var(--gray-50);
+    color: var(--gray-900);
+}
+
+.sidebar__item--active {
+    background: var(--primary-500);
+    color: white !important;
+    box-shadow: var(--shadow-orange);
+}
+
+.sidebar__item-icon {
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 100%;
-    color: var(--primary-orange);
+    width: 20px;
+    height: 20px;
 }
 
-.sidebar__toggle,
-.sidebar-toggle {
-    padding: var(--spacing-xs);
-    background: transparent;
-    border: none;
-    border-radius: var(--radius-md);
-    color: var(--text-secondary);
-    cursor: pointer;
-    transition: all var(--transition-fast);
-}
-
-.sidebar__toggle:hover,
-.sidebar-toggle:hover {
-    background: var(--background-light);
-    color: var(--primary-orange);
-}
-
-/* ========================================
-   SIDEBAR SECTIONS
-   ======================================== */
-.sidebar__section,
-.sidebar-section {
-    padding: var(--spacing-md) 0;
-}
-
-.sidebar__section--primary {
-    flex: 1;
+/* FOOTER SECTIONS */
+.sidebar__divider {
+    height: 1px;
+    background: var(--gray-100);
+    margin: var(--spacing-md);
 }
 
 .sidebar__section--secondary {
     margin-top: auto;
+    padding-bottom: var(--spacing-xl);
 }
 
-.sidebar__list,
-.sidebar-list {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-}
-
-.sidebar__divider,
-.sidebar-divider {
-    height: 1px;
-    background: var(--border-light);
-    margin: var(--spacing-sm) var(--spacing-md);
-}
-
-/* ========================================
-   SIDEBAR ITEMS
-   ======================================== */
-.sidebar__item,
-.sidebar-item {
-    display: flex;
-    align-items: center;
-    gap: var(--spacing-sm);
-    padding: var(--spacing-sm) var(--spacing-md);
-    margin: 0 var(--spacing-sm);
-    color: var(--text-secondary);
-    text-decoration: none;
-    border-radius: var(--radius-md);
-    transition: all var(--transition-fast);
-    font-weight: var(--font-medium);
-    font-size: var(--text-sm);
-}
-
-.sidebar__item:hover,
-.sidebar-item:hover {
-    background: var(--background-light);
-    color: var(--primary-orange);
-}
-
-.sidebar__item--active,
-.sidebar-item.active {
-    background: var(--primary-orange);
-    color: white;
-}
-
-.sidebar__item--active:hover,
-.sidebar-item.active:hover {
-    background: var(--primary-orange-light);
-    color: white;
-}
-
-.sidebar__item-icon,
-.sidebar-item-icon {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 24px;
-    height: 24px;
-    flex-shrink: 0;
-}
-
-.sidebar__item-label,
-.sidebar-item-label {
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
-/* ========================================
-   SIDEBAR TOOLTIP (Collapsed State)
-   ======================================== */
-.sidebar__tooltip,
-.sidebar-tooltip {
-    position: fixed;
-    background: var(--navy-dark);
-    color: white;
-    padding: var(--spacing-xs) var(--spacing-sm);
-    border-radius: var(--radius-md);
-    font-size: var(--text-sm);
-    white-space: nowrap;
-    z-index: 1000;
-    pointer-events: none;
-    box-shadow: var(--shadow-lg);
-}
-
-.sidebar__tooltip-arrow,
-.sidebar-tooltip-arrow {
-    position: absolute;
-    left: -4px;
-    top: 50%;
-    transform: translateY(-50%);
-    border-width: 4px;
-    border-style: solid;
-    border-color: transparent var(--navy-dark) transparent transparent;
-}
-
-/* ========================================
-   SIDEBAR FOOTER & DANGER ITEMS
-   ======================================== */
-.sidebar__footer {
-    padding-bottom: var(--spacing-sm);
-}
-
-.sidebar__item--danger {
-    border: none;
-    background: transparent;
-    cursor: pointer;
-    width: 100%;
-}
-
-.sidebar__item--danger:hover {
-    background: #FEF2F2 !important;
-    color: #DC2626 !important;
-}
-
-[data-theme="dark"] .sidebar__item--danger:hover {
-    background: #450a0a !important;
-    color: #f87171 !important;
-}
-
-/* ========================================
-   MOBILE SIDEBAR
-   ======================================== */
+/* MOBILE ADAPTATION */
 @media (max-width: 1023px) {
     .sidebar {
         position: fixed;
-        top: 0;
         left: 0;
-        height: 100vh;
-        width: 280px;
-        z-index: 50;
+        top: 0;
+        z-index: 100;
         transform: translateX(-100%);
-        transition: transform var(--transition-normal);
-        box-shadow: var(--shadow-xl);
     }
 
-    .sidebar--mobile-open,
-    .sidebar-mobile-open {
+    .sidebar--mobile-open {
         transform: translateX(0);
     }
 }

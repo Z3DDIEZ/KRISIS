@@ -41,145 +41,91 @@
     align-items: center;
     gap: var(--spacing-sm);
     text-decoration: none;
-    flex-shrink: 0;
+    display: none;
+    align-items: center;
+    gap: var(--spacing-sm);
+    text-decoration: none;
+}
+
+@media (max-width: 1023px) {
+    .topnav__logo {
+        display: flex;
+    }
 }
 
 .topnav__logo-icon {
-    width: 36px;
-    height: 36px;
-    background: linear-gradient(135deg, var(--primary-orange), var(--primary-orange-light));
-    border-radius: var(--radius-lg);
+    width: 32px;
+    height: 32px;
+    background: var(--gray-900);
+    border-radius: var(--radius-sm);
     display: flex;
     align-items: center;
     justify-content: center;
     color: white;
-    box-shadow: 0 2px 8px rgba(230, 126, 34, 0.3);
-}
-
-.topnav__logo-text {
-    display: flex;
-    flex-direction: column;
-    line-height: 1.2;
 }
 
 .topnav__logo-name {
-    font-weight: var(--font-bold);
-    font-size: var(--text-lg);
-    color: var(--text-primary);
-    letter-spacing: -0.02em;
+    font-weight: var(--font-black);
+    font-size: 16px;
+    color: var(--gray-900);
+    letter-spacing: var(--tracking-tighter);
 }
 
-.topnav__logo-tagline {
-    font-size: var(--text-xs);
-    color: var(--text-secondary);
-    font-weight: var(--font-medium);
-}
-
-/* Hide tagline on mobile */
-@media (max-width: 768px) {
-    .topnav__logo-tagline {
-        display: none;
-    }
-}
-
-/* ========================================
-   SEARCH
-   ======================================== */
+/* SEARCH BAR */
 .topnav__search {
     flex: 1;
-    max-width: 480px;
+    max-width: 600px;
     position: relative;
     display: flex;
     align-items: center;
 }
 
-.topnav__search-icon {
-    position: absolute;
-    left: var(--spacing-md);
-    color: var(--text-muted);
-    pointer-events: none;
-    transition: color var(--transition-fast);
-}
-
-.topnav__search--focused .topnav__search-icon {
-    color: var(--primary-orange);
-}
-
 .topnav__search-input {
     width: 100%;
-    height: 40px;
-    padding: 0 var(--spacing-xl) 0 calc(var(--spacing-md) + 24px);
-    border: 1px solid var(--border-light);
-    border-radius: var(--radius-xl);
-    background: var(--background-light);
-    font-size: var(--text-sm);
-    color: var(--text-primary);
+    height: 44px;
+    padding: 0 44px;
+    background: var(--gray-100);
+    border: 1px solid transparent;
+    border-radius: var(--radius-md);
+    font-size: 13px;
+    font-weight: var(--font-bold);
+    color: var(--gray-900);
     transition: all var(--transition-fast);
-}
-
-.topnav__search-input::placeholder {
-    color: var(--text-muted);
+    outline: none;
 }
 
 .topnav__search-input:focus {
-    outline: none;
-    border-color: var(--primary-orange);
-    background: var(--background-white);
-    box-shadow: 0 0 0 3px rgba(230, 126, 34, 0.1);
+    background: white;
+    border-color: var(--gray-900);
+    box-shadow: 0 0 0 4px rgba(0, 0, 0, 0.05);
+}
+
+.topnav__search-icon {
+    position: absolute;
+    left: 14px;
+    color: var(--gray-400);
 }
 
 .topnav__search-shortcut {
     position: absolute;
-    right: var(--spacing-sm);
-    padding: 2px 6px;
-    background: var(--background-white);
-    border: 1px solid var(--border-light);
-    border-radius: var(--radius-sm);
+    right: 14px;
     font-size: 10px;
-    color: var(--text-muted);
-    font-family: inherit;
-    pointer-events: none;
+    font-weight: var(--font-black);
+    color: var(--gray-400);
+    background: white;
+    padding: 2px 6px;
+    border: 1px solid var(--gray-200);
+    border-radius: var(--radius-sm);
 }
 
-/* Hide shortcut on mobile */
-@media (max-width: 768px) {
-    .topnav__search-shortcut {
-        display: none;
-    }
-
-    .topnav__search {
-        max-width: 200px;
-    }
-}
-
-/* ========================================
-   ACTIONS
-   ======================================== */
+/* ACTIONS */
 .topnav__actions {
     display: flex;
     align-items: center;
-    gap: var(--spacing-sm);
-    flex-shrink: 0;
-}
-
-.topnav__action-btn {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: var(--spacing-xs);
-    height: 36px;
-    padding: 0 var(--spacing-md);
-    border-radius: var(--radius-lg);
-    font-size: var(--text-sm);
-    font-weight: var(--font-medium);
-    text-decoration: none;
-    transition: all var(--transition-fast);
-    border: none;
-    cursor: pointer;
+    gap: var(--spacing-md);
 }
 
 .topnav__action-btn--primary {
-    background: linear-gradient(135deg, var(--primary-orange), var(--primary-orange-light));
     color: white;
     box-shadow: 0 2px 8px rgba(230, 126, 34, 0.25);
 }

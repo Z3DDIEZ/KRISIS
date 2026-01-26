@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
+import Icon from './Icon'
 
 interface DataPoint {
   label: string
@@ -248,8 +249,10 @@ function BarChart({
       {data.length === 0 && (
         <div className="absolute inset-0 flex items-center justify-center">
           <div className="text-center">
-            <div className="text-4xl mb-4">📊</div>
-            <div className="text-secondary">No data to display</div>
+            <div className="text-secondary mb-4">
+              <Icon name="bar-chart" size={48} className="opacity-20" />
+            </div>
+            <div className="text-secondary font-medium">No data to display</div>
           </div>
         </div>
       )}

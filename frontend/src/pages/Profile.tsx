@@ -131,20 +131,19 @@ function Profile() {
 
   return (
     <div className="max-w-4xl mx-auto animate-fade-in">
-      {/* Page Header */}
-      <div className="mb-xl">
-        <h1 className="text-3xl font-bold text-primary tracking-tight">Profile</h1>
-        <p className="text-secondary font-medium mt-1">Manage your professional identity and account security</p>
-      </div>
+      <header className="page-header">
+        <h1 className="text-3xl font-black text-primary tracking-tighter uppercase page-header__title">Profile</h1>
+        <p className="text-secondary font-medium tracking-tight page-header__subtitle">Manage your professional identity and account security protocols</p>
+      </header>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-xl">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
         {/* Profile Overview Card */}
         <div className="lg:col-span-1">
-          <div className="card text-center border border-border-light hover:shadow-xl transition-all">
-            <div className="card-body p-xl">
+          <div className="card text-center">
+            <div className="card-body p-8">
               <div
-                className="w-24 h-24 mx-auto rounded-2xl flex items-center justify-center text-white font-bold text-3xl mb-6 shadow-lg shadow-primary-orange/20"
-                style={{ background: 'linear-gradient(135deg, var(--primary-orange), var(--primary-orange-light))' }}
+                className="w-24 h-24 mx-auto rounded-xl flex items-center justify-center text-text-on-contrast font-black text-4xl mb-6 shadow-elevated border-2 border-primary-500/20"
+                style={{ background: 'var(--primary-500)' }}
               >
                 {getInitials(user.displayName) || user.email?.[0].toUpperCase() || '?'}
               </div>
@@ -153,10 +152,10 @@ function Profile() {
               </h3>
               <p className="text-secondary text-sm font-medium mb-6 break-all">{user.email}</p>
 
-              <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-surface-2 rounded-full border border-border-light">
-                <div className={`w-2 h-2 rounded-full ${user.emailVerified ? 'bg-status-success' : 'bg-status-warning animation-pulse'}`} />
-                <span className="text-[10px] font-bold text-secondary uppercase tracking-wider">
-                  {user.emailVerified ? 'Verified Account' : 'Pending Verification'}
+              <div className="inline-flex items-center gap-2 px-4 py-2 bg-surface-2 rounded-lg border border-border-light shadow-sm">
+                <div className={`w-2 h-2 rounded-full ${user.emailVerified ? 'bg-status-success' : 'bg-status-warning animate-pulse'}`} />
+                <span className="text-[10px] font-black text-secondary uppercase tracking-widest">
+                  {user.emailVerified ? 'Verified Profile' : 'Pending Auth'}
                 </span>
               </div>
 
@@ -171,17 +170,17 @@ function Profile() {
         </div>
 
         {/* Profile Settings Card */}
-        <div className="lg:col-span-2 space-y-xl">
-          <div className="card border border-border-light">
+        <div className="lg:col-span-2 space-y-12">
+          <div className="card">
             <div className="card-header border-b border-border-light">
               <h3 className="card-title flex items-center gap-2">
                 <Icon name="person" size={18} />
                 Personal Information
               </h3>
             </div>
-            <div className="card-body p-xl">
+            <div className="card-body p-8">
               {/* Profile Information Form */}
-              <form onSubmit={handleUpdateProfile} className="space-y-xl">
+              <form onSubmit={handleUpdateProfile} className="space-y-12">
                 <div className="form-group">
                   <label htmlFor="displayName" className="form-label">
                     Display Name
@@ -201,9 +200,9 @@ function Profile() {
                         <button
                           type="submit"
                           disabled={isUpdating}
-                          className="btn btn-orange flex-1 sm:flex-none px-6"
+                          className="btn btn--orange flex-1 sm:flex-none px-8"
                         >
-                          {isUpdating ? 'Saving...' : 'Save'}
+                          {isUpdating ? 'Saving...' : 'COMMIT'}
                         </button>
                         <button
                           type="button"
@@ -223,9 +222,9 @@ function Profile() {
                       <button
                         type="button"
                         onClick={() => setIsEditing(true)}
-                        className="btn btn--ghost btn--sm text-primary-orange font-bold uppercase tracking-tighter"
+                        className="btn btn--ghost btn--sm text-primary-500 font-black uppercase tracking-widest px-4"
                       >
-                        Change
+                        RECONFIGURE
                       </button>
                     </div>
                   )}
@@ -259,8 +258,8 @@ function Profile() {
             </div>
             <div className="card-body p-xl space-y-md">
               {!user.emailVerified && (
-                <div className="bg-primary-orange-bg border border-primary-orange/10 rounded-2xl p-lg flex gap-md">
-                  <div className="p-2 bg-primary-orange/10 rounded-xl text-primary-orange h-fit">
+                <div className="bg-primary-500/10 border border-primary-500/20 rounded-xl p-8 flex gap-6">
+                  <div className="p-3 bg-surface-1 rounded-xl text-primary-500 h-fit shadow-sm">
                     <Icon name="warning" size={24} />
                   </div>
                   <div className="flex-1">
@@ -283,43 +282,43 @@ function Profile() {
                 <button
                   onClick={handlePasswordReset}
                   disabled={isResettingPassword}
-                  className="btn btn--secondary h-auto py-4 flex flex-col items-center gap-2 border border-border-light hover:border-primary-orange/30 group"
+                  className="btn btn--secondary h-auto py-8 flex flex-col items-center gap-4 group"
                 >
-                  <div className="p-3 bg-surface-3 rounded-xl text-secondary group-hover:text-primary-orange transition-colors">
+                  <div className="p-3 bg-surface-2 rounded-xl text-muted group-hover:text-primary-500 transition-all shadow-sm">
                     <Icon name="lock" size={20} />
                   </div>
-                  <span className="text-xs font-bold uppercase tracking-wider">Change Password</span>
+                  <span className="text-[10px] font-black uppercase tracking-[0.2em]">Reset Credentials</span>
                 </button>
 
                 {!showDeleteConfirm ? (
                   <button
                     onClick={() => setShowDeleteConfirm(true)}
-                    className="btn btn--secondary h-auto py-4 flex flex-col items-center gap-2 border border-border-light hover:border-red-200 group"
+                    className="btn btn--secondary h-auto py-8 flex flex-col items-center gap-4 hover:border-red-500/30 group"
                   >
-                    <div className="p-3 bg-red-50 rounded-xl text-red-400 group-hover:text-red-600 transition-colors">
+                    <div className="p-3 bg-red-500/10 rounded-xl text-red-500/60 group-hover:text-red-500 transition-all shadow-sm">
                       <Icon name="delete" size={20} />
                     </div>
-                    <span className="text-xs font-bold uppercase tracking-wider text-red-500">Delete Account</span>
+                    <span className="text-[10px] font-black uppercase tracking-[0.2em] text-red-500/70 group-hover:text-red-500">Purge Record</span>
                   </button>
                 ) : (
-                  <div className="col-span-full bg-red-50 border border-red-100 rounded-2xl p-lg animate-fade-in">
-                    <h4 className="text-sm font-bold text-red-800 mb-1">Are you absolutely sure?</h4>
-                    <p className="text-xs text-red-600 font-medium mb-4 leading-relaxed">
-                      This will permanently delete your profile and all application data.
+                  <div className="col-span-full bg-red-500/5 border border-red-500/20 rounded-xl p-8 animate-fade-in">
+                    <h4 className="text-sm font-black text-red-500 mb-2 uppercase tracking-widest">Permanent Termination?</h4>
+                    <p className="text-xs text-secondary font-medium mb-8 leading-relaxed max-w-md">
+                      This protocol will permanently delete your professional identity and all associated pipeline data. This action is irreversible.
                     </p>
-                    <div className="flex gap-2">
+                    <div className="flex gap-4">
                       <button
                         onClick={handleDeleteAccount}
                         disabled={isDeletingAccount}
-                        className="btn bg-red-600 text-white hover:bg-red-700 btn--sm"
+                        className="btn bg-red-600 text-white hover:bg-red-700 px-8 py-3 rounded font-black text-[10px] uppercase tracking-widest"
                       >
-                        {isDeletingAccount ? 'Processing...' : 'Delete Permanently'}
+                        {isDeletingAccount ? 'TERMINATING...' : 'PURGE EVERYTHING'}
                       </button>
                       <button
                         onClick={() => setShowDeleteConfirm(false)}
-                        className="btn btn--secondary btn--sm bg-white"
+                        className="btn btn--secondary px-8 py-3 rounded font-black text-[10px] uppercase tracking-widest"
                       >
-                        Cancel
+                        ABORT
                       </button>
                     </div>
                   </div>

@@ -16,12 +16,7 @@
   grid-template-columns: 240px 1fr;
   grid-template-rows: 64px 1fr;
   transition: grid-template-columns var(--transition-normal);
-  background-color: var(--background-light);
-}
-
-/* Dual nav modifier */
-.layout--dual-nav {
-  /* Handled by default grid now */
+  background-color: var(--background-canvas);
 }
 
 /* Sidebar collapsed state */
@@ -29,7 +24,7 @@
   grid-template-columns: 72px 1fr;
 }
 
-/* Mobile Layout */
+/* Mobile Layout config */
 @media (max-width: 1023px) {
   .layout {
     grid-template-areas:
@@ -46,24 +41,20 @@
 .layout__sidebar {
   grid-area: sidebar;
   background-color: var(--background-white);
-  border-right: 1px solid var(--border-light);
+  border-right: 2px solid var(--border-medium);
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  position: fixed;
+  position: sticky;
   top: 64px;
-  /* Below top nav */
-  left: 0;
   height: calc(100vh - 64px);
-  width: 240px;
+  width: 100%;
+  /* Inherit from grid column */
   z-index: 40;
-  transition: width var(--transition-normal), transform var(--transition-normal);
+  transition: var(--transition-normal);
 }
 
-/* Collapsed sidebar */
-.layout[data-sidebar-state="collapsed"] .layout__sidebar {
-  width: 72px;
-}
+/* Collapsed sidebar handles via grid-template-columns */
 
 /* Mobile Sidebar (Drawer) */
 @media (max-width: 1023px) {
@@ -86,11 +77,11 @@
 .layout__sidebar-close {
   display: none;
   position: absolute;
-  top: var(--spacing-md);
-  right: var(--spacing-md);
-  padding: var(--spacing-sm);
-  background: var(--background-light);
-  border: none;
+  top: var(--spacing-4);
+  right: var(--spacing-4);
+  padding: var(--spacing-2);
+  background: var(--surface-2);
+  border: 1px solid var(--border-light);
   border-radius: var(--radius-md);
   color: var(--text-secondary);
   cursor: pointer;
@@ -98,7 +89,7 @@
 }
 
 .layout__sidebar-close:hover {
-  background: var(--border-light);
+  background: var(--surface-3);
   color: var(--text-primary);
 }
 
@@ -116,25 +107,24 @@
 .layout__hamburger {
   display: none;
   position: fixed;
-  bottom: var(--spacing-lg);
-  left: var(--spacing-lg);
-  width: 48px;
-  height: 48px;
-  border-radius: 50%;
-  background: linear-gradient(135deg, var(--primary-orange), var(--primary-orange-light));
-  color: white;
-  border: none;
-  box-shadow: 0 4px 16px rgba(230, 126, 34, 0.4);
+  bottom: 2rem;
+  left: 2rem;
+  width: 56px;
+  height: 56px;
+  border-radius: 12px;
+  background: var(--primary-500);
+  color: var(--text-on-contrast);
+  border: 2px solid var(--surface-contrast);
+  box-shadow: var(--shadow-elevated);
   cursor: pointer;
   z-index: 50;
   align-items: center;
   justify-content: center;
-  transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+  transition: all var(--transition-fast);
 }
 
 .layout__hamburger:hover {
-  transform: scale(1.05);
-  box-shadow: 0 6px 20px rgba(230, 126, 34, 0.5);
+  transform: scale(1.05) rotate(5deg);
 }
 
 @media (max-width: 1023px) {
@@ -149,7 +139,8 @@
 .layout__overlay {
   position: fixed;
   inset: 0;
-  background-color: rgba(0, 0, 0, 0.5);
+  background-color: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(4px);
   z-index: 55;
   opacity: 0;
   pointer-events: none;
@@ -162,30 +153,64 @@
 }
 
 /* ========================================
-   MAIN CONTENT
+   MAIN CONTENT - THE CORE FIX
    ======================================== */
 .layout__main {
   grid-area: main;
-  padding: var(--spacing-xl);
+  padding: 48px;
+  /* Standard Bauhaus Padding */
   overflow-x: hidden;
-  width: 100%;
-  max-width: 1600px;
-  margin: 0 auto;
-  /* Offset for sidebar on desktop */
-  margin-left: 240px;
-  transition: margin-left var(--transition-normal);
+  background-color: var(--background-canvas);
+  display: flex;
+  flex-direction: column;
 }
 
-.layout[data-sidebar-state="collapsed"] .layout__main {
-  margin-left: 72px;
+.layout__inner {
+  width: 100%;
+  max-width: 1400px;
+  margin: 0 auto;
+  /* Truly center the content area */
+  display: flex;
+  flex-direction: column;
+  gap: 48px;
+  /* Consistent Vertical Rhythm */
 }
 
 @media (max-width: 1023px) {
   .layout__main {
-    margin-left: 0;
-    padding: var(--spacing-md);
-    padding-bottom: 80px;
-    /* Space for hamburger button */
+    padding: 24px;
+    padding-bottom: 120px;
+  }
+
+  .layout__inner {
+    gap: 32px;
+  }
+}
+
+/* ========================================
+   PAGE HEADER SYSTEM
+   ======================================== */
+.page-header {
+  margin-bottom: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.page-header__title {
+  margin: 0;
+  line-height: 1;
+}
+
+.page-header__subtitle {
+  margin: 0;
+  opacity: 0.8;
+}
+
+@media (max-width: 1023px) {
+  .layout__main {
+    padding: 24px;
+    padding-bottom: 120px;
   }
 }
 
@@ -194,7 +219,7 @@
    ======================================== */
 
 .layout__section {
-  margin-bottom: var(--spacing-2xl);
+  margin-bottom: var(--spacing-8);
   container-type: inline-size;
 }
 
@@ -203,62 +228,46 @@
 }
 
 .layout__section--charts {
-  min-height: 400px;
+  min-height: 450px;
 }
 
 .layout__section--filters {
   position: sticky;
   top: 80px;
-  /* Below header + some spacing */
   z-index: 10;
-  background-color: var(--background-light);
-  padding: var(--spacing-md) 0;
-  margin-bottom: var(--spacing-lg);
-  transition: padding var(--transition-normal), background-color var(--transition-normal);
+  background-color: var(--background-canvas);
+  padding: var(--spacing-4) 0;
+  margin-bottom: var(--spacing-4);
 }
 
 /* ========================================
    TIER 3 - Grid Systems
    ======================================== */
 
-/* PATTERN 1: Metrics Grid (KPIs) */
+/* Metrics Grid (KPIs) */
 .grid--metrics {
   display: grid;
-  gap: var(--spacing-lg);
-  grid-template-columns: repeat(1, 1fr);
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: var(--spacing-6);
 }
 
-@media (min-width: 768px) {
-  .grid--metrics {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
-
-@media (min-width: 1280px) {
-  .grid--metrics {
-    grid-template-columns: repeat(4, 1fr);
-  }
-}
-
-/* PATTERN 2: Content Grid (Charts) */
 .grid--content {
   display: grid;
-  gap: var(--spacing-xl);
   grid-template-columns: 1fr;
+  gap: var(--spacing-8);
 }
 
 @media (min-width: 1280px) {
   .grid--content {
     grid-template-columns: repeat(2, 1fr);
-    grid-auto-flow: dense;
   }
 }
 
-/* PATTERN 3: Card Grid (Applications) - Fixed spacing */
+/* Card Grid (Applications) */
 .grid--cards {
   display: grid;
-  gap: var(--spacing-lg);
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: var(--spacing-6);
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
 }
 
 /* Prevent 4-column overlap */

@@ -1,10 +1,11 @@
 import { useState, useRef, useEffect } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { useAuthState } from 'react-firebase-hooks/auth'
 import { auth } from '../../lib/firebase'
 import Icon from './Icon'
 import UserMenu from './UserMenu'
 import DarkModeToggle from './DarkModeToggle'
+import { useDebounce } from '../../utils/useDebounce'
 
 interface TopNavbarProps {
     onSearchChange?: (query: string) => void
@@ -15,7 +16,18 @@ function TopNavbar({ onSearchChange, searchPlaceholder = 'Search applications...
     const [user] = useAuthState(auth)
     const [searchQuery, setSearchQuery] = useState('')
     const [searchFocused, setSearchFocused] = useState(false)
+    const [isSearching, setIsSearching] = useState(false)
     const searchRef = useRef<HTMLInputElement>(null)
+    const navigate = useNavigate()
+
+    const debouncedSearchQuery = useDebounce(searchQuery, 300)
+
+    useEffect(() => {
+        if (debouncedSearchQuery !== undefined) {
+            onSearchChange?.(debouncedSearchQuery)
+            setIsSearching(false)
+        }
+    }, [debouncedSearchQuery, onSearchChange])
 
     // Handle keyboard shortcut (Ctrl/Cmd + K)
     useEffect(() => {
@@ -31,9 +43,25 @@ function TopNavbar({ onSearchChange, searchPlaceholder = 'Search applications...
     }, [])
 
     const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const value = e.target.value
-        setSearchQuery(value)
-        onSearchChange?.(value)
+        setSearchQuery(e.target.value)
+        setIsSearching(true)
+    }
+
+    const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+        if (e.key === 'Enter') {
+            onSearchChange?.(searchQuery)
+            setIsSearching(false)
+            // Navigate to applications if not already there or just trigger search
+            if (window.location.pathname !== '/applications') {
+                navigate('/applications')
+            }
+        }
+    }
+
+    const clearSearch = () => {
+        setSearchQuery('')
+        onSearchChange?.('')
+        searchRef.current?.focus()
     }
 
     return (
@@ -51,13 +79,14 @@ function TopNavbar({ onSearchChange, searchPlaceholder = 'Search applications...
                 </Link>
 
                 {/* Global Search */}
-                <div className={`topnav__search ${searchFocused ? 'topnav__search--focused' : ''}`}>
+                <div className={`topnav__search ${searchFocused ? 'topnav__search--focused' : ''} ${isSearching ? 'topnav__search--loading' : ''}`}>
                     <Icon name="search" size={18} className="topnav__search-icon" />
                     <input
                         ref={searchRef}
-                        type="search"
+                        type="text"
                         value={searchQuery}
                         onChange={handleSearchChange}
+                        onKeyDown={handleKeyDown}
                         onFocus={() => setSearchFocused(true)}
                         onBlur={() => setSearchFocused(false)}
                         placeholder={searchPlaceholder}
@@ -65,26 +94,40 @@ function TopNavbar({ onSearchChange, searchPlaceholder = 'Search applications...
                         aria-label="Search"
                         data-track-action="global-search"
                     />
-                    <kbd className="topnav__search-shortcut">⌘K</kbd>
+                    {searchQuery ? (
+                        <button
+                            onClick={clearSearch}
+                            className="topnav__search-clear"
+                            aria-label="Clear search"
+                        >
+                            <Icon name="close" size={14} />
+                        </button>
+                    ) : (
+                        <kbd className="topnav__search-shortcut">⌘K</kbd>
+                    )}
                 </div>
 
                 {/* Actions */}
                 <div className="topnav__actions">
-                    {/* Quick Add Button */}
+                    {/* Quick Add Button - Now Icon Only as requested */}
                     <Link
                         to="/applications/new"
-                        className="topnav__action-btn topnav__action-btn--primary"
+                        className="topnav__action-btn topnav__action-btn--primary !p-2 rounded-full shadow-lg hover:shadow-orange/20"
+                        title="Add Application"
                         data-track-action="quick-add"
                     >
-                        <Icon name="add" size={18} />
-                        <span className="topnav__action-label">Add</span>
+                        <Icon name="add" size={20} />
                     </Link>
+
+                    <div className="w-[1px] h-6 bg-border-light mx-2 hidden md:block" />
 
                     {/* Dark Mode Toggle */}
                     <DarkModeToggle />
 
+                    <div className="w-[1px] h-6 bg-border-light mx-2 hidden md:block" />
+
                     {/* User Menu */}
-                    {user && <UserMenu />}
+                    {user && <div className="ml-1"><UserMenu /></div>}
                 </div>
             </div>
         </header>

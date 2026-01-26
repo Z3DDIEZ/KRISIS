@@ -6,17 +6,18 @@
    BASE CARD
    ======================================== */
 .card {
-    background: var(--background-white);
-    border-radius: var(--radius-xl);
-    padding: var(--spacing-lg);
-    box-shadow: var(--shadow-md);
+    background: var(--surface-1);
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-6);
+    box-shadow: var(--shadow-card);
     transition: all var(--transition-normal);
     border: 1px solid var(--border-light);
 }
 
 .card:hover {
-    box-shadow: var(--shadow-lg);
+    box-shadow: var(--shadow-elevated);
     transform: translateY(-2px);
+    border-color: var(--border-medium);
 }
 
 .card__header {
@@ -57,38 +58,55 @@
     align-items: center;
 }
 
-/* Legacy class compatibility */
+/* Legacy class compatibility (Explicit mapping) */
 .card-header {
-    composes: card__header;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--spacing-md);
+    padding-bottom: var(--spacing-md);
+    border-bottom: 1px solid var(--border-light);
 }
 
 .card-title {
-    composes: card__title;
+    font-size: var(--text-lg);
+    font-weight: var(--font-semibold);
+    color: var(--text-primary);
+    margin: 0;
 }
 
 .card-body {
-    composes: card__body;
+    padding: var(--spacing-lg);
+    color: var(--text-primary);
+    font-size: var(--text-base);
 }
 
 .card-footer {
-    composes: card__footer;
+    margin-top: var(--spacing-md);
+    padding-top: var(--spacing-md);
+    border-top: 1px solid var(--border-light);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 
 
 /* ========================================
    STAT CARD (Dashboard Metrics)
+   Pattern: Material Card + Swiss Typography
    ======================================== */
 .stat-card {
-    background: var(--background-white);
-    border-radius: var(--radius-xl);
-    padding: var(--spacing-lg);
-    box-shadow: var(--shadow-md);
+    background: var(--surface-1);
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-6);
+    box-shadow: var(--shadow-card);
     position: relative;
     overflow: hidden;
     display: flex;
     flex-direction: column;
     transition: all var(--transition-normal);
     border: 1px solid var(--border-light);
+    border-left: 6px solid var(--primary-500);
 }
 
 .stat-card:hover {
@@ -96,152 +114,78 @@
     transform: translateY(-2px);
 }
 
-/* Colored left border accent */
-.stat-card::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 4px;
-    height: 100%;
-    background: var(--primary-orange);
-}
-
 .stat-card__content {
     flex: 1;
-    padding-left: var(--spacing-sm);
-}
-
-.stat-card__value {
-    font-size: var(--text-4xl);
-    font-weight: var(--font-bold);
-    color: var(--text-primary);
-    line-height: 1;
-    margin-bottom: var(--spacing-sm);
 }
 
 .stat-card__label {
-    font-size: var(--text-sm);
-    color: var(--text-secondary);
+    font-size: 12px;
+    color: var(--gray-600);
     text-transform: uppercase;
-    letter-spacing: 0.5px;
-    font-weight: var(--font-medium);
+    letter-spacing: var(--tracking-wide);
+    font-weight: var(--font-bold);
+    margin-bottom: var(--spacing-sm);
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+}
+
+.stat-card__icon {
+    color: var(--primary-500);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.stat-card__value {
+    font-size: 32px;
+    /* Bauhaus geometric boldness */
+    font-weight: var(--font-bold);
+    color: var(--gray-900);
+    line-height: 1.2;
 }
 
 .stat-card__change {
     display: flex;
     align-items: center;
-    gap: var(--spacing-xs);
-    font-size: var(--text-sm);
+    gap: 4px;
+    font-size: 12px;
     font-weight: var(--font-medium);
-    margin-top: var(--spacing-sm);
+    margin-top: var(--spacing-xs);
 }
 
 .stat-card__change--positive {
-    color: var(--status-offer);
-}
-
-.stat-card__change--positive::before {
-    content: '↗';
+    color: var(--success);
 }
 
 .stat-card__change--negative {
-    color: var(--status-rejected);
+    color: var(--error);
 }
 
-.stat-card__change--negative::before {
-    content: '↘';
+/* Specific icon positions handled in JSX for more flexibility */
+.stat-card__icon-wrapper {
+    margin-bottom: var(--spacing-sm);
+    width: 24px;
+    height: 24px;
 }
 
-/* Icon container in top-right */
-.stat-card__icon {
-    position: absolute;
-    top: var(--spacing-lg);
-    right: var(--spacing-lg);
-    width: 48px;
-    height: 48px;
-    border-radius: var(--radius-xl);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.5rem;
-}
-
-.stat-card__icon--orange {
-    background: rgba(230, 126, 34, 0.1);
-    color: var(--primary-orange);
-}
-
-.stat-card__icon--green {
-    background: rgba(46, 204, 113, 0.1);
-    color: var(--status-offer);
-}
-
-.stat-card__icon--blue {
-    background: rgba(52, 152, 219, 0.1);
-    color: var(--status-applied);
-}
-
-.stat-card__icon--purple {
-    background: rgba(155, 89, 182, 0.1);
-    color: var(--status-phone);
-}
-
-/* Legacy class compatibility */
-.stat-card-content {
-    composes: stat-card__content;
-}
-
-.stat-value {
-    composes: stat-card__value;
-}
-
-.stat-label {
-    composes: stat-card__label;
-}
-
-.stat-change {
-    composes: stat-card__change;
-}
-
-.stat-change.positive {
-    composes: stat-card__change--positive;
-}
-
-.stat-change.negative {
-    composes: stat-card__change--negative;
-}
-
-.stat-icon {
-    composes: stat-card__icon;
-}
-
-.stat-icon.orange {
-    composes: stat-card__icon--orange;
-}
-
-.stat-icon.green {
-    composes: stat-card__icon--green;
-}
-
-.stat-icon.blue {
-    composes: stat-card__icon--blue;
-}
-
-.stat-icon.purple {
-    composes: stat-card__icon--purple;
+/* Grid for Dashboard */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: var(--spacing-md);
 }
 
 
 /* ========================================
-   APPLICATION CARD
+   REFACTORED APPLICATION CARD
    ======================================== */
 .application-card {
-    background: var(--background-white);
-    border-radius: var(--radius-xl);
-    padding: var(--spacing-lg);
-    box-shadow: var(--shadow-md);
-    transition: all var(--transition-normal);
+    background: var(--surface-1);
+    border-radius: var(--radius-md);
+    padding: var(--spacing-6);
+    box-shadow: var(--shadow-card);
+    transition: all var(--transition-fast);
     position: relative;
     display: flex;
     flex-direction: column;
@@ -249,33 +193,28 @@
 }
 
 .application-card:hover {
-    box-shadow: var(--shadow-lg);
-    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+    border-color: var(--primary-500);
 }
 
 .application-card__header {
     display: flex;
-    align-items: flex-start;
+    align-items: center;
     gap: var(--spacing-md);
     margin-bottom: var(--spacing-md);
 }
 
 .application-card__logo {
-    width: 48px;
-    height: 48px;
-    border-radius: var(--radius-lg);
-    background: var(--background-light);
+    width: 44px;
+    height: 44px;
+    border-radius: var(--radius-sm);
+    background: var(--gray-100);
     display: flex;
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
-    overflow: hidden;
-}
-
-.application-card__logo img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
+    font-weight: var(--font-bold);
+    color: var(--primary-500);
 }
 
 .application-card__info {
@@ -284,71 +223,28 @@
 }
 
 .application-card__company {
-    font-weight: var(--font-semibold);
-    font-size: var(--text-base);
-    color: var(--text-primary);
-    margin-bottom: 0.25rem;
-    display: flex;
-    align-items: center;
-    gap: var(--spacing-sm);
+    font-weight: var(--font-bold);
+    font-size: var(--text-sm);
+    color: var(--gray-900);
+    margin-bottom: 2px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .application-card__role {
-    font-size: var(--text-sm);
-    color: var(--text-secondary);
-    line-height: 1.4;
-}
-
-.application-card__meta {
-    display: flex;
-    flex-direction: column;
-    gap: var(--spacing-sm);
-    margin-bottom: var(--spacing-md);
+    font-size: 11px;
+    color: var(--gray-500);
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-wide);
+    font-weight: var(--font-semibold);
 }
 
 .application-card__footer {
     margin-top: auto;
     padding-top: var(--spacing-md);
-    border-top: 1px solid var(--border-light);
+    border-top: 1px solid var(--gray-100);
     display: flex;
     justify-content: space-between;
     align-items: center;
-}
-
-.application-card__actions {
-    display: flex;
-    gap: var(--spacing-xs);
-}
-
-/* Legacy class compatibility */
-.application-card-header {
-    composes: application-card__header;
-}
-
-.company-logo {
-    composes: application-card__logo;
-}
-
-.company-info {
-    composes: application-card__info;
-}
-
-.company-name {
-    composes: application-card__company;
-}
-
-.position-title {
-    composes: application-card__role;
-}
-
-.application-meta {
-    composes: application-card__meta;
-}
-
-.application-card-footer {
-    composes: application-card__footer;
-}
-
-.card-actions {
-    composes: application-card__actions;
 }

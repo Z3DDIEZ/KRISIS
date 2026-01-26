@@ -1,5 +1,6 @@
 /* ========================================
    KRISIS Components - Buttons
+   Swiss Minimalist Style
    ======================================== */
 
 /* Base Button */
@@ -8,123 +9,88 @@
     align-items: center;
     justify-content: center;
     gap: var(--spacing-sm);
-    padding: 0.75rem var(--spacing-lg);
-    border-radius: var(--radius-lg);
-    font-weight: var(--font-medium);
-    font-size: var(--text-sm);
+    padding: 0.75rem var(--spacing-6);
+    border-radius: var(--radius-md);
+    font-weight: var(--font-black);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-widest);
     cursor: pointer;
     transition: all var(--transition-normal);
-    border: none;
+    border: 2px solid transparent;
     text-decoration: none;
     white-space: nowrap;
     font-family: var(--font-primary);
 }
 
 .btn:disabled {
-    opacity: 0.5;
+    opacity: 0.4;
     cursor: not-allowed;
 }
 
-/* ========================================
-   BUTTON VARIANTS
-   ======================================== */
-
-/* Primary Button */
+/* Primary Button (Bauhaus Black/Gray) */
 .btn--primary,
 .btn-primary {
-    background: var(--navy-dark);
-    color: white;
+    background: var(--gray-900);
+    color: var(--gray-50);
 }
 
 .btn--primary:hover:not(:disabled),
 .btn-primary:hover:not(:disabled) {
-    background: var(--navy-medium);
+    background: var(--gray-800);
+    box-shadow: var(--shadow-lg);
     transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(26, 29, 46, 0.3);
 }
 
-/* Orange Button - Key CTAs */
+/* Orange Button (Key CTA) */
 .btn--orange,
 .btn-orange {
-    background: var(--primary-orange);
+    background: var(--primary-500);
     color: white;
+    box-shadow: 0 4px 12px rgba(230, 126, 34, 0.2);
 }
 
 .btn--orange:hover:not(:disabled),
 .btn-orange:hover:not(:disabled) {
-    background: var(--primary-orange-light);
+    background: var(--primary-600);
+    box-shadow: 0 6px 16px rgba(230, 126, 34, 0.3);
     transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(230, 126, 34, 0.3);
 }
 
-/* Secondary Button */
+/* Secondary Button (Swiss Ghostly Neutral) */
 .btn--secondary,
 .btn-secondary {
     background: var(--background-white);
-    color: var(--text-primary);
-    border: 1px solid var(--border-light);
+    color: var(--gray-900);
+    border-color: var(--gray-200);
 }
 
 .btn--secondary:hover:not(:disabled),
 .btn-secondary:hover:not(:disabled) {
-    background: var(--background-light);
-    border-color: var(--primary-orange);
+    background: var(--gray-50);
+    border-color: var(--gray-300);
 }
 
 /* Ghost Button */
 .btn--ghost,
 .btn-ghost {
     background: transparent;
-    color: var(--text-secondary);
+    color: var(--gray-600);
 }
 
 .btn--ghost:hover:not(:disabled),
 .btn-ghost:hover:not(:disabled) {
-    background: var(--background-light);
-    color: var(--primary-orange);
+    background: var(--gray-100);
+    color: var(--gray-900);
 }
 
-/* Icon Button */
-.btn--icon,
-.btn-icon {
-    padding: var(--spacing-sm);
-    width: 36px;
-    height: 36px;
-    border-radius: var(--radius-md);
-}
-
-/* ========================================
-   BUTTON SIZES
-   ======================================== */
-
-.btn--sm,
-.btn-sm {
-    padding: var(--spacing-sm) var(--spacing-md);
-    font-size: var(--text-xs);
-}
-
-.btn--lg,
-.btn-lg {
-    padding: var(--spacing-md) var(--spacing-xl);
-    font-size: var(--text-base);
-}
-
-/* Full Width */
-.btn--block,
-.btn-block {
-    width: 100%;
-}
-
-/* ========================================
-   ICON BUTTON (Standalone)
-   ======================================== */
-
+/* Standalone Icon Button */
 .icon-button {
     padding: var(--spacing-sm);
     border: none;
     background: transparent;
     cursor: pointer;
-    color: var(--text-secondary);
+    color: var(--gray-600);
     border-radius: var(--radius-md);
     transition: all var(--transition-fast);
     display: flex;
@@ -132,7 +98,25 @@
     justify-content: center;
 }
 
-.icon-button:hover {
-    background: var(--background-light);
-    color: var(--primary-orange);
+.icon-button:hover:not(:disabled) {
+    background: var(--gray-100);
+    color: var(--primary-500);
+}
+
+/* SIZES */
+.btn--sm,
+.btn-sm {
+    padding: 0.4rem var(--spacing-2);
+    font-size: 11px;
+}
+
+.btn--lg,
+.btn-lg {
+    padding: 0.8rem var(--spacing-6);
+    font-size: var(--text-base);
+}
+
+.btn--block,
+.btn-block {
+    width: 100%;
 }

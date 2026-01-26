@@ -126,19 +126,16 @@ function Settings() {
 
   return (
     <div className="max-w-4xl mx-auto py-8 animate-fade-in font-primary">
-      {/* Page Header */}
-      <div className="mb-xl">
-        <h1 className="text-3xl font-bold text-primary tracking-tight">Settings</h1>
-        <p className="text-secondary font-medium mt-1">Configure your workspace and manage your application data</p>
-      </div>
+      <header className="page-header">
+        <h1 className="text-3xl font-black text-primary tracking-tighter uppercase page-header__title">Configuration</h1>
+        <p className="text-secondary font-medium tracking-tight page-header__subtitle">System parameters and data extraction protocols</p>
+      </header>
 
-      {/* Settings Grid */}
-      <div className="flex flex-col gap-xl">
-
+      <div className="flex flex-col gap-12">
         {/* Main Preferences */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-xl">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           {/* Appearance Card */}
-          <div className="card border border-border-light hover:shadow-lg transition-all">
+          <div className="card">
             <div className="card-header border-b border-border-light">
               <h3 className="card-title flex items-center gap-2">
                 <Icon name="palette" size={18} />
@@ -146,10 +143,10 @@ function Settings() {
               </h3>
             </div>
             <div className="card-body p-xl">
-              <div className="flex items-center justify-between p-4 bg-surface-2 rounded-2xl border border-border-light group hover:border-primary-orange/20 transition-all">
+              <div className="flex items-center justify-between p-6 bg-surface-2 rounded-xl border border-border-light group hover:border-primary-500/20 transition-all">
                 <div>
-                  <div className="text-sm font-bold text-primary mb-0.5">Interface Theme</div>
-                  <div className="text-xs text-secondary font-medium">
+                  <div className="text-sm font-black text-primary mb-1 uppercase tracking-widest">Interface Theme</div>
+                  <div className="text-xs text-secondary font-medium uppercase tracking-tight">
                     {isDark ? 'Dark mode optimized' : 'Light mode active'}
                   </div>
                 </div>
@@ -159,10 +156,10 @@ function Settings() {
           </div>
 
           {/* Account Settings Card */}
-          <div className="card border border-border-light hover:shadow-lg transition-all">
+          <div className="card">
             <div className="card-header border-b border-border-light">
               <h3 className="card-title flex items-center gap-2">
-                <Icon name="notifications" size={18} />
+                <Icon name="bolt" size={18} />
                 Global Preferences
               </h3>
             </div>
@@ -184,54 +181,54 @@ function Settings() {
         </div>
 
         {/* Enhanced Data Export Card */}
-        <div className="card border border-border-light overflow-hidden shadow-xl">
-          <div className="card-header border-b border-border-light bg-surface-1">
+        <div className="card">
+          <div className="card-header border-b border-border-light bg-surface-2/30">
             <h3 className="card-title flex items-center gap-2">
-              <Icon name="download" size={20} className="text-primary-orange" />
+              <Icon name="download" size={20} className="text-primary-500" />
               Data Intelligence & Export
             </h3>
           </div>
           <div className="card-body p-xl">
             {/* Export Stats - Bauhaus Grid */}
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-xl">
-              <div className="p-5 bg-navy-light text-white rounded-2xl border border-white/5 relative overflow-hidden group">
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+              <div className="p-6 bg-surface-contrast text-text-on-contrast rounded-xl border border-white/5 relative overflow-hidden group">
                 <div className="relative z-10">
-                  <div className="text-3xl font-bold mb-1">{applications.length}</div>
-                  <div className="text-[10px] font-bold opacity-70 uppercase tracking-widest">Total Pipeline</div>
+                  <div className="text-4xl font-black mb-1">{applications.length}</div>
+                  <div className="text-[10px] font-black opacity-60 uppercase tracking-[0.2em]">Total Pipeline</div>
                 </div>
                 <Icon name="work" size={60} className="absolute -right-4 -bottom-4 opacity-5 group-hover:opacity-10 transition-opacity" />
               </div>
 
-              <div className="p-5 bg-surface-2 rounded-2xl border border-border-light relative overflow-hidden group">
+              <div className="p-6 bg-surface-2 rounded-xl border border-border-light relative overflow-hidden group">
                 <div className="relative z-10">
-                  <div className="text-3xl font-bold text-primary mb-1">
+                  <div className="text-4xl font-black text-primary mb-1">
                     {applications.filter(app => app.status === 'Offer').length}
                   </div>
-                  <div className="text-[10px] font-bold text-secondary uppercase tracking-widest">Successful Offers</div>
+                  <div className="text-[10px] font-black text-muted uppercase tracking-[0.2em]">Successful Offers</div>
                 </div>
                 <Icon name="verified" size={60} className="absolute -right-4 -bottom-4 opacity-5 group-hover:opacity-10 transition-opacity" />
               </div>
 
-              <div className="p-5 bg-surface-2 rounded-2xl border border-border-light relative overflow-hidden group">
+              <div className="p-6 bg-surface-2 rounded-xl border border-border-light relative overflow-hidden group">
                 <div className="relative z-10">
-                  <div className="text-3xl font-bold text-primary mb-1">
+                  <div className="text-4xl font-black text-primary mb-1">
                     {applications.filter(app => app.visaSponsorship).length}
                   </div>
-                  <div className="text-[10px] font-bold text-secondary uppercase tracking-widest">Visa Sponsored</div>
+                  <div className="text-[10px] font-black text-muted uppercase tracking-[0.2em]">Visa Sponsored</div>
                 </div>
                 <Icon name="public" size={60} className="absolute -right-4 -bottom-4 opacity-5 group-hover:opacity-10 transition-opacity" />
               </div>
 
-              <div className="p-5 bg-primary-orange-bg rounded-2xl border border-primary-orange/10 relative overflow-hidden group">
+              <div className="p-6 bg-primary-100/10 rounded-xl border border-primary-500/10 relative overflow-hidden group">
                 <div className="relative z-10">
-                  <div className="text-3xl font-bold text-primary-orange mb-1">
+                  <div className="text-4xl font-black text-primary-500 mb-1">
                     {applications.length > 0
                       ? Math.round((applications.filter(app => app.status !== 'Applied').length / applications.length) * 100)
                       : 0}%
                   </div>
-                  <div className="text-[10px] font-bold text-primary-orange/70 uppercase tracking-widest">Engagement</div>
+                  <div className="text-[10px] font-black text-primary-600 uppercase tracking-[0.2em]">Engagement</div>
                 </div>
-                <Icon name="trending_up" size={60} className="absolute -right-4 -bottom-4 opacity-10 group-hover:opacity-20 transition-opacity" />
+                <Icon name="bolt" size={60} className="absolute -right-4 -bottom-4 opacity-10 group-hover:opacity-20 transition-opacity" />
               </div>
             </div>
 
@@ -277,14 +274,14 @@ function Settings() {
               </div>
 
               {/* Action Area */}
-              <div className="p-6 bg-surface-2 border border-border-light rounded-2xl flex flex-col sm:flex-row items-center justify-between gap-6">
-                <div className="flex items-start gap-4">
-                  <div className="w-10 h-10 bg-primary-orange/10 rounded-xl flex items-center justify-center text-primary-orange flex-shrink-0 mt-1">
-                    <Icon name="info" size={20} />
+              <div className="p-8 bg-surface-2 border border-border-light rounded-xl flex flex-col sm:flex-row items-center justify-between gap-10 shadow-sm">
+                <div className="flex items-start gap-5">
+                  <div className="w-12 h-12 bg-primary-500 text-white rounded-xl flex items-center justify-center flex-shrink-0 mt-1 shadow-orange">
+                    <Icon name="info" size={24} />
                   </div>
                   <div>
-                    <h4 className="text-sm font-bold text-primary">Data Integrity Check</h4>
-                    <p className="text-xs text-secondary font-medium leading-relaxed">
+                    <h4 className="text-sm font-black text-primary uppercase tracking-widest mb-1">Data Integrity Check</h4>
+                    <p className="text-xs text-secondary font-medium leading-relaxed max-w-md">
                       Your export will include all companies, roles, status history, and personal notes.
                       Encrypted with UTF-8 for maximum compatibility.
                     </p>
@@ -294,7 +291,7 @@ function Settings() {
                 <button
                   onClick={handleExportData}
                   disabled={isExporting || applications.length === 0}
-                  className="btn btn-orange px-8 py-3 h-auto flex flex-col items-center gap-1 shadow-lg shadow-primary-orange/20 min-w-[200px]"
+                  className="btn btn--orange px-10 py-4 h-auto flex flex-col items-center gap-1 shadow-elevated min-w-[240px]"
                 >
                   {isExporting ? (
                     <div className="flex items-center gap-3">
@@ -314,9 +311,9 @@ function Settings() {
               </div>
 
               {applications.length === 0 && (
-                <div className="p-4 bg-yellow-50 border border-yellow-100 rounded-xl flex items-center gap-3">
-                  <Icon name="warning" size={18} className="text-yellow-500" />
-                  <span className="text-xs font-bold text-yellow-800">No data records found to export.</span>
+                <div className="p-6 bg-surface-2 border border-dashed border-border-medium rounded-xl flex items-center gap-4">
+                  <Icon name="warning" size={20} className="text-primary-500" />
+                  <span className="text-xs font-black text-muted uppercase tracking-widest">No data records detected for intelligence protocols.</span>
                 </div>
               )}
             </div>

@@ -1,58 +1,67 @@
-import { useState, useEffect } from 'react'
+import * as LucideIcons from 'lucide-react'
+import { LucideProps } from 'lucide-react'
 
-interface IconProps {
+interface IconProps extends LucideProps {
   name: string
-  size?: number
+  size?: number | string
   className?: string
   alt?: string
 }
 
-function Icon({ name, size = 24, className = '', alt = '' }: IconProps) {
-  const [iconModule, setIconModule] = useState<any>(null)
+const iconMap: Record<string, keyof typeof LucideIcons> = {
+  // Navigation
+  'dashboard': 'LayoutDashboard',
+  'work': 'Briefcase',
+  'trending-up': 'TrendingUp',
+  'person': 'User',
+  'download': 'Download',
+  'settings': 'Settings',
+  'logout': 'LogOut',
 
-  useEffect(() => {
-    // Dynamically import the SVG as a raw string
-    import(`../icons/${name}.svg?raw`)
-      .then((module) => {
-        setIconModule(module)
-      })
-      .catch((error) => {
-        console.error(`Failed to load icon: ${name}.svg`, error)
-        setIconModule(null)
-      })
-  }, [name])
+  // Actions
+  'add': 'Plus',
+  'search': 'Search',
+  'close': 'X',
+  'visibility': 'Eye',
+  'edit': 'Edit3',
+  'check': 'Check',
+  'bolt': 'Zap',
+  'info': 'Info',
+  'warning': 'AlertTriangle',
+  'delete': 'Trash2',
+  'grid': 'Grid',
+  'table': 'Table',
+  'list': 'List',
+  'arrow-left': 'ChevronLeft',
+  'arrow-right': 'ChevronRight',
+  'arrow-up': 'ChevronUp',
+  'arrow-down': 'ChevronDown',
 
-  if (!iconModule) {
-    // Fallback while loading or if failed
-    return (
-      <div
-        className={className}
-        style={{
-          width: size,
-          height: size,
-          display: 'inline-block',
-          background: 'currentColor',
-          opacity: 0.1,
-          borderRadius: '2px'
-        }}
-        role="img"
-        aria-label={alt}
-      />
-    )
+  // Miscellaneous
+  'calendar': 'Calendar',
+  'pie-chart': 'PieChart',
+  'bar-chart': 'BarChart3',
+  'line-chart': 'LineChart',
+  'lightbulb': 'Lightbulb',
+  'verified': 'CheckCircle',
+  'public': 'Globe',
+}
+
+function Icon({ name, size = 24, className = '', alt = '', ...props }: IconProps) {
+  const iconName = iconMap[name] || 'HelpCircle'
+  const LucideIcon = (LucideIcons as any)[iconName] as React.FC<LucideProps>
+
+  if (!LucideIcon) {
+    console.warn(`Icon "${name}" (mapped to "${String(iconName)}") not found in lucide-react`)
+    return <LucideIcons.HelpCircle size={size} className={className} {...props} />
   }
 
-  // Render the imported SVG
   return (
-    <div
+    <LucideIcon
+      size={size}
       className={className}
-      style={{
-        width: size,
-        height: size,
-        display: 'inline-block'
-      }}
-      dangerouslySetInnerHTML={{ __html: iconModule.default }}
-      role="img"
-      aria-label={alt}
+      aria-label={alt || name}
+      {...props}
     />
   )
 }

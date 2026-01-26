@@ -234,49 +234,48 @@ function Applications() {
 
   return (
     <div className="animate-fade-in">
-      {/* Page Header */}
-      <div className="flex flex-col lg:flex-row lg:justify-between lg:items-start gap-md mb-xl">
-        <div>
-          <h1 className="text-3xl font-bold text-primary mb-sm">Applications</h1>
-          <p className="text-secondary text-base">
-            {filteredApplications.length} of {applications.length} applications
+      <div className="flex flex-col lg:flex-row lg:justify-between lg:items-center gap-6 mb-0">
+        <header className="page-header">
+          <h1 className="text-3xl font-black text-primary tracking-tighter uppercase page-header__title">Applications</h1>
+          <p className="text-secondary font-medium tracking-tight page-header__subtitle">
+            {filteredApplications.length} cases detected in your active pipeline.
           </p>
-        </div>
-        <div className="flex gap-sm">
-          <Link to="/analytics" className="btn btn-ghost" data-track-action="go-to-analytics">
-            <Icon name="trending-up" size={16} />
-            Analytics
+        </header>
+        <div className="flex gap-4">
+          <Link to="/analytics" className="btn btn--secondary" data-track-action="go-to-analytics">
+            <Icon name="pie-chart" size={16} />
+            Intelligence
           </Link>
-          <Link to="/applications/new" className="btn btn-orange" data-track-action="add-application">
+          <Link to="/applications/new" className="btn btn--orange shadow-elevated" data-track-action="add-application">
             <Icon name="add" size={16} />
-            Add Application
+            Initialize Record
           </Link>
         </div>
       </div>
 
       {/* Filters and Controls */}
-      <div className="layout__section layout__section--filters card mb-xl" data-section="filters">
-        <div className="card-body">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-md mb-lg">
-            {/* Search (Local Overrides Global if needed, but synced) */}
-            <div className="form-group">
-              <label className="form-label">Search</label>
-              <div className="search-input-wrapper">
-                <Icon name="search" size={14} className="search-input-icon" />
+      <div className="card mb-12 overflow-hidden">
+        <div className="p-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-10">
+            {/* Search */}
+            <div className="flex flex-col gap-1.5">
+              <label className="text-[10px] font-black text-muted uppercase tracking-widest">Global Scan</label>
+              <div className="relative group">
+                <Icon name="search" size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted group-focus-within:text-primary-500 transition-colors" />
                 <input
                   type="text"
-                  placeholder="Filter by company, role..."
+                  placeholder="Company, role, narrative..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="input"
+                  className="input pl-9"
                   data-track-filter="search"
                 />
               </div>
             </div>
 
             {/* Status Filter */}
-            <div className="form-group">
-              <label className="form-label">Status</label>
+            <div className="flex flex-col gap-1.5">
+              <label className="text-[10px] font-black text-muted uppercase tracking-widest">Protocol Status</label>
               <div className="select-wrapper">
                 <select
                   value={statusFilter}
@@ -284,7 +283,7 @@ function Applications() {
                   className="input"
                   data-track-filter="status"
                 >
-                  <option value="all">All Statuses</option>
+                  <option value="all">All Protocols</option>
                   <option value="Applied">Applied</option>
                   <option value="Phone Screen">Phone Screen</option>
                   <option value="Technical Interview">Technical Interview</option>
@@ -296,8 +295,8 @@ function Applications() {
             </div>
 
             {/* Visa Filter */}
-            <div className="form-group">
-              <label className="form-label">Visa Sponsorship</label>
+            <div className="flex flex-col gap-1.5">
+              <label className="text-[10px] font-black text-muted uppercase tracking-widest">Residency Support</label>
               <div className="select-wrapper">
                 <select
                   value={visaFilter}
@@ -305,77 +304,77 @@ function Applications() {
                   className="input"
                   data-track-filter="visa"
                 >
-                  <option value="all">All Applications</option>
-                  <option value="visa">Visa Only</option>
-                  <option value="no-visa">No Visa</option>
+                  <option value="all">Normal Priority</option>
+                  <option value="visa">Sponsorship Required</option>
+                  <option value="no-visa">Local Only</option>
                 </select>
               </div>
             </div>
 
             {/* Sort */}
-            <div className="form-group">
-              <label className="form-label">Sort By</label>
-              <div className="flex gap-sm">
+            <div className="flex flex-col gap-1.5">
+              <label className="text-[10px] font-black text-muted uppercase tracking-widest">Chronometry</label>
+              <div className="flex gap-2">
                 <div className="select-wrapper flex-1">
                   <select
                     value={sortField}
                     onChange={(e) => setSortField(e.target.value as SortField)}
                     className="input"
                   >
-                    <option value="dateApplied">Date Applied</option>
-                    <option value="company">Company</option>
-                    <option value="role">Role</option>
-                    <option value="status">Status</option>
+                    <option value="dateApplied">Applied Velocity</option>
+                    <option value="company">Company Depth</option>
+                    <option value="role">Position Identity</option>
+                    <option value="status">Pipeline Flow</option>
                   </select>
                 </div>
                 <button
                   onClick={() => setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc')}
-                  className="btn btn-ghost px-sm bg-surface-2 hover:bg-surface-3"
+                  className="w-10 h-10 flex items-center justify-center bg-surface-2 hover:bg-surface-3 rounded-md border border-border-light transition-all"
                   aria-label={`Sort ${sortOrder === 'asc' ? 'descending' : 'ascending'}`}
                 >
-                  <Icon name={sortOrder === 'asc' ? 'arrow-up' : 'arrow-down'} size={16} />
+                  <Icon name={sortOrder === 'asc' ? 'arrow-up' : 'arrow-down'} size={14} className="text-secondary" />
                 </button>
               </div>
             </div>
           </div>
 
           {/* View Mode Toggle & Bulk Actions */}
-          <div className="flex flex-wrap items-center justify-between gap-md border-t border-border-light pt-lg">
-            <div className="flex items-center gap-sm">
-              <span className="text-secondary text-xs font-bold uppercase tracking-wider">Layout:</span>
-              <div className="flex bg-surface-2 rounded-lg p-0.5 border border-border-light">
+          <div className="flex flex-wrap items-center justify-between gap-4 border-t border-gray-100 pt-6">
+            <div className="flex items-center gap-3">
+              <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">View Mode</span>
+              <div className="flex bg-gray-100 p-1 rounded-md">
                 <button
                   onClick={() => setViewMode('cards')}
-                  className={`p-1.5 rounded-md transition-all ${viewMode === 'cards' ? 'bg-background-white shadow-sm text-primary-orange' : 'text-secondary hover:text-primary'}`}
+                  className={`flex items-center justify-center w-8 h-8 rounded transition-all ${viewMode === 'cards' ? 'bg-white shadow-sm text-primary-500' : 'text-gray-500 hover:text-gray-900'}`}
                 >
-                  <Icon name="grid" size={16} />
+                  <Icon name="grid" size={14} />
                 </button>
                 <button
                   onClick={() => setViewMode('table')}
-                  className={`p-1.5 rounded-md transition-all ${viewMode === 'table' ? 'bg-background-white shadow-sm text-primary-orange' : 'text-secondary hover:text-primary'}`}
+                  className={`flex items-center justify-center w-8 h-8 rounded transition-all ${viewMode === 'table' ? 'bg-white shadow-sm text-primary-500' : 'text-gray-500 hover:text-gray-900'}`}
                 >
-                  <Icon name="table" size={16} />
+                  <Icon name="table" size={14} />
                 </button>
                 <button
                   onClick={() => setViewMode('list')}
-                  className={`p-1.5 rounded-md transition-all ${viewMode === 'list' ? 'bg-background-white shadow-sm text-primary-orange' : 'text-secondary hover:text-primary'}`}
+                  className={`flex items-center justify-center w-8 h-8 rounded transition-all ${viewMode === 'list' ? 'bg-white shadow-sm text-primary-500' : 'text-gray-500 hover:text-gray-900'}`}
                 >
-                  <Icon name="list" size={16} />
+                  <Icon name="list" size={14} />
                 </button>
               </div>
             </div>
 
             {/* Bulk Actions */}
-            <div className="flex items-center gap-sm">
+            <div className="flex items-center gap-3">
               {selectedApplications.size > 0 && (
                 <>
-                  <span className="text-primary-orange text-xs font-bold bg-primary-orange-bg px-2 py-1 rounded-full border border-primary-orange/20">
+                  <span className="text-xs font-bold text-primary-500 px-2 py-1 bg-primary-50 rounded-full border border-primary-100">
                     {selectedApplications.size} Selected
                   </span>
-                  <div className="select-wrapper">
+                  <div className="relative">
                     <select
                       onChange={(e) => e.target.value && handleBulkStatusUpdate(e.target.value)}
-                      className="input text-xs py-1 h-9 min-w-[140px]"
+                      className="h-9 px-3 pr-8 bg-white border border-gray-200 rounded-md text-xs font-bold uppercase transition-all appearance-none cursor-pointer hover:border-gray-300"
                       defaultValue=""
                     >
                       <option value="">Update Status</option>
@@ -386,10 +385,11 @@ function Applications() {
                       <option value="Offer">Offer</option>
                       <option value="Rejected">Rejected</option>
                     </select>
+                    <Icon name="arrow-down" size={10} className="absolute right-2.5 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
                   </div>
                   <button
                     onClick={handleBulkDelete}
-                    className="btn btn-ghost h-9 px-3 text-red-500 hover:bg-red-50"
+                    className="w-9 h-9 flex items-center justify-center text-red-500 hover:bg-red-50 rounded-md transition-colors border border-transparent hover:border-red-100"
                   >
                     <Icon name="delete" size={16} />
                   </button>
@@ -399,7 +399,7 @@ function Applications() {
               {(searchQuery || statusFilter !== 'all' || visaFilter !== 'all') && (
                 <button
                   onClick={clearFilters}
-                  className="btn btn-ghost h-9 px-3 text-secondary text-xs uppercase font-bold tracking-tight"
+                  className="h-9 px-4 text-xs font-bold text-gray-500 uppercase tracking-tight hover:text-gray-900 transition-colors"
                 >
                   Clear All
                 </button>
@@ -430,9 +430,9 @@ function Applications() {
           <p className="text-secondary mb-6">Try adjusting your filters or search term.</p>
           <button
             onClick={clearFilters}
-            className="btn btn-ghost text-primary-orange font-bold text-xs"
+            className="btn btn-ghost text-primary-500 font-black text-[10px] uppercase tracking-widest"
           >
-            RESET FILTERS
+            RESET PROTOCOLS
           </button>
         </div>
       ) : viewMode === 'cards' ? (
@@ -440,15 +440,13 @@ function Applications() {
           {filteredApplications.map((application, index) => (
             <div
               key={application.id}
-              className={`application-card bg-surface-1 border border-border-light hover:shadow-xl transition-all animate-fade-in-scale stagger-${(index % 5) + 1}`}
+              className={`card flex flex-col p-6 hover:shadow-elevated transition-all animate-fade-in stagger-${(index % 5) + 1}`}
             >
               <div className="application-card-header mb-4">
                 <div className="company-info flex-1">
                   <div className="flex items-start justify-between">
-                    <div className="company-logo bg-primary-orange-bg border border-primary-orange/10 mr-3">
-                      <span className="text-primary-orange font-bold text-xl">
-                        {application.company.charAt(0).toUpperCase()}
-                      </span>
+                    <div className="company-logo bg-surface-contrast text-text-on-contrast w-12 h-12 rounded flex items-center justify-center font-black text-2xl shadow-lg border-2 border-primary-500/20">
+                      {application.company.charAt(0).toUpperCase()}
                     </div>
                     <label className="checkbox-group">
                       <input
@@ -544,7 +542,7 @@ function Applications() {
               </thead>
               <tbody>
                 {filteredApplications.map(application => (
-                  <tr key={application.id} className={selectedApplications.has(application.id) ? 'bg-primary-orange-bg/30' : ''}>
+                  <tr key={application.id} className={selectedApplications.has(application.id) ? 'bg-primary-500/10' : ''}>
                     <td>
                       <input
                         type="checkbox"
@@ -587,7 +585,7 @@ function Applications() {
           {filteredApplications.map(application => (
             <div
               key={application.id}
-              className={`card flex items-center p-3 gap-4 hover:shadow-md transition-all ${selectedApplications.has(application.id) ? 'border-primary-orange ring-1 ring-primary-orange' : ''}`}
+              className={`card flex items-center p-3 gap-4 hover:shadow-md transition-all ${selectedApplications.has(application.id) ? 'border-primary-500 ring-1 ring-primary-500' : ''}`}
             >
               <input
                 type="checkbox"
@@ -595,7 +593,7 @@ function Applications() {
                 onChange={() => toggleApplicationSelection(application.id)}
                 className="checkbox"
               />
-              <div className="w-10 h-10 rounded-lg bg-surface-2 flex items-center justify-center font-bold text-primary-orange">
+              <div className="w-10 h-10 rounded-lg bg-surface-2 flex items-center justify-center font-black text-primary-500">
                 {application.company.charAt(0)}
               </div>
               <div className="flex-1 min-w-0">
@@ -607,7 +605,7 @@ function Applications() {
                   {application.status}
                 </span>
                 {application.visaSponsorship && (
-                  <span className="text-primary-orange">
+                  <span className="text-primary-500">
                     <Icon name="verified" size={14} />
                   </span>
                 )}

@@ -62,13 +62,16 @@ function UserMenu() {
     <div className="relative" ref={menuRef}>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="btn-icon hover-lift"
+        className="btn-icon hover-lift transition-all"
         style={{
-          background: 'var(--primary-orange)',
-          color: 'white',
-          width: '40px',
-          height: '40px',
-          borderRadius: 'var(--radius-xl)'
+          background: 'var(--primary-500)',
+          color: 'var(--text-on-contrast)',
+          width: '42px',
+          height: '42px',
+          borderRadius: 'var(--radius-md)',
+          fontWeight: 'var(--font-black)',
+          fontSize: '14px',
+          boxShadow: 'var(--shadow-md)'
         }}
         aria-label="User menu"
       >
@@ -80,10 +83,10 @@ function UserMenu() {
           <div className="p-md border-b border-border-light">
             <div className="flex items-center gap-md">
               <div
-                className="w-12 h-12 rounded-xl flex items-center justify-center font-bold text-lg"
+                className="w-14 h-14 rounded-lg flex items-center justify-center font-black text-xl shadow-inner"
                 style={{
-                  background: 'var(--primary-orange)',
-                  color: 'white'
+                  background: 'var(--surface-contrast)',
+                  color: 'var(--text-on-contrast)'
                 }}
               >
                 {initials}
@@ -99,10 +102,10 @@ function UserMenu() {
             </div>
           </div>
 
-          <div className="p-sm">
+          <div className="p-2">
             <Link
               to="/profile"
-              className="flex items-center gap-sm px-md py-sm text-sm text-primary hover:bg-background-light rounded-md transition-colors"
+              className="flex items-center gap-3 px-4 py-3 text-xs font-black uppercase tracking-widest text-primary hover:bg-surface-2 rounded-lg transition-all"
               onClick={() => setIsOpen(false)}
             >
               <Icon name="person" size={16} />
@@ -111,18 +114,18 @@ function UserMenu() {
 
             <Link
               to="/settings"
-              className="flex items-center gap-sm px-md py-sm text-sm text-primary hover:bg-background-light rounded-md transition-colors"
+              className="flex items-center gap-3 px-4 py-3 text-xs font-black uppercase tracking-widest text-primary hover:bg-surface-2 rounded-lg transition-all"
               onClick={() => setIsOpen(false)}
             >
               <Icon name="settings" size={16} />
               Settings
             </Link>
 
-            <hr className="my-sm border-border-light" />
+            <hr className="my-2 border-border-light" />
 
             <button
               onClick={handleSignOut}
-              className="flex items-center gap-sm w-full px-md py-sm text-sm text-danger hover:bg-red-50 rounded-md transition-colors"
+              className="flex items-center gap-3 w-full px-4 py-3 text-xs font-black uppercase tracking-widest text-red-500 hover:bg-red-500/10 rounded-lg transition-all"
             >
               <Icon name="logout" size={16} />
               Sign Out

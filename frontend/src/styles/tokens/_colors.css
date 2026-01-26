@@ -1,130 +1,135 @@
 /* ========================================
    KRISIS Design Tokens - Colors
-   Refined palette with softer tones
+   Refined palette with Swiss precision
    ======================================== */
 
 :root {
-    /* ===== PRIMARY COLORS ===== */
-    --primary-orange: #E67E22;
-    --primary-orange-light: #F39C12;
-    --primary-orange-dark: #D35400;
-    --primary-orange-bg: #FFF8F0;
-    --primary-orange-bg-rgb: 255, 248, 240;
+    /* ===== PRIMARY: Orange (#E67E22) - Brand anchor ===== */
+    --primary-50: #FEF3E7;
+    --primary-100: #FCE3C5;
+    --primary-200: #FAD0A3;
+    --primary-300: #F8BD81;
+    --primary-400: #F6AA5F;
+    --primary-500: #E67E22;
+    /* Base */
+    --primary-600: #CA6C1E;
+    --primary-700: #AE5A1A;
+    --primary-800: #924816;
+    --primary-900: #763612;
 
-    /* Navy/Dark */
-    --navy-dark: #1A1D2E;
-    --navy-medium: #2C3E50;
-    --navy-light: #34495E;
+    /* Legacy Aliases (mapped to new system) */
+    --primary-orange: var(--primary-500);
+    --primary-orange-light: var(--primary-400);
+    --primary-orange-dark: var(--primary-600);
+    --primary-orange-bg: var(--primary-50);
 
-    /* ===== STATUS COLORS (Semantic) ===== */
-    --status-applied: #3498DB;
-    --status-phone: #9B59B6;
-    --status-technical: #F39C12;
-    --status-final: #E67E22;
-    --status-offer: #27AE60;
-    --status-rejected: #E74C3C;
+    /* ===== NEUTRALS (Swiss grayscale precision) ===== */
+    --gray-50: #FAFAFA;
+    --gray-100: #F5F5F5;
+    --gray-200: #E5E5E5;
+    --gray-300: #D4D4D4;
+    --gray-400: #A3A3A3;
+    --gray-500: #737373;
+    --gray-600: #525252;
+    --gray-700: #404040;
+    --gray-800: #262626;
+    --gray-900: #171717;
 
-    /* Status Aliases */
-    --status-info: #3498DB;
-    --status-success: #27AE60;
-    --status-warning: #F39C12;
-    --status-danger: #E74C3C;
-    --primary-blue: #3498DB;
-    --primary-purple: #9B59B6;
-
-    /* ===== BACKGROUND & NEUTRAL COLORS ===== */
-    /* Softer whites to prevent eye strain */
-    --background-light: #F7F8FA;
-    --background-white: #FEFEFE;
+    /* Backgrounds */
+    --background-light: var(--gray-50);
+    --background-white: #FFFFFF;
     --background-elevated: #FFFFFF;
-    --background-white-rgb: 254, 254, 254;
+    --background-canvas: #F8F9FA;
 
     /* Surface variants for depth */
     --surface-1: var(--background-white);
-    --surface-2: #F9FAFB;
-    --surface-3: #F3F4F6;
+    --surface-2: var(--gray-50);
+    --surface-3: var(--gray-100);
+    --surface-contrast: var(--gray-900);
 
     /* Text Hierarchy */
-    --text-primary: #1F2937;
-    --text-secondary: #6B7280;
-    --text-muted: #9CA3AF;
-    --text-disabled: #D1D5DB;
+    --text-primary: var(--gray-900);
+    --text-secondary: var(--gray-600);
+    --text-muted: var(--gray-400);
+    --text-disabled: var(--gray-300);
+    --text-on-contrast: #FFFFFF;
 
     /* Borders */
-    --border-light: #E5E7EB;
-    --border-medium: #D1D5DB;
-    --border-focus: var(--primary-orange);
+    --border-light: var(--gray-200);
+    --border-medium: var(--gray-300);
+    --border-focus: var(--primary-50);
+
+    /* Shadows (Standardized) */
+    --shadow-card: 0 4px 20px -2px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.02);
+    --shadow-elevated: 0 20px 40px -4px rgba(0, 0, 0, 0.1), 0 8px 16px -4px rgba(0, 0, 0, 0.05);
+
+    /* ===== SEMANTIC COLORS ===== */
+    --success: #10B981;
+    --warning: #F59E0B;
+    --error: #EF4444;
+    --info: #3B82F6;
+
+    --status-applied: var(--info);
+    --status-phone: #9B59B6;
+    --status-technical: var(--warning);
+    --status-final: var(--primary-500);
+    --status-offer: var(--success);
+    --status-rejected: var(--error);
 }
 
 /* ========================================
    DARK MODE
    ======================================== */
 [data-theme="dark"] {
-    /* Primary colors - slightly brighter for visibility */
-    --primary-orange: #F39C12;
-    --primary-orange-light: #F5B041;
-    --primary-orange-dark: #E67E22;
-    --primary-orange-bg: #2D2419;
-    --primary-orange-bg-rgb: 45, 36, 25;
+    /* Primary: Bauhaus Gold for dark mode visibility */
+    --primary-500: #F39C12;
+    --primary-400: #F5B041;
+    --primary-600: #E67E22;
 
-    /* Navy inverted */
-    --navy-dark: #F9FAFB;
-    --navy-medium: #E5E7EB;
-    --navy-light: #D1D5DB;
-
-    /* Status - brighter for dark backgrounds */
-    --status-applied: #60A5FA;
-    --status-phone: #C084FC;
-    --status-technical: #FBBF24;
-    --status-final: #F59E0B;
-    --status-offer: #34D399;
-    --status-rejected: #F87171;
-
-    --status-info: #60A5FA;
-    --status-success: #34D399;
-    --status-warning: #FBBF24;
-    --status-danger: #F87171;
-    --primary-blue: #60A5FA;
-    --primary-purple: #C084FC;
-
-    /* Backgrounds - nuanced dark with depth */
-    --background-light: #0F0F0F;
-    --background-white: #171717;
-    --background-elevated: #1F1F1F;
-    --background-white-rgb: 23, 23, 23;
+    /* Backgrounds - deep navy/charcoal for depth */
+    --background-light: #0A0A0A;
+    --background-white: #121212;
+    --background-elevated: #1A1A1A;
+    --background-canvas: #050505;
 
     /* Surface variants for depth in dark mode */
-    --surface-1: #171717;
-    --surface-2: #1F1F1F;
-    --surface-3: #262626;
+    --surface-1: #121212;
+    --surface-2: #1A1A1A;
+    --surface-3: #242424;
+    --surface-contrast: #FFFFFF;
 
-    /* Text - slightly off-white for comfort */
-    --text-primary: #F3F4F6;
-    --text-secondary: #9CA3AF;
-    --text-muted: #6B7280;
-    --text-disabled: #4B5563;
+    /* Text */
+    --text-primary: #F5F5F5;
+    --text-secondary: #A0A0A0;
+    --text-muted: #606060;
+    --text-disabled: #333333;
+    --text-on-contrast: var(--gray-900);
 
-    /* Borders - subtle separation */
-    --border-light: #2E2E2E;
-    --border-medium: #404040;
-    --border-focus: var(--primary-orange);
+    /* Borders */
+    --border-light: #222222;
+    --border-medium: #333333;
+
+    /* Shadows (Intensity adjusted for dark mode) */
+    --shadow-card: 0 4px 20px -2px rgba(0, 0, 0, 0.4);
+    --shadow-elevated: 0 20px 40px -4px rgba(0, 0, 0, 0.6);
 }
 
 /* ========================================
    COLOR UTILITY CLASSES
    ======================================== */
 
-/* Danger/Error color */
 .text-danger {
-    color: var(--status-danger);
+    color: var(--error);
 }
 
-/* Success color */
 .text-success {
-    color: var(--status-success);
+    color: var(--success);
 }
 
-/* Warning color */
 .text-warning {
-    color: var(--status-warning);
+    color: var(--warning);
+}
+
+.text-info {
+    color: var(--info);
 }

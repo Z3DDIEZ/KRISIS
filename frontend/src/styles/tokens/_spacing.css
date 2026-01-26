@@ -1,11 +1,28 @@
 /* ========================================
    KRISIS Design Tokens - Spacing
+   Bauhaus Geometry & 8-point Grid
    ======================================== */
 
 :root {
-    /* 8px base unit system */
+    /* 8-point grid system - EVERYTHING aligns to 8px increments */
+    --spacing-1: 0.5rem;
+    /* 8px */
+    --spacing-2: 1rem;
+    /* 16px */
+    --spacing-3: 1.5rem;
+    /* 24px */
+    --spacing-4: 2rem;
+    /* 32px */
+    --spacing-5: 2.5rem;
+    /* 40px */
+    --spacing-6: 3rem;
+    /* 48px */
+    --spacing-8: 4rem;
+    /* 64px */
+
+    /* Legacy Aliases */
     --spacing-xs: 0.25rem;
-    /* 4px */
+    /* 4px (allowed sub-unit) */
     --spacing-sm: 0.5rem;
     /* 8px */
     --spacing-md: 1rem;
@@ -21,9 +38,15 @@
     --spacing-4xl: 5rem;
     /* 80px */
 
-    /* Border Radius */
-    --radius-sm: 4px;
-    --radius-md: 6px;
-    --radius-lg: 8px;
-    --radius-xl: 12px;
+    /* Border Radius (Modernist softness) */
+    --radius-sm: 0.25rem;
+    /* 4px - subtle */
+    --radius-md: 0.5rem;
+    /* 8px - standard */
+    --radius-lg: 0.75rem;
+    /* 12px - cards */
+    --radius-xl: 1rem;
+    /* 16px - panels */
+    --radius-full: 9999px;
+    /* Pills/circles */
 }

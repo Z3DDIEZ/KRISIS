@@ -10,7 +10,7 @@ interface SidebarItem {
 }
 
 interface SidebarProps {
-  items: SidebarItem[]
+  items?: SidebarItem[]
   primaryItems: SidebarItem[]
   secondaryItems: SidebarItem[]
   isOpen?: boolean
@@ -84,36 +84,40 @@ function Sidebar({ primaryItems, secondaryItems, isOpen, onClose, isCollapsed, o
         aria-label="Main navigation"
       >
         {/* Sidebar Header */}
-        <div className="sidebar-header">
+        <div className="sidebar__header px-6 flex items-center justify-between">
           {!isCollapsed && (
-            <div className="sidebar-logo">
-              <div className="sidebar-logo-icon">
-                <Icon name="dashboard" size={20} />
+            <div className="sidebar__logo flex items-center gap-3">
+              <div className="sidebar__logo-icon bg-surface-contrast text-text-on-contrast w-10 h-10 rounded flex items-center justify-center shadow-lg">
+                <Icon name="work" size={20} />
               </div>
-              <div className="sidebar-logo-text">
-                <div className="font-bold text-lg">KRISIS</div>
-                <div className="text-xs text-secondary">Job Intelligence</div>
-              </div>
+              <span className="sidebar__logo-text font-black text-primary tracking-tighter text-xl">KRISIS</span>
             </div>
           )}
           {isCollapsed && (
-            <div className="sidebar-logo-collapsed">
-              <Icon name="dashboard" size={24} />
+            <div className="flex justify-center w-full">
+              <div className="sidebar__logo-icon bg-surface-contrast text-text-on-contrast w-10 h-10 rounded flex items-center justify-center shadow-lg">
+                <Icon name="work" size={20} />
+              </div>
             </div>
           )}
+
+          {/* Collapse Toggle - Bauhaus precision trigger */}
           <button
-            onClick={onToggle}
-            className="sidebar-toggle"
-            aria-label={isCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
-            aria-expanded={!isCollapsed}
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              onToggle();
+            }}
+            className="sidebar__toggle p-2 rounded-lg text-muted hover:text-primary hover:bg-surface-2 transition-all ml-auto"
+            title={isCollapsed ? "Expand Sidebar" : "Collapse Sidebar"}
           >
-            <Icon name={isCollapsed ? 'arrow-right' : 'arrow-left'} size={18} />
+            <Icon name={isCollapsed ? "arrow-right" : "arrow-left"} size={16} />
           </button>
         </div>
 
         {/* Primary Navigation */}
-        <div className="sidebar__section sidebar__section--primary">
-          <ul className="sidebar__list">
+        <div className="sidebar__section">
+          <ul className="sidebar__list space-y-1">
             {primaryItems.map((item) => (
               <li key={item.href}>
                 <Link
@@ -123,11 +127,9 @@ function Sidebar({ primaryItems, secondaryItems, isOpen, onClose, isCollapsed, o
                   onMouseEnter={(e) => handleItemHover(item.name, e)}
                   onMouseLeave={handleItemLeave}
                   aria-current={isActive(item.href) ? 'page' : undefined}
-                  data-track-nav={item.name.toLowerCase().replace(' ', '-')}
-                  data-nav-category="primary"
                 >
                   <div className="sidebar__item-icon">
-                    <Icon name={item.iconName} size={20} />
+                    <Icon name={item.iconName} size={18} />
                   </div>
                   {!isCollapsed && (
                     <span className="sidebar__item-label">{item.name}</span>
@@ -138,12 +140,9 @@ function Sidebar({ primaryItems, secondaryItems, isOpen, onClose, isCollapsed, o
           </ul>
         </div>
 
-        {/* Divider */}
-        {!isCollapsed && <div className="sidebar-divider" />}
-
         {/* Secondary Navigation */}
         <div className="sidebar__section sidebar__section--secondary">
-          <ul className="sidebar__list">
+          <ul className="sidebar__list space-y-1">
             {secondaryItems.map((item) => (
               <li key={item.href}>
                 <Link
@@ -153,11 +152,9 @@ function Sidebar({ primaryItems, secondaryItems, isOpen, onClose, isCollapsed, o
                   onMouseEnter={(e) => handleItemHover(item.name, e)}
                   onMouseLeave={handleItemLeave}
                   aria-current={isActive(item.href) ? 'page' : undefined}
-                  data-track-nav={item.name.toLowerCase().replace(' ', '-')}
-                  data-nav-category="secondary"
                 >
                   <div className="sidebar__item-icon">
-                    <Icon name={item.iconName} size={20} />
+                    <Icon name={item.iconName} size={18} />
                   </div>
                   {!isCollapsed && (
                     <span className="sidebar__item-label">{item.name}</span>
