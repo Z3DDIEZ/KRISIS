@@ -10,9 +10,10 @@ import { useDebounce } from '../../utils/useDebounce'
 interface TopNavbarProps {
     onSearchChange?: (query: string) => void
     searchPlaceholder?: string
+    onToggleSidebar?: () => void
 }
 
-function TopNavbar({ onSearchChange, searchPlaceholder = 'Search applications...' }: TopNavbarProps) {
+function TopNavbar({ onSearchChange, searchPlaceholder = 'Search applications...', onToggleSidebar }: TopNavbarProps) {
     const [user] = useAuthState(auth)
     const [searchQuery, setSearchQuery] = useState('')
     const [searchFocused, setSearchFocused] = useState(false)
@@ -67,16 +68,26 @@ function TopNavbar({ onSearchChange, searchPlaceholder = 'Search applications...
     return (
         <header className="topnav" role="banner">
             <div className="topnav__container">
-                {/* Logo */}
-                <Link to="/" className="topnav__logo" data-track-action="logo-click">
-                    <div className="topnav__logo-icon">
-                        <Icon name="dashboard" size={20} />
-                    </div>
-                    <div className="topnav__logo-text">
-                        <span className="topnav__logo-name">KRISIS</span>
-                        <span className="topnav__logo-tagline">Job Intelligence</span>
-                    </div>
-                </Link>
+                {/* Sidebar Toggle & Logo */}
+                <div className="flex items-center gap-4">
+                    <button
+                        onClick={onToggleSidebar}
+                        className="topnav__hamburger bezel-icon p-2"
+                        aria-label="Toggle sidebar"
+                    >
+                        <Icon name="list" size={20} />
+                    </button>
+
+                    <Link to="/" className="topnav__logo" data-track-action="logo-click">
+                        <div className="topnav__logo-icon">
+                            <Icon name="dashboard" size={20} />
+                        </div>
+                        <div className="topnav__logo-text">
+                            <span className="topnav__logo-name">KRISIS</span>
+                            <span className="topnav__logo-tagline">Job Intelligence</span>
+                        </div>
+                    </Link>
+                </div>
 
                 {/* Global Search */}
                 <div className={`topnav__search ${searchFocused ? 'topnav__search--focused' : ''} ${isSearching ? 'topnav__search--loading' : ''}`}>
@@ -112,7 +123,7 @@ function TopNavbar({ onSearchChange, searchPlaceholder = 'Search applications...
                     {/* Quick Add Button - Now Icon Only as requested */}
                     <Link
                         to="/applications/new"
-                        className="topnav__action-btn topnav__action-btn--primary !p-2 rounded-full shadow-lg hover:shadow-orange/20"
+                        className="topnav__action-btn topnav__action-btn--primary bezel-icon !bg-orange-500 !text-white !border-none shadow-orange-500/20"
                         title="Add Application"
                         data-track-action="quick-add"
                     >

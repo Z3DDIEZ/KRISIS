@@ -38,11 +38,11 @@ function DarkModeToggle() {
   return (
     <button
       onClick={toggleTheme}
-      className="btn btn-ghost btn-icon"
+      className="bezel-icon btn-icon hover:shadow-lg transition-all"
       aria-label={isDark ? 'Toggle light mode' : 'Toggle dark mode'}
       title={isDark ? 'Toggle light mode' : 'Toggle dark mode'}
     >
-      <Icon name={isDark ? 'light-mode' : 'dark-mode'} size={20} />
+      <Icon name={isDark ? 'lightbulb' : 'bolt'} size={20} className={isDark ? 'text-yellow-500' : 'text-primary-500'} />
     </button>
   )
 }

@@ -74,6 +74,7 @@ function MainLayout({ children }: MainLayoutProps) {
         <TopNavbar
           onSearchChange={setSearchQuery}
           searchPlaceholder="Search applications, companies..."
+          onToggleSidebar={toggleSidebar}
         />
 
         {/* Sidebar (Section-specific) */}
@@ -97,7 +98,6 @@ function MainLayout({ children }: MainLayoutProps) {
             primaryItems={primaryItems}
             secondaryItems={secondaryItems}
             isCollapsed={sidebarState === 'collapsed'}
-            onToggle={toggleSidebar}
             isOpen={mobileSidebarOpen}
             onClose={() => setMobileSidebarOpen(false)}
           />

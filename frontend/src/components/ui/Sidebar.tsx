@@ -16,10 +16,9 @@ interface SidebarProps {
   isOpen?: boolean
   onClose?: () => void
   isCollapsed: boolean
-  onToggle: () => void
 }
 
-function Sidebar({ primaryItems, secondaryItems, isOpen, onClose, isCollapsed, onToggle }: SidebarProps) {
+function Sidebar({ primaryItems, secondaryItems, isOpen, onClose, isCollapsed }: SidebarProps) {
   const location = useLocation()
   const [hoveredItem, setHoveredItem] = useState<string | null>(null)
   const [tooltipPosition, setTooltipPosition] = useState({ x: 0, y: 0 })
@@ -100,19 +99,6 @@ function Sidebar({ primaryItems, secondaryItems, isOpen, onClose, isCollapsed, o
               </div>
             </div>
           )}
-
-          {/* Collapse Toggle - Bauhaus precision trigger */}
-          <button
-            onClick={(e) => {
-              e.preventDefault();
-              e.stopPropagation();
-              onToggle();
-            }}
-            className="sidebar__toggle p-2 rounded-lg text-muted hover:text-primary hover:bg-surface-2 transition-all ml-auto"
-            title={isCollapsed ? "Expand Sidebar" : "Collapse Sidebar"}
-          >
-            <Icon name={isCollapsed ? "arrow-right" : "arrow-left"} size={16} />
-          </button>
         </div>
 
         {/* Primary Navigation */}

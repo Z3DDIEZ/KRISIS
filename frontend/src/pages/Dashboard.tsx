@@ -104,28 +104,36 @@ function Dashboard() {
   }
 
   return (
-    <div className="animate-fade-in">
-      <header className="page-header">
-        <h1 className="text-3xl font-black text-primary tracking-tighter uppercase page-header__title">Intelligence Dashboard</h1>
-        <p className="text-secondary font-medium tracking-tight page-header__subtitle">Real-time pipeline analytics and application tracking.</p>
+    <div className="animate-fade-in swiss-grid-bg min-h-screen p-8">
+      <header className="page-header mb-16 relative">
+        <div className="absolute -top-12 -left-12 w-48 h-48 bg-primary-500/5 rounded-full blur-3xl" />
+        <div className="asymmetric-header">
+          <h1 className="text-5xl font-black text-primary tracking-tighter uppercase leading-none mb-4">
+            Intelligence <br />
+            <span className="text-outline">Dashboard</span>
+          </h1>
+          <p className="text-secondary font-medium tracking-tight page-header__subtitle max-w-md">
+            Swiss-engineered tracking for the modern software professional. Precise. Fast. Minimal.
+          </p>
+        </div>
       </header>
 
       {/* Stats Grid */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-8 mb-16 relative">
         {[
           { label: 'Total pipeline', value: stats.totalApplications, icon: 'work', change: '12% increase' },
           { label: 'Active Interviews', value: stats.interviews, icon: 'person', change: '4 new items' },
           { label: 'Secured Offers', value: stats.offers, icon: 'check', change: 'High velocity' },
           { label: 'Success Quotient', value: `${stats.successRate}%`, icon: 'trending-up', change: 'Optimizing flow' }
         ].map((stat, i) => (
-          <div key={i} className="stat-card group">
+          <div key={i} className="stat-card group hover-elevate bg-white/80 backdrop-blur-sm border-2 border-transparent hover:border-primary-500/20">
             <div className="flex justify-between items-start mb-6">
               <span className="text-[10px] font-black text-muted uppercase tracking-[0.2em]">{stat.label}</span>
-              <div className="p-2.5 bg-surface-2 text-muted group-hover:bg-primary-50 group-hover:text-primary-500 transition-colors rounded-md">
+              <div className="bezel-icon text-muted group-hover:bg-primary-500 group-hover:text-white transition-all">
                 <Icon name={stat.icon} size={14} />
               </div>
             </div>
-            <div className="text-4xl font-black text-primary mb-2 leading-none">{stat.value}</div>
+            <div className="text-5xl font-black text-primary mb-2 leading-none tracking-tighter">{stat.value}</div>
             <div className="text-[10px] font-bold text-primary-500 uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-opacity">
               {stat.change}
             </div>

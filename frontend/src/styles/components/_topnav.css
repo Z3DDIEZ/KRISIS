@@ -135,6 +135,40 @@
     box-shadow: 0 4px 12px rgba(230, 126, 34, 0.35);
 }
 
+.topnav__hamburger {
+    display: none;
+}
+
+@media (max-width: 1023px) {
+    .topnav__hamburger {
+        display: flex;
+    }
+}
+
+.bezel-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.5rem;
+    border-radius: 9999px;
+    background: var(--surface-2);
+    border: 1px solid var(--border-light);
+    color: var(--text-muted);
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.bezel-icon:hover {
+    background: var(--surface-3);
+    border-color: var(--primary-500);
+    color: var(--primary-500);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(var(--primary-rgb), 0.1);
+}
+
+[data-theme="dark"] .bezel-icon {
+    background: var(--surface-dark);
+}
+
 .topnav__action-btn--secondary {
     background: var(--background-light);
     color: var(--text-primary);
