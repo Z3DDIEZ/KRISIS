@@ -88,6 +88,13 @@ npm run test    # Run tests
 npm run build   # Build for production
 ```
 
+### 🧪 Demo Data Mode
+For development and stress testing, the platform includes a **Demo Data Generator**.
+
+- **Access**: Look for the "Initialize Demo Protocol" button in the Settings panel or User Menu.
+- **Function**: Seeds your current user account with typical application scenarios (Applied, Interviewing, Offers, etc.).
+- **Usage**: Useful for verifying Analytics charts and PDF export formats without manual data entry.
+
 ## 🚀 Deployment
 
 The project is configured for deployment via Firebase Hosting and GitHub Actions.
