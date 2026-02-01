@@ -104,9 +104,34 @@ The project is configured for deployment via Firebase Hosting and GitHub Actions
 firebase deploy --only hosting
 ```
 
-## 📝 License
+## 📄 License
+MIT License - see the [LICENSE](LICENSE) file for details.
 
-This project is licensed under the MIT License - see the LICENSE file for details.
+## 🏗️ Backend Architecture
+KRISIS is built on a serverless, event-driven architecture using **Google Cloud Platform (GCP)**.
+
+- **Frontend**: React + Vite + Tailwind CSS (Hosted on Firebase Hosting)
+- **Authentication**: Firebase Authentication (Identity Platform)
+- **Database**: Cloud Firestore (NoSQL, Real-time)
+- **Serverless Logic**: Cloud Functions (2nd Gen, TypeScript)
+- **AI Engine**: Google Gemini Pro (via Vertex AI / Gemini API)
+- **Analytics**: BigQuery (Streaming export for long-term data analysis)
+
+## 📊 Data Management & Demo Mode
+KRISIS includes built-in tools for managing your application data.
+
+### Generating Dummy Data
+To quickly populate the dashboard for testing or demonstration:
+1. Navigate to the **Settings** or **Data Management** page.
+2. Locate the **Demo Data Generator** card.
+3. Click the **Generate Demo Data** button.
+4. This will create ~30 realistic job application records with varying statuses and dates.
+
+### Exporting Data
+You can export your data at any time:
+1. Go to the **Data Management** section.
+2. Click **Export Data** to download a CSV file of all your applications.
+
 
 ## 🙋 Support
 
