@@ -7,8 +7,8 @@ export interface DataRecord {
   notes?: string;
   resumeUrl?: string;
   visaSponsorship: boolean;
-  createdAt?: any;
-  updatedAt?: any;
+  createdAt?: unknown;
+  updatedAt?: unknown;
 }
 
 export interface ImportResult {
@@ -22,7 +22,7 @@ export interface ImportError {
   row: number;
   field?: string;
   message: string;
-  data?: any;
+  data?: unknown;
 }
 
 export interface ExportOptions {

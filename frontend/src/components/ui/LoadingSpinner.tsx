@@ -1,7 +1,7 @@
 interface LoadingSpinnerProps {
   size?: 'sm' | 'md' | 'lg'
   className?: string
-  [key: string]: any
+  [key: string]: unknown
 }
 
 function LoadingSpinner({ size = 'md', className = '', ...props }: LoadingSpinnerProps) {

@@ -28,7 +28,7 @@ interface AnalyticsData {
   roleBreakdown: Array<{ name: string; count: number }>
   visaBreakdown: Array<{ name: string; value: number; color: string }>
   funnelData: Array<{ name: string; value: number }>
-  statusTrend: Array<{ name: string;[key: string]: any }>
+  statusTrend: Array<{ name: string;[key: string]: number | string }>
   performanceMetrics: {
     avgPerWeek: number
     interviewRate: number
@@ -261,7 +261,7 @@ function Analytics() {
             ].map(t => (
               <button
                 key={t.id}
-                onClick={() => setSelectedTimeframe(t.id as any)}
+                onClick={() => setSelectedTimeframe(t.id as 'all' | '6months' | '3months' | '1month')}
                 className={`px-4 py-1.5 rounded-md text-[10px] font-black uppercase tracking-widest transition-all ${selectedTimeframe === t.id ? 'bg-surface-1 shadow-sm text-primary' : 'text-muted hover:text-secondary'}`}
               >
                 {t.label}
@@ -294,7 +294,7 @@ function Analytics() {
                 label={stat.label}
                 value={stat.value}
                 icon={stat.icon}
-                trend={stat.trend as any}
+                trend={stat.trend as 'up' | 'down' | 'neutral'}
               />
             ))}
           </div>

@@ -150,8 +150,8 @@ function parseDate(dateStr: string): string | null {
       // Validate date
       const date = new Date(year, month - 1, day)
       if (date.getFullYear() === year &&
-          date.getMonth() === month - 1 &&
-          date.getDate() === day) {
+        date.getMonth() === month - 1 &&
+        date.getDate() === day) {
         // Return in YYYY-MM-DD format
         return date.toISOString().split('T')[0]
       }
@@ -174,7 +174,7 @@ function normalizeStatus(status: string): DataRecord['status'] | null {
 /**
  * Parses boolean values from various string representations
  */
-function parseBoolean(value: any): boolean {
+function parseBoolean(value: unknown): boolean {
   if (typeof value === 'boolean') return value
   if (typeof value !== 'string') return Boolean(value)
 
@@ -185,7 +185,7 @@ function parseBoolean(value: any): boolean {
 /**
  * Validates a single data record
  */
-function validateRecord(record: any, rowNumber: number): { record: DataRecord | null; errors: ImportError[] } {
+function validateRecord(record: Record<string, unknown>, rowNumber: number): { record: DataRecord | null; errors: ImportError[] } {
   const errors: ImportError[] = []
 
   // Validate required fields
@@ -222,7 +222,7 @@ function validateRecord(record: any, rowNumber: number): { record: DataRecord | 
   }
 
   // Validate date
-  const parsedDate = parseDate(record.dateApplied)
+  const parsedDate = parseDate(String(record.dateApplied))
   if (!parsedDate) {
     errors.push({
       row: rowNumber,
@@ -233,7 +233,7 @@ function validateRecord(record: any, rowNumber: number): { record: DataRecord | 
   }
 
   // Validate status
-  const normalizedStatus = normalizeStatus(record.status)
+  const normalizedStatus = normalizeStatus(String(record.status))
   if (!normalizedStatus) {
     errors.push({
       row: rowNumber,
@@ -249,15 +249,15 @@ function validateRecord(record: any, rowNumber: number): { record: DataRecord | 
   }
 
   // Create the record - only include fields that have values
-  const dataRecord: any = {
+  const dataRecord: Partial<DataRecord> = {
     id: record.id || `imported-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
-    company: record.company.trim(),
-    role: record.role.trim(),
+    company: String(record.company).trim(),
+    role: String(record.role).trim(),
     dateApplied: parsedDate!,
     status: normalizedStatus!,
     visaSponsorship: parseBoolean(record.visaSponsorship) ||
-                     VISA_SPONSOR_COMPANIES.has(record.company.toLowerCase().trim())
-  }
+      VISA_SPONSOR_COMPANIES.has(String(record.company).toLowerCase().trim())
+  } as DataRecord
 
   // Only include optional fields if they have values
   if (record.notes && String(record.notes).trim()) {
@@ -268,7 +268,7 @@ function validateRecord(record: any, rowNumber: number): { record: DataRecord | 
     dataRecord.resumeUrl = String(record.resumeUrl).trim()
   }
 
-  return { record: dataRecord, errors: [] }
+  return { record: dataRecord as DataRecord, errors: [] }
 }
 
 /**
@@ -299,11 +299,12 @@ export function importCsvFromFile(
       header: true,
       skipEmptyLines: true,
       transformHeader: normalizeHeader,
-      step: (results, parser) => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      step: (results: any, parser: any) => {
         rowsProcessed++
 
         // Validate and process each row
-        const { record, errors: rowErrors } = validateRecord(results.data, rowsProcessed)
+        const { record, errors: rowErrors } = validateRecord(results.data as Record<string, unknown>, rowsProcessed)
 
         if (rowErrors.length > 0) {
           errors.push(...rowErrors)
@@ -322,10 +323,12 @@ export function importCsvFromFile(
           })
         }
       },
-      complete: (results) => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      complete: (results: any) => {
         // Handle parse errors
         if (results.errors.length > 0) {
-          results.errors.forEach(error => {
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          results.errors.forEach((error: any) => {
             errors.push({
               row: error.row || 0,
               message: `Parse error: ${error.message}`,
@@ -343,7 +346,8 @@ export function importCsvFromFile(
           skipped
         })
       },
-      error: (error) => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      error: (error: any) => {
         reject(new Error(`Failed to parse CSV: ${error.message}`))
       }
     })

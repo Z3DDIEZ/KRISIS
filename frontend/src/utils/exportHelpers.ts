@@ -1,5 +1,4 @@
 import { DataRecord, ExportOptions } from '../types/dataManagement'
-import { formatDateForDisplay } from './dateUtils'
 
 /**
  * Escapes CSV fields according to RFC 4180
@@ -21,8 +20,7 @@ function escapeCsvField(field: string | number | boolean): string {
  */
 export function applicationsToCsv(applications: DataRecord[], options: ExportOptions = {}): string {
   const {
-    includeHeaders = true,
-    dateFormat = 'YYYY-MM-DD'
+    includeHeaders = true
   } = options
 
   const headers = ['Company', 'Role', 'Date Applied', 'Status', 'Visa Sponsorship', 'Notes']
@@ -104,7 +102,7 @@ export function exportApplicationsToCsv(
 /**
  * Exports a Recharts chart to PNG
  */
-export function exportChartToPng(chartRef: React.RefObject<any>, filename: string = 'chart.png'): boolean {
+export function exportChartToPng(chartRef: React.RefObject<unknown>, filename: string = 'chart.png'): boolean {
   if (!chartRef.current) {
     console.error('Chart ref not found')
     return false
@@ -112,7 +110,9 @@ export function exportChartToPng(chartRef: React.RefObject<any>, filename: strin
 
   try {
     // Find the SVG element within the Recharts component
-    const container = chartRef.current.container || chartRef.current
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const current = chartRef.current as any
+    const container = current.container || current
     const svgElement = container.querySelector('svg')
 
     if (!svgElement) {

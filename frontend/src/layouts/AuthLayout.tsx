@@ -14,6 +14,8 @@ function AuthLayout({ children }: AuthLayoutProps) {
   const isFirebaseConfigured = import.meta.env.VITE_FIREBASE_API_KEY &&
     import.meta.env.VITE_FIREBASE_API_KEY !== 'demo-api-key'
 
+  const [user, loading] = useAuthState(auth)
+
   // If Firebase is not configured, show demo mode
   if (!isFirebaseConfigured) {
     return (
@@ -43,7 +45,7 @@ function AuthLayout({ children }: AuthLayoutProps) {
     )
   }
 
-  const [user, loading] = useAuthState(auth)
+
 
   if (loading) {
     return (

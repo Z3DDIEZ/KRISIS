@@ -49,7 +49,7 @@ const iconMap: Record<string, keyof typeof LucideIcons> = {
 
 function Icon({ name, size = 24, className = '', alt = '', ...props }: IconProps) {
   const iconName = iconMap[name] || 'HelpCircle'
-  const LucideIcon = (LucideIcons as any)[iconName] as React.FC<LucideProps>
+  const LucideIcon = (LucideIcons as unknown as Record<string, React.FC<LucideProps>>)[iconName]
 
   if (!LucideIcon) {
     console.warn(`Icon "${name}" (mapped to "${String(iconName)}") not found in lucide-react`)

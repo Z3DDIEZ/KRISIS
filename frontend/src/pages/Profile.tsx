@@ -58,8 +58,9 @@ function Profile() {
       })
       toast.success('Profile updated successfully!')
       setIsEditing(false)
-    } catch (error: any) {
-      toast.error(`Failed to update profile: ${error.message}`)
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : 'Unknown error'
+      toast.error(`Failed to update profile: ${message}`)
     } finally {
       setIsUpdating(false)
     }
@@ -72,8 +73,9 @@ function Profile() {
     try {
       await sendEmailVerification(user)
       toast.success('Verification email sent! Please check your inbox.')
-    } catch (error: any) {
-      toast.error(`Failed to send verification email: ${error.message}`)
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : 'Unknown error'
+      toast.error(`Failed to send verification email: ${message}`)
     } finally {
       setIsResendingVerification(false)
     }
@@ -86,8 +88,9 @@ function Profile() {
     try {
       await sendPasswordResetEmail(auth, user.email)
       toast.success('Password reset email sent! Please check your inbox.')
-    } catch (error: any) {
-      toast.error(`Failed to send password reset email: ${error.message}`)
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : 'Unknown error'
+      toast.error(`Failed to send password reset email: ${message}`)
     } finally {
       setIsResettingPassword(false)
     }
@@ -104,8 +107,9 @@ function Profile() {
       // 3. Require re-authentication before deletion
       await deleteUser(user)
       toast.success('Account deleted successfully.')
-    } catch (error: any) {
-      toast.error(`Failed to delete account: ${error.message}`)
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : 'Unknown error'
+      toast.error(`Failed to delete account: ${message}`)
     } finally {
       setIsDeletingAccount(false)
       setShowDeleteConfirm(false)

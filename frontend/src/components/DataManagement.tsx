@@ -149,9 +149,10 @@ function DataManagement({ onDataChange }: DataManagementProps) {
         }
       }
 
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Import error:', error)
-      toast.error(`Import failed: ${error.message}`)
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error'
+      toast.error(`Import failed: ${errorMessage}`)
     } finally {
       setIsImporting(false)
       setImportProgress(null)
@@ -374,8 +375,8 @@ function DataManagement({ onDataChange }: DataManagementProps) {
                     <div className={`w-2 h-2 rounded-full ${importProgress.rowsProcessed > 0 ? 'bg-green-500' : 'bg-blue-500'}`}></div>
                     <span className="text-secondary">
                       {importProgress.rowsProcessed === 0 ? 'Reading file...' :
-                       importProgress.rowsProcessed < importProgress.total ? 'Validating data...' :
-                       'Saving to database...'}
+                        importProgress.rowsProcessed < importProgress.total ? 'Validating data...' :
+                          'Saving to database...'}
                     </span>
                   </div>
 
@@ -415,8 +416,8 @@ function DataManagement({ onDataChange }: DataManagementProps) {
                       <Icon name="info" size={12} />
                       <span>
                         {importProgress.rowsProcessed === 0 ? 'Reading and parsing CSV file...' :
-                         importProgress.rowsProcessed < importProgress.total ? 'Validating data types and required fields...' :
-                         'Saving validated records to database...'}
+                          importProgress.rowsProcessed < importProgress.total ? 'Validating data types and required fields...' :
+                            'Saving validated records to database...'}
                       </span>
                     </div>
                   </div>
@@ -467,7 +468,7 @@ function DataManagement({ onDataChange }: DataManagementProps) {
           <div className="mt-md p-md bg-background-light rounded-lg">
             <p className="text-sm font-medium text-primary mb-sm">Sample CSV for Import:</p>
             <pre className="text-xs text-secondary overflow-x-auto">
-{`company,role,dateApplied,status,visaSponsorship,notes
+              {`company,role,dateApplied,status,visaSponsorship,notes
 Google,Software Engineer,2024-01-15,Applied,true,Excited about this role!
 Microsoft,Frontend Developer,2024-01-10,Phone Screen,true,Great interview experience
 Apple,Data Engineer,2024-01-08,Technical Interview,true,Strong technical team`}

@@ -1,4 +1,4 @@
-/// <reference types="vitest" />
+
 import { render, screen } from '@testing-library/react'
 import { expect } from 'vitest'
 import LoadingSpinner from './LoadingSpinner'

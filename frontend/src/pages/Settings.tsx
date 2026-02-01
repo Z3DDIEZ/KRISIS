@@ -262,7 +262,7 @@ function Settings() {
                   <div className="select-wrapper">
                     <select
                       value={exportScope}
-                      onChange={(e) => setExportScope(e.target.value as any)}
+                      onChange={(e) => setExportScope(e.target.value as 'all' | 'recent' | 'offers')}
                       className="input"
                     >
                       <option value="all">Entire Application History ({applications.length})</option>

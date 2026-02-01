@@ -1,24 +1,13 @@
-import { useState, useEffect, createContext, useContext } from 'react'
+import { useState, useEffect } from 'react'
 import { useLocation } from 'react-router-dom'
 import TopNavbar from '../components/ui/TopNavbar'
 import BackToTop from '../components/ui/BackToTop'
 import Sidebar from '../components/ui/Sidebar'
+import { SearchContext } from '../context/SearchContext'
 
 interface MainLayoutProps {
   children: React.ReactNode
 }
-
-interface SearchContextType {
-  searchQuery: string
-  setSearchQuery: (query: string) => void
-}
-
-export const SearchContext = createContext<SearchContextType>({
-  searchQuery: '',
-  setSearchQuery: () => { }
-})
-
-export const useSearch = () => useContext(SearchContext)
 
 function MainLayout({ children }: MainLayoutProps) {
   const location = useLocation()

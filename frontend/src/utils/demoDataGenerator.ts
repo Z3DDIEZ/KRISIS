@@ -89,36 +89,7 @@ const SAMPLE_NOTES = [
   'Positive interview experience with the team.'
 ]
 
-/**
- * Gets appropriate status based on application age
- */
-function getStatusForAge(daysSinceApplied: number): DataRecord['status'] {
-  if (daysSinceApplied < 7) {
-    return 'Applied' // All recent applications are still applied
-  } else if (daysSinceApplied < 14) {
-    // 70% still applied, 30% moved to phone screen
-    return Math.random() < 0.7 ? 'Applied' : 'Phone Screen'
-  } else if (daysSinceApplied < 21) {
-    // 50% applied, 25% phone screen, 25% technical
-    const rand = Math.random()
-    if (rand < 0.5) return 'Applied'
-    if (rand < 0.75) return 'Phone Screen'
-    return 'Technical Interview'
-  } else if (daysSinceApplied < 30) {
-    // 40% technical, 20% final, 30% rejected, 10% offer
-    const rand = Math.random()
-    if (rand < 0.4) return 'Technical Interview'
-    if (rand < 0.6) return 'Final Round'
-    if (rand < 0.9) return 'Rejected'
-    return 'Offer'
-  } else {
-    // 70% rejected, 20% technical/final, 10% offer
-    const rand = Math.random()
-    if (rand < 0.7) return 'Rejected'
-    if (rand < 0.9) return Math.random() < 0.5 ? 'Technical Interview' : 'Final Round'
-    return 'Offer'
-  }
-}
+
 
 /**
  * Generates a random date within the last 60 days
@@ -143,7 +114,7 @@ export function generateDemoData(): DataRecord[] {
   // Generate applications with status distribution
   STATUS_DISTRIBUTION.forEach(({ status, count }) => {
     for (let i = 0; i < count; i++) {
-      const { dateString, daysAgo } = getRandomDate()
+      const { dateString } = getRandomDate()
       const company = COMPANIES[Math.floor(Math.random() * COMPANIES.length)]
       const role = ROLES[Math.floor(Math.random() * ROLES.length)]
 

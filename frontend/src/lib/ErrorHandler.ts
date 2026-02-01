@@ -17,18 +17,19 @@ export const ERROR_MESSAGES: Record<string | number, string> = {
     'network-error': 'Signal Loss: Unable to reach the central data cluster.'
 };
 
-export const handleError = (error: any, context?: string) => {
+export const handleError = (error: unknown, context?: string) => {
     console.error(`[KRISIS ${context || 'Core'}] Error:`, error);
 
-    let status = error?.status || error?.code;
-    let message = ERROR_MESSAGES[status] || ERROR_MESSAGES['default'];
+    const err = error as { status?: number | string; code?: number | string; message?: string };
+    const status = err?.status || err?.code || 'default';
+    let message = ERROR_MESSAGES[status as string | number] || ERROR_MESSAGES['default'];
 
-    if (error?.message?.includes('Network Error')) {
+    if (err?.message?.includes('Network Error')) {
         message = ERROR_MESSAGES['network-error'];
     }
 
     toast.error(message, {
-        description: error?.message || 'Check logs for trace details.',
+        description: err?.message || 'Check logs for trace details.',
         duration: 5000
     });
 

@@ -16,12 +16,16 @@ interface AnalyticsSnapshot {
     topCompanies: { name: string; count: number }[];
 }
 
+interface JsPDFWithAutoTable extends jsPDF {
+    lastAutoTable: { finalY: number };
+}
+
 export const exportIntelligenceReport = (
     applications: ApplicationData[],
     stats: AnalyticsSnapshot,
     timeframe: string
 ) => {
-    const doc = new jsPDF();
+    const doc = new jsPDF() as unknown as JsPDFWithAutoTable;
     const timestamp = new Date().toLocaleString();
 
     // Set Bauhaus Document Header
@@ -64,10 +68,10 @@ export const exportIntelligenceReport = (
     // Detailed Pipeline
     doc.setFont('helvetica', 'bold');
     doc.setFontSize(12);
-    doc.text('Detailed Application Protocol', 20, (doc as any).lastAutoTable.finalY + 15);
+    doc.text('Detailed Application Protocol', 20, doc.lastAutoTable.finalY + 15);
 
     autoTable(doc, {
-        startY: (doc as any).lastAutoTable.finalY + 20,
+        startY: doc.lastAutoTable.finalY + 20,
         head: [['Company', 'Position', 'Applied On', 'Status', 'Sponsorship']],
         body: applications.map(app => [
             app.company,
@@ -83,7 +87,10 @@ export const exportIntelligenceReport = (
     });
 
     // Footer
-    const pageCount = (doc as any).internal.getNumberOfPages();
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const internal = doc.internal as any;
+    const pageCount = internal.getNumberOfPages ? internal.getNumberOfPages() : 0;
+
     for (let i = 1; i <= pageCount; i++) {
         doc.setPage(i);
         doc.setFontSize(8);

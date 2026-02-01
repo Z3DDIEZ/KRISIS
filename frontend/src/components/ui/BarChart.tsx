@@ -99,7 +99,7 @@ function BarChart({
     return colors[index % colors.length]
   }
 
-  const handleBarHover = (_event: React.MouseEvent, point: DataPoint, _index: number) => {
+  const handleBarHover = (_event: React.MouseEvent, point: DataPoint) => {
     if (!showTooltips) return
 
     const rect = _event.currentTarget.getBoundingClientRect()
@@ -188,7 +188,7 @@ function BarChart({
                       minHeight: point.value > 0 ? '2px' : '0px',
                       transitionDelay: animate ? `${index * 50}ms` : '0ms'
                     }}
-                    onMouseEnter={(e) => handleBarHover(e, point, index)}
+                    onMouseEnter={(e) => handleBarHover(e, point)}
                     onMouseLeave={handleBarLeave}
                   >
                     {/* Hover value indicator */}

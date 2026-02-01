@@ -122,7 +122,7 @@ function Dashboard() {
         return {
           id: `urgent-${app.id}`,
           priority: (daysOld > 21 ? 'high' : 'medium') as 'high' | 'medium' | 'low',
-          category: (app.status.includes('Interview') ? 'Assessment' : 'Follow-up') as any,
+          category: (app.status.includes('Interview') ? 'Assessment' : 'Follow-up') as 'Assessment' | 'Follow-up',
           description: `Stagnant application at ${app.company}`,
           impact: `Risk: High - No response for ${daysOld} days`,
           daysAged: daysOld,

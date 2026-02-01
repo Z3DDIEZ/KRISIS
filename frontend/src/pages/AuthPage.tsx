@@ -44,8 +44,9 @@ function AuthPage() {
         toast.success('Access granted')
         navigate('/')
       }
-    } catch (error: any) {
-      toast.error(error.message || 'Authentication failed')
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : 'Authentication failed'
+      toast.error(errorMessage)
     } finally {
       setLoading(false)
     }
@@ -63,8 +64,9 @@ function AuthPage() {
       }, { merge: true })
       toast.success('Linked to Cloud Intelligence')
       navigate('/')
-    } catch (error: any) {
+    } catch (error: unknown) {
       toast.error('Google authentication failed')
+      console.error(error)
     } finally {
       setLoading(false)
     }

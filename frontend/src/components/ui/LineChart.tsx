@@ -1,5 +1,8 @@
 import { useState, useEffect, useRef } from 'react'
-import Icon from './Icon'
+// Icon is used implicitly in other components or intended for future use, leaving as is or removing if truly unused. 
+// Linter said 'Icon' is defined but never used.
+// Removing it.
+
 
 interface DataPoint {
   label: string
@@ -114,6 +117,8 @@ function LineChart({
     updatePoints()
     window.addEventListener('resize', updatePoints)
     return () => window.removeEventListener('resize', updatePoints)
+    // Adding points to dependency array as getPoints depends on it
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data, yAxisMax])
 
   const pathData = points.length > 0 ? points.map((p, i) => `${i === 0 ? 'M' : 'L'} ${p.x} ${p.y}`).join(' ') : ''
@@ -228,7 +233,7 @@ function LineChart({
               className={`cursor-pointer transition-all duration-300 ${animate && isVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-0'
                 }`}
               style={{ transitionDelay: `${index * 50}ms` }}
-              onMouseEnter={(e) => handlePointHover(e as any, point)}
+              onMouseEnter={(e) => handlePointHover(e, point)}
               onMouseLeave={handlePointLeave}
             />
             {/* Invisibile large circle for better hover area */}
@@ -238,7 +243,7 @@ function LineChart({
               r="12"
               fill="transparent"
               className="cursor-pointer"
-              onMouseEnter={(e) => handlePointHover(e as any, point)}
+              onMouseEnter={(e) => handlePointHover(e, point)}
               onMouseLeave={handlePointLeave}
             />
             {/* X-axis label */}

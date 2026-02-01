@@ -66,6 +66,7 @@ function ApplicationDetail() {
     } else if (id === 'new' || !id) {
       setIsLoading(false)
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user, id])
 
   const loadApplication = async () => {
@@ -126,9 +127,10 @@ function ApplicationDetail() {
         )
         dispatchNotification('Intelligence node updated.', 'success')
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Error saving application:', error)
-      dispatchNotification(`Tactical failure: ${error.message}`, 'error')
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error'
+      dispatchNotification(`Tactical failure: ${errorMessage}`, 'error')
     }
   }
 

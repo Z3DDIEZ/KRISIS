@@ -57,9 +57,10 @@ function DemoDataButton({ onDataGenerated, className = '' }: DemoDataButtonProps
       // Call callback if provided
       onDataGenerated?.()
 
-    } catch (error: any) {
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error'
       console.error('Error generating demo data:', error)
-      toast.error(`Failed to generate demo data: ${error.message}`)
+      toast.error(`Failed to generate demo data: ${errorMessage}`)
     } finally {
       setIsGenerating(false)
       setShowConfirm(false)

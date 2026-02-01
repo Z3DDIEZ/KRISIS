@@ -14,7 +14,7 @@ import { auth, db } from '../lib/firebase'
 import { formatDateForDisplay } from '../lib/dateUtils'
 import { toast } from 'sonner'
 import Icon from '../components/ui/Icon'
-import { useSearch } from '../layouts/MainLayout'
+import { useSearch } from '../context/SearchContext'
 
 interface Application {
   id: string
@@ -25,8 +25,8 @@ interface Application {
   notes?: string
   resumeUrl?: string
   visaSponsorship: boolean
-  createdAt?: any
-  updatedAt?: any
+  createdAt?: unknown
+  updatedAt?: unknown
 }
 
 type ViewMode = 'cards' | 'table' | 'list'
@@ -85,7 +85,7 @@ function Applications() {
   }, [user])
 
   const filteredApplications = useMemo(() => {
-    let filtered = applications.filter(app => {
+    const filtered = applications.filter(app => {
       if (searchQuery) {
         const query = searchQuery.toLowerCase()
         const matchesSearch = app.company.toLowerCase().includes(query) ||
@@ -100,7 +100,7 @@ function Applications() {
     })
 
     filtered.sort((a, b) => {
-      let aVal: any, bVal: any
+      let aVal: string | number | Date, bVal: string | number | Date
       switch (sortField) {
         case 'company': aVal = a.company.toLowerCase(); bVal = b.company.toLowerCase(); break
         case 'role': aVal = a.role.toLowerCase(); bVal = b.role.toLowerCase(); break
