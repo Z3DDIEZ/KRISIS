@@ -1,0 +1,16 @@
+# Compiled JavaScript files
+lib/
+lib.zip
+
+# Node Modules
+node_modules/
+
+# Environment files
+.env
+.env.local
+.DS_Store
+
+# Log files
+firebase-debug.log*
+firestore-debug.log*
+ui-debug.log*
