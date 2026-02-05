@@ -5,7 +5,6 @@ import { useAuthState } from 'react-firebase-hooks/auth'
 import Icon from '../components/ui/Icon'
 import { toast } from 'sonner'
 import { addDoc, collection, serverTimestamp } from 'firebase/firestore'
-import { useNavigate } from 'react-router-dom'
 
 interface JobResult {
     job_id: string;
@@ -25,7 +24,6 @@ function JobSearch() {
     const [loading, setLoading] = useState(false)
     const [results, setResults] = useState<JobResult[]>([])
     const [user] = useAuthState(auth)
-    const navigate = useNavigate()
 
     const handleSearch = async (e: React.FormEvent) => {
         e.preventDefault()
@@ -57,7 +55,7 @@ function JobSearch() {
         }
 
         try {
-            const docRef = await addDoc(collection(db, `users/${user.uid}/applications`), {
+            await addDoc(collection(db, `users/${user.uid}/applications`), {
                 company: job.employer_name,
                 role: job.job_title,
                 status: 'Applied', // Assume applying if saving from here, or we could add "Watchlist" status
@@ -68,8 +66,6 @@ function JobSearch() {
                 updatedAt: serverTimestamp()
             })
             toast.success('Target Acquired: Application Record Created')
-            // Optional: Navigate to it?
-            // navigate(`/applications/${docRef.id}`)
         } catch (error) {
             toast.error('Failed to save target.')
         }
