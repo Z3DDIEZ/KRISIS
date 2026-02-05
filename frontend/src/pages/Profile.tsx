@@ -1,9 +1,12 @@
-import { useState } from 'react'
+
+import { useState, useEffect } from 'react'
 import { useAuthState } from 'react-firebase-hooks/auth'
 import { updateProfile, sendEmailVerification, sendPasswordResetEmail, deleteUser } from 'firebase/auth'
-import { auth } from '../lib/firebase'
+import { auth, db } from '../lib/firebase'
+import { doc, getDoc, setDoc } from 'firebase/firestore'
 import { toast } from 'sonner'
 import Icon from '../components/ui/Icon'
+import { extractTextFromPDF } from '../utils/pdfHelpers'
 
 function getInitials(displayName: string | null): string {
   if (!displayName || displayName.trim() === '') {
@@ -35,6 +38,59 @@ function Profile() {
   const [isDeletingAccount, setIsDeletingAccount] = useState(false)
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
 
+  // Resume State
+  const [resumeText, setResumeText] = useState('')
+  const [isSavingResume, setIsSavingResume] = useState(false)
+  const [isProcessingResume, setIsProcessingResume] = useState(false)
+
+  // Load Resume Protocol
+  useEffect(() => {
+    const loadResume = async () => {
+      if (!user) return
+      try {
+        const docRef = doc(db, 'users', user.uid)
+        const docSnap = await getDoc(docRef)
+        if (docSnap.exists() && docSnap.data().defaultResume) {
+          setResumeText(docSnap.data().defaultResume)
+        }
+      } catch (error) {
+        console.error("Failed to load resume protocol", error)
+      }
+    }
+    loadResume()
+  }, [user])
+
+  const handleResumeUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+
+    setIsProcessingResume(true)
+    try {
+      const text = await extractTextFromPDF(file)
+      setResumeText(text)
+      toast.success('Resume extracted successfully')
+    } catch (error) {
+      toast.error('Failed to parse PDF')
+    } finally {
+      setIsProcessingResume(false)
+    }
+  }
+
+  const handleSaveResume = async () => {
+    if (!user) return
+    setIsSavingResume(true)
+    try {
+      await setDoc(doc(db, 'users', user.uid), {
+        defaultResume: resumeText
+      }, { merge: true })
+      toast.success('Standard Resume Protocol Saved')
+    } catch (error) {
+      toast.error('Failed to save resume')
+    } finally {
+      setIsSavingResume(false)
+    }
+  }
+
   const handleUpdateProfile = async (e: React.FormEvent) => {
     e.preventDefault()
 
@@ -60,7 +116,7 @@ function Profile() {
       setIsEditing(false)
     } catch (error: unknown) {
       const message = error instanceof Error ? error.message : 'Unknown error'
-      toast.error(`Failed to update profile: ${message}`)
+      toast.error(`Failed to update profile: ${message} `)
     } finally {
       setIsUpdating(false)
     }
@@ -75,7 +131,7 @@ function Profile() {
       toast.success('Verification email sent! Please check your inbox.')
     } catch (error: unknown) {
       const message = error instanceof Error ? error.message : 'Unknown error'
-      toast.error(`Failed to send verification email: ${message}`)
+      toast.error(`Failed to send verification email: ${message} `)
     } finally {
       setIsResendingVerification(false)
     }
@@ -90,7 +146,7 @@ function Profile() {
       toast.success('Password reset email sent! Please check your inbox.')
     } catch (error: unknown) {
       const message = error instanceof Error ? error.message : 'Unknown error'
-      toast.error(`Failed to send password reset email: ${message}`)
+      toast.error(`Failed to send password reset email: ${message} `)
     } finally {
       setIsResettingPassword(false)
     }
@@ -109,7 +165,7 @@ function Profile() {
       toast.success('Account deleted successfully.')
     } catch (error: unknown) {
       const message = error instanceof Error ? error.message : 'Unknown error'
-      toast.error(`Failed to delete account: ${message}`)
+      toast.error(`Failed to delete account: ${message} `)
     } finally {
       setIsDeletingAccount(false)
       setShowDeleteConfirm(false)
@@ -157,7 +213,7 @@ function Profile() {
               <p className="text-secondary text-sm font-medium mb-6 break-all">{user.email}</p>
 
               <div className="inline-flex items-center gap-2 px-4 py-2 bg-surface-2 rounded-lg border border-border-light shadow-sm">
-                <div className={`w-2 h-2 rounded-full ${user.emailVerified ? 'bg-status-success' : 'bg-status-warning animate-pulse'}`} />
+                <div className={`w - 2 h - 2 rounded - full ${user.emailVerified ? 'bg-status-success' : 'bg-status-warning animate-pulse'} `} />
                 <span className="text-[10px] font-black text-secondary uppercase tracking-widest">
                   {user.emailVerified ? 'Verified Profile' : 'Pending Auth'}
                 </span>
@@ -249,6 +305,58 @@ function Profile() {
                   </p>
                 </div>
               </form>
+            </div>
+          </div>
+
+          {/* Standard Resume Protocol Card */}
+          <div className="card">
+            <div className="card-header border-b border-border-light">
+              <h3 className="card-title flex items-center gap-2">
+                <Icon name="description" size={18} />
+                Standard Resume Protocol
+              </h3>
+            </div>
+            <div className="card-body p-8 space-y-6">
+              <p className="text-secondary text-sm">
+                Upload your primary resume. This content will be automatically injected into new applications for rapid deployment.
+              </p>
+
+              <div className="flex flex-col gap-4">
+                <div className="relative group">
+                  <input
+                    type="file"
+                    accept=".pdf"
+                    onChange={handleResumeUpload}
+                    className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+                  />
+                  <div className="flex items-center justify-center gap-3 p-4 border-2 border-dashed border-border-light rounded-xl group-hover:border-primary-orange/50 transition-colors bg-surface-2">
+                    <Icon name="upload_file" size={24} className="text-muted group-hover:text-primary-orange" />
+                    <span className="text-sm font-bold text-muted group-hover:text-primary transition-colors">
+                      {isProcessingResume ? 'EXTRACTING INTELLIGENCE...' : 'UPLOAD SOURCE PDF'}
+                    </span>
+                  </div>
+                </div>
+
+                <div className="form-group">
+                  <label className="form-label">Extracted Data Stream</label>
+                  <textarea
+                    value={resumeText}
+                    onChange={(e) => setResumeText(e.target.value)}
+                    className="input min-h-[200px] font-mono text-xs"
+                    placeholder="Resume content will appear here..."
+                  />
+                </div>
+
+                <div className="flex justify-end">
+                  <button
+                    onClick={handleSaveResume}
+                    disabled={isSavingResume || isProcessingResume}
+                    className="btn btn--orange px-8"
+                  >
+                    {isSavingResume ? 'SAVING...' : 'SAVE PROTOCOL'}
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
 

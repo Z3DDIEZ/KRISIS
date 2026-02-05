@@ -42,6 +42,7 @@ function ApplicationDetail() {
   const {
     register,
     handleSubmit,
+    setValue,
     reset,
     watch,
     formState: { errors, isDirty, isSubmitting: hookIsSubmitting }
@@ -55,14 +56,15 @@ function ApplicationDetail() {
       notes: '',
       visaSponsorship: false,
       requestAnalysis: false,
-      resumeUrl: ''
+      resumeUrl: '',
+      latestAnalysis: undefined
     }
   })
 
   const [isLoading, setIsLoading] = useState(id && id !== 'new')
   const [resumeText, setResumeText] = useState<string>('')
   const [analyzing, setAnalyzing] = useState(false)
-  const [analysisResult, setAnalysisResult] = useState<any>(null)
+  const analysisResult = watch('latestAnalysis')
 
   const formData = watch()
 
@@ -104,8 +106,12 @@ function ApplicationDetail() {
       const result: any = await analyzeFn({ resumeText, jobDescription })
 
       if (result.data.success) {
-        setAnalysisResult(result.data.data)
-        toast.success('Analysis complete.')
+        const analysisData = {
+          ...result.data.data,
+          analyzedAt: new Date().toISOString()
+        }
+        setValue('latestAnalysis', analysisData, { shouldDirty: true, shouldValidate: true })
+        toast.success('Analysis complete. Sync Intel to save.')
       } else {
         throw new Error('Analysis returned failure.')
       }
@@ -144,7 +150,8 @@ function ApplicationDetail() {
           notes: data.notes || '',
           resumeUrl: data.resumeUrl || '',
           visaSponsorship: Boolean(data.visaSponsorship),
-          requestAnalysis: false
+          requestAnalysis: false,
+          latestAnalysis: data.latestAnalysis
         }
         reset(loadedData)
       } else {
@@ -496,7 +503,8 @@ function ApplicationDetail() {
           )}
         </div>
       </div>
-      )
+    </div>
+  )
 }
 
-      export default ApplicationDetail
+export default ApplicationDetail

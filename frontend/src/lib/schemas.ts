@@ -8,7 +8,14 @@ export const applicationSchema = z.object({
     notes: z.string().max(1000),
     visaSponsorship: z.boolean(),
     requestAnalysis: z.boolean(),
-    resumeUrl: z.string(),
+    resumeUrl: z.string().optional(),
+    latestAnalysis: z.object({
+        fitScore: z.number(),
+        matchAnalysis: z.string(),
+        missingKeywords: z.array(z.string()),
+        suggestedImprovements: z.array(z.string()),
+        analyzedAt: z.string().optional()
+    }).optional(),
 });
 
 export type ApplicationValues = z.infer<typeof applicationSchema>;
