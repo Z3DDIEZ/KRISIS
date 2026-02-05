@@ -28,7 +28,7 @@ function Sidebar({ primaryItems, secondaryItems, isOpen, onClose, isCollapsed }:
     if (isCollapsed) {
       const rect = event.currentTarget.getBoundingClientRect()
       setTooltipPosition({
-        x: rect.right + 8,
+        x: rect.right + 12, // More spacing
         y: rect.top + rect.height / 2
       })
       setHoveredItem(itemName)
@@ -84,18 +84,12 @@ function Sidebar({ primaryItems, secondaryItems, isOpen, onClose, isCollapsed }:
       >
         {/* Sidebar Header */}
         <div className="sidebar__header">
-          {!isCollapsed ? (
-            <div className="sidebar__logo flex items-center">
-              <div className="sidebar__logo-icon">
-                <Icon name="work" size={20} />
-              </div>
-              <span className="sidebar__logo-text">KRISIS</span>
-            </div>
-          ) : (
+          <div className="sidebar__logo flex items-center">
             <div className="sidebar__logo-icon">
               <Icon name="work" size={20} />
             </div>
-          )}
+            <span className="sidebar__logo-text">KRISIS</span>
+          </div>
         </div>
 
         {/* Primary Navigation */}
@@ -106,17 +100,19 @@ function Sidebar({ primaryItems, secondaryItems, isOpen, onClose, isCollapsed }:
                 <Link
                   to={item.href}
                   onClick={onClose}
-                  className={`sidebar__item ${isActive(item.href) ? 'sidebar__item--active' : ''}`}
-                  style={isActive(item.href) ? { borderLeft: '4px solid var(--krisis-orange)', backgroundColor: 'rgba(230, 126, 34, 0.05)' } : {}}
+                  className={`sidebar__item ${isActive(item.href)
+                    ? 'bg-primary-50 text-primary-600 dark:bg-primary-900/10 dark:text-primary-400 border-l-4 border-primary-500'
+                    : 'text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-zinc-800 hover:text-gray-900 dark:hover:text-gray-200 border-l-4 border-transparent'
+                    }`}
                   onMouseEnter={(e) => handleItemHover(item.name, e)}
                   onMouseLeave={handleItemLeave}
                   aria-current={isActive(item.href) ? 'page' : undefined}
                 >
-                  <div className="sidebar__item-icon">
+                  <div className={`sidebar__item-icon ${isActive(item.href) ? 'text-primary-600 dark:text-primary-400' : 'text-gray-400 dark:text-gray-500 group-hover:text-gray-900 dark:group-hover:text-gray-300'}`}>
                     <Icon name={item.iconName} size={18} />
                   </div>
                   {!isCollapsed && (
-                    <span className="sidebar__item-label">{item.name}</span>
+                    <span className="sidebar__item-label font-medium">{item.name}</span>
                   )}
                 </Link>
               </li>
@@ -125,24 +121,26 @@ function Sidebar({ primaryItems, secondaryItems, isOpen, onClose, isCollapsed }:
         </div>
 
         {/* Secondary Navigation */}
-        <div className="sidebar__section sidebar__section--secondary">
+        <div className="sidebar__section sidebar__section--secondary mt-6 pt-4 border-t border-gray-100 dark:border-zinc-800">
           <ul className="sidebar__list space-y-1">
             {secondaryItems.map((item) => (
               <li key={item.href}>
                 <Link
                   to={item.href}
                   onClick={onClose}
-                  className={`sidebar__item ${isActive(item.href) ? 'sidebar__item--active' : ''}`}
-                  style={isActive(item.href) ? { borderLeft: '4px solid var(--krisis-orange)', backgroundColor: 'rgba(230, 126, 34, 0.05)' } : {}}
+                  className={`sidebar__item ${isActive(item.href)
+                    ? 'bg-primary-50 text-primary-600 dark:bg-primary-900/10 dark:text-primary-400 border-l-4 border-primary-500'
+                    : 'text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-zinc-800 hover:text-gray-900 dark:hover:text-gray-200 border-l-4 border-transparent'
+                    }`}
                   onMouseEnter={(e) => handleItemHover(item.name, e)}
                   onMouseLeave={handleItemLeave}
                   aria-current={isActive(item.href) ? 'page' : undefined}
                 >
-                  <div className="sidebar__item-icon">
+                  <div className={`sidebar__item-icon ${isActive(item.href) ? 'text-primary-600 dark:text-primary-400' : 'text-gray-400 dark:text-gray-500 group-hover:text-gray-900 dark:group-hover:text-gray-300'}`}>
                     <Icon name={item.iconName} size={18} />
                   </div>
                   {!isCollapsed && (
-                    <span className="sidebar__item-label">{item.name}</span>
+                    <span className="sidebar__item-label font-medium">{item.name}</span>
                   )}
                 </Link>
               </li>

@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { useParams, useNavigate } from 'react-router-dom'
+import { useParams, useNavigate, Link } from 'react-router-dom'
 import { useAuthState } from 'react-firebase-hooks/auth'
 import {
   doc,
@@ -73,7 +73,7 @@ function ApplicationDetail() {
     if (!file) return
 
     if (file.type !== 'application/pdf') {
-      toast.error('Tactical Error: Only PDF files are supported.')
+      toast.error('Only PDF files are supported.')
       return
     }
 
@@ -89,13 +89,15 @@ function ApplicationDetail() {
   const handleAnalyze = async (e: React.MouseEvent) => {
     e.preventDefault()
     if (!resumeText) {
-      toast.error('Missing Resume: Upload a PDF first.')
+      toast.error('Please upload a PDF resume first.')
       return
     }
-    // For now we use the 'notes' field as Job Description if Role is vague, 
-    // but ideally we'd have a separate JD field. 
-    // Let's assume the user puts the JD in "Notes" for now or we prompt them.
-    // Actually, let's use the Role + Company as a minimal JD if Notes is short.
+    // Require basic context
+    if (formData.notes.length < 10 && (!formData.role || !formData.company)) {
+      toast.error('Please define a Role and Company, or add details in notes to start analysis.')
+      return
+    }
+
     const jobDescription = formData.notes.length > 50
       ? formData.notes
       : `Role: ${formData.role} at ${formData.company}.`
@@ -111,7 +113,7 @@ function ApplicationDetail() {
           analyzedAt: new Date().toISOString()
         }
         setValue('latestAnalysis', analysisData, { shouldDirty: true, shouldValidate: true })
-        toast.success('Analysis complete. Sync Intel to save.')
+        toast.success('Analysis complete. Save changes to persist.')
       } else {
         throw new Error('Analysis returned failure.')
       }
@@ -155,7 +157,7 @@ function ApplicationDetail() {
         }
         reset(loadedData)
       } else {
-        dispatchNotification('Application protocol mission: MISSING', 'error')
+        dispatchNotification('Application not found', 'error')
         navigate('/applications')
       }
     } catch (error) {
@@ -170,338 +172,393 @@ function ApplicationDetail() {
     if (!user) return
 
     try {
+      // Deep Sanitize: JSON.stringify removes all keys with 'undefined' values automatically
+      const sanitizedData = JSON.parse(JSON.stringify(data));
+
       const applicationData = {
-        ...data,
+        ...sanitizedData,
         updatedAt: serverTimestamp(),
         ...(isNewApplication && {
           createdAt: serverTimestamp()
         })
       }
 
+
+
       if (isNewApplication) {
         const docRef = await addDoc(
           collection(db, `users/${user.uid}/applications`),
           applicationData
         )
-        dispatchNotification('Application localized and registered.', 'success')
+        dispatchNotification('Application created successfully.', 'success')
         navigate(`/applications/${docRef.id}`)
       } else {
         await updateDoc(
           doc(db, `users/${user.uid}/applications/${id}`),
           applicationData
         )
-        dispatchNotification('Intelligence node updated.', 'success')
+        dispatchNotification('Application updated successfully.', 'success')
       }
     } catch (error: unknown) {
       console.error('Error saving application:', error)
       const errorMessage = error instanceof Error ? error.message : 'Unknown error'
-      dispatchNotification(`Tactical failure: ${errorMessage}`, 'error')
+      dispatchNotification(`Error saving application: ${errorMessage}`, 'error')
     }
   }
 
   // Show loading for existing applications that are still loading
   if (id && id !== 'new' && (authLoading || isLoading)) {
     return (
-      <div className="flex items-center justify-center min-h-64">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-orange"></div>
-        <p className="mt-4 text-secondary uppercase text-xs tracking-widest font-bold">
-          {authLoading ? 'Authenticating Signal...' : 'Decrypting Data...'}
-        </p>
+      <div className="flex items-center justify-center min-h-[50vh]">
+        <div className="flex flex-col items-center gap-4">
+          <div className="animate-spin rounded-full h-8 w-8 border-2 border-primary-500 border-t-transparent"></div>
+          <p className="text-text-secondary text-sm font-bold">
+            {authLoading ? 'Authenticating...' : 'Loading Application...'}
+          </p>
+        </div>
       </div>
     )
   }
 
   if (!user) {
     return (
-      <div className="text-center py-12">
-        <p className="text-muted uppercase text-xs tracking-widest font-black">Access Denied: Please Initiate Session</p>
+      <div className="flex items-center justify-center min-h-[50vh]">
+        <div className="text-center">
+          <p className="text-text-secondary font-bold mb-4">Please sign in to view this application</p>
+          <Link to="/auth" className="btn-primary">Sign In</Link>
+        </div>
       </div>
     )
   }
 
   return (
-    <div className="max-w-4xl mx-auto animate-fade-in">
-      {/* Page Header */}
-      <div className="mb-xl">
-        <h1 className="text-3xl font-bold text-primary mb-sm uppercase tracking-tighter">
-          {isNewApplication ? t('common.execute') + ': New Pipeline Node' : 'Intelligence Protocol: Update'}
-        </h1>
-        <p className="text-secondary text-base font-medium opacity-80 uppercase text-[10px] tracking-widest">
-          {isNewApplication
-            ? 'Quantifying a new market engagement node'
-            : 'Synchronizing intelligence parameters'
-          }
-        </p>
+    <div className="animate-fade-in min-h-screen bg-bg-subtle pb-20 p-6">
+      {/* Premium Header */}
+      <div className="premium-card py-6 px-8 mb-8">
+        <div className="max-w-4xl mx-auto flex items-center justify-between">
+          <div>
+            <div className="flex items-center gap-2 mb-2">
+              <Link to="/applications" className="text-text-secondary hover:text-primary-600 transition-colors flex items-center gap-1 text-xs font-bold uppercase tracking-wide">
+                <Icon name="arrow-left" size={14} />
+                Back to Applications
+              </Link>
+            </div>
+            <h1 className="text-3xl font-bold text-gray-900 dark:text-white tracking-tight">
+              {isNewApplication ? 'New Application' : 'Application Details'}
+            </h1>
+          </div>
+          <div className="flex gap-2">
+            {!isNewApplication && (
+              <div className="hidden sm:block">
+                <span className={`badge-pill ${formData.status === 'Offer' ? 'bg-green-50 text-green-700 border-green-200' :
+                  formData.status === 'Rejected' ? 'bg-red-50 text-red-700 border-red-200' :
+                    'bg-zinc-100 text-zinc-700 border-zinc-200 dark:bg-zinc-800 dark:text-zinc-300 dark:border-zinc-700'
+                  }`}>
+                  {formData.status}
+                </span>
+              </div>
+            )}
+          </div>
+        </div>
       </div>
 
-      <form onSubmit={handleSubmit(onFormSubmit)} className="card shadow-2xl border-l-[6px] border-l-primary-orange">
-        <div className="card-body p-spacing-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-lg mb-lg">
-            {/* Company */}
-            <div className="input-group">
-              <label htmlFor="company" className="input-label font-black text-[10px] uppercase tracking-widest text-muted mb-2 block">
-                Target Entity <span className="text-primary-orange">*</span>
-              </label>
-              <input
-                {...register('company')}
-                type="text"
-                id="company"
-                className={`input-field bg-surface-2 border-border-light focus:border-primary-orange rounded-none h-12 px-4 transition-all ${errors.company ? 'border-red-500' : ''}`}
-                placeholder="e.g., Google, Microsoft"
-              />
-              {errors.company && (
-                <p className="text-[10px] uppercase font-bold text-red-500 mt-2 tracking-wide">{errors.company.message}</p>
-              )}
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+        <form onSubmit={handleSubmit(onFormSubmit)} className="space-y-8">
+
+          <div className="premium-card p-6 md:p-8 space-y-8">
+            <div className="flex items-center gap-2 mb-6 pb-4 border-b border-border-subtle">
+              <div className="w-10 h-10 rounded-lg bg-primary-600/10 text-primary-600 flex items-center justify-center">
+                <Icon name="work" size={20} />
+              </div>
+              <div>
+                <h3 className="text-lg font-bold text-text-primary">Role Information</h3>
+                <p className="text-xs text-text-secondary">Key details about this opportunity</p>
+              </div>
             </div>
 
-            {/* Role */}
-            <div className="input-group">
-              <label htmlFor="role" className="input-label font-black text-[10px] uppercase tracking-widest text-muted mb-2 block">
-                Designated Role <span className="text-primary-orange">*</span>
-              </label>
-              <input
-                {...register('role')}
-                type="text"
-                id="role"
-                className={`input-field bg-surface-2 border-border-light focus:border-primary-orange rounded-none h-12 px-4 transition-all ${errors.role ? 'border-red-500' : ''}`}
-                placeholder="e.g., Software Engineer"
-              />
-              {errors.role && (
-                <p className="text-[10px] uppercase font-bold text-red-500 mt-2 tracking-wide">{errors.role.message}</p>
-              )}
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-lg mb-lg">
-            {/* Status */}
-            <div className="input-group">
-              <label htmlFor="status" className="input-label font-black text-[10px] uppercase tracking-widest text-muted mb-2 block">
-                Pipeline Phase
-              </label>
-              <select
-                {...register('status')}
-                id="status"
-                className="select-field bg-surface-2 border-border-light focus:border-primary-orange rounded-none h-12 px-4 appearance-none font-bold uppercase text-xs"
-              >
-                {statusOptions.map((option) => (
-                  <option key={option.value} value={option.value}>
-                    {option.label.toUpperCase()}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            {/* Date Applied */}
-            <div className="input-group">
-              <label htmlFor="dateApplied" className="input-label font-black text-[10px] uppercase tracking-widest text-muted mb-2 block">
-                Submission Timestamp <span className="text-primary-orange">*</span>
-              </label>
-              <input
-                {...register('dateApplied')}
-                type="date"
-                id="dateApplied"
-                className={`input-field bg-surface-2 border-border-light focus:border-primary-orange rounded-none h-12 px-4 transition-all ${errors.dateApplied ? 'border-red-500' : ''}`}
-              />
-              {errors.dateApplied && (
-                <p className="text-[10px] uppercase font-bold text-red-500 mt-2 tracking-wide">{errors.dateApplied.message}</p>
-              )}
-            </div>
-          </div>
-
-          {/* Visa Sponsorship */}
-          <div className="input-group mb-lg">
-            <div className="flex items-center gap-sm">
-              <div className="relative">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {/* Company */}
+              <div className="space-y-1.5">
+                <label htmlFor="company" className="text-xs font-bold text-text-secondary uppercase tracking-wider block">
+                  Company Name <span className="text-primary-600">*</span>
+                </label>
                 <input
-                  {...register('visaSponsorship')}
-                  id="visaSponsorship"
-                  type="checkbox"
-                  className="w-5 h-5 accent-primary-orange bg-surface-3 border-border rounded-none cursor-pointer"
+                  {...register('company')}
+                  type="text"
+                  id="company"
+                  className={`input-modern ${errors.company ? 'border-error ring-error/20' : ''}`}
+                  placeholder="e.g. Acme Corp"
                 />
+                {errors.company && (
+                  <p className="text-xs text-error font-medium mt-1">{errors.company.message}</p>
+                )}
               </div>
-              <label htmlFor="visaSponsorship" className="text-[10px] uppercase font-black tracking-widest text-secondary cursor-pointer select-none">
-                Residency Protocol: Required Support
-              </label>
-            </div>
-          </div>
 
-          {/* Notes */}
-          <div className="input-group mb-lg">
-            <label htmlFor="notes" className="input-label font-black text-[10px] uppercase tracking-widest text-muted mb-2 block">
-              Intelligence Context
-            </label>
-            <textarea
-              {...register('notes')}
-              id="notes"
-              rows={4}
-              className={`textarea-field bg-surface-2 border-border-light focus:border-primary-orange rounded-none px-4 py-3 transition-all ${errors.notes ? 'border-red-500' : ''}`}
-              placeholder="Inject tactical data..."
-            />
-            <div className="flex justify-between mt-2">
-              {errors.notes ? (
-                <p className="text-[10px] uppercase font-bold text-red-500 tracking-wide">{errors.notes.message}</p>
-              ) : (
-                <p className="text-[10px] uppercase font-bold text-muted tracking-widest">Optional Decryption</p>
-              )}
-              <p className={`text-[10px] font-mono font-bold ${formData.notes.length > 900 ? 'text-primary-orange' : 'text-muted'}`}>
-                {formData.notes.length}/1000
-              </p>
-            </div>
-          </div>
-
-          {/* AI Analysis Request */}
-          {isNewApplication && (
-            <div className="bg-surface-3 border border-border-light p-spacing-4 mb-lg relative overflow-hidden">
-              <div className="absolute top-0 left-0 w-1 h-full bg-primary-orange" />
-              <div className="flex items-start gap-sm">
-                <div className="flex items-center h-5 mt-0.5">
-                  <input
-                    {...register('requestAnalysis')}
-                    id="requestAnalysis"
-                    type="checkbox"
-                    className="w-5 h-5 accent-primary-orange cursor-pointer"
-                  />
-                </div>
-                <div className="flex-1">
-                  <label htmlFor="requestAnalysis" className="text-xs font-black uppercase tracking-widest text-primary-orange flex items-center gap-2">
-                    <Icon name="technical" size={14} />
-                    Gemini Intelligence Protocol
-                  </label>
-                  <p className="text-[10px] text-secondary font-medium uppercase mt-1 opacity-70 leading-relaxed tracking-wider">
-                    Engage neural networks to quantify resume-job fit architecture.
-                  </p>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* Form Actions */}
-          <div className="card-footer flex justify-end gap-spacing-3 pt-spacing-4 border-t border-border-light mt-spacing-4">
-            <button
-              type="submit"
-              disabled={hookIsSubmitting || !isDirty}
-              className="btn btn-primary px-10 h-12 rounded-none font-black uppercase text-[10px] tracking-[0.2em] bg-primary-orange text-white hover:brightness-110 disabled:grayscale disabled:opacity-50 transition-all shadow-lg"
-            >
-              {hookIsSubmitting ? t('common.loading') : (isNewApplication ? 'Deploy Node' : 'Sync Intel')}
-            </button>
-          </div>
-        </div>
-      </form>
-
-      {/* AI Analysis Section (Only for existing applications or if resume is added) */}
-      <div className="card mt-xl border border-border-light shadow-lg animate-fade-in delay-100">
-        <div className="card-header border-b border-border-light bg-surface-2/50 flex justify-between items-center">
-          <h3 className="card-title flex items-center gap-2 text-primary">
-            <Icon name="technical" size={20} className="text-primary-orange" />
-            Resume Compatibility Analysis
-          </h3>
-          {resumeText && !analyzing && !analysisResult && (
-            <button
-              onClick={handleAnalyze}
-              className="btn btn--sm btn--orange font-black uppercase tracking-widest text-[10px]"
-            >
-              Run Analysis
-            </button>
-          )}
-        </div>
-        <div className="card-body p-spacing-6">
-          {/* File Upload Area */}
-          <div className="mb-lg">
-            <label className="block text-xs font-black uppercase tracking-widest text-muted mb-3">
-              Resume Source File (PDF Only)
-            </label>
-            <div className="flex items-center gap-4">
-              <label className="btn btn--secondary cursor-pointer relative overflow-hidden">
+              {/* Role */}
+              <div className="space-y-1.5">
+                <label htmlFor="role" className="text-xs font-bold text-text-secondary uppercase tracking-wider block">
+                  Role Title <span className="text-primary-600">*</span>
+                </label>
                 <input
-                  type="file"
-                  accept=".pdf"
-                  onChange={handleFileChange}
-                  className="absolute inset-0 opacity-0 cursor-pointer"
+                  {...register('role')}
+                  type="text"
+                  id="role"
+                  className={`input-modern ${errors.role ? 'border-error ring-error/20' : ''}`}
+                  placeholder="e.g. Senior Engineer"
                 />
-                <span className="flex items-center gap-2">
-                  <Icon name="upload" size={16} />
-                  {resumeText ? 'Replace File' : 'Upload Resume'}
-                </span>
-              </label>
-              {resumeText && (
-                <div className="flex items-center gap-2 text-primary-green">
-                  <Icon name="check_circle" size={16} />
-                  <span className="text-xs font-bold uppercase">Resume Parsed Successfully</span>
-                </div>
-              )}
-            </div>
-            <p className="text-[10px] text-secondary mt-2 opacity-70">
-              Upload your resume to unlock AI-driven compatibility scoring and improvement suggestions.
-            </p>
-          </div>
-
-          {/* Analysis Loading State */}
-          {analyzing && (
-            <div className="py-12 flex flex-col items-center justify-center text-center">
-              <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-primary-orange mb-4"></div>
-              <p className="text-xs font-black uppercase tracking-widest text-primary animate-pulse">Running Neural Diagnostics...</p>
-              <p className="text-[10px] text-muted mt-2">Comparing skillset vectors against role requirements</p>
-            </div>
-          )}
-
-          {/* Analysis Results */}
-          {analysisResult && !analyzing && (
-            <div className="animate-fade-in">
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-                {/* Score Card */}
-                <div className="p-6 bg-surface-2 rounded-xl border border-border-light flex flex-col items-center justify-center text-center relative overflow-hidden">
-                  <div className={`text-5xl font-black mb-2 ${analysisResult.fitScore >= 70 ? 'text-primary-green' : analysisResult.fitScore >= 40 ? 'text-yellow-500' : 'text-primary-red'}`}>
-                    {analysisResult.fitScore}%
-                  </div>
-                  <div className="text-[10px] font-black uppercase tracking-[0.2em] text-muted">Compatibility Score</div>
-                  <div className={`absolute bottom-0 left-0 h-1 w-full ${analysisResult.fitScore >= 70 ? 'bg-primary-green' : analysisResult.fitScore >= 40 ? 'bg-yellow-500' : 'bg-primary-red'}`}></div>
-                </div>
-
-                {/* Missing Keywords */}
-                <div className="md:col-span-2 p-6 bg-surface-2 rounded-xl border border-border-light">
-                  <h4 className="text-xs font-black uppercase tracking-widest text-primary mb-4 flex items-center gap-2">
-                    <Icon name="warning" size={14} className="text-primary-orange" />
-                    Missing Critical Keywords
-                  </h4>
-                  <div className="flex flex-wrap gap-2">
-                    {analysisResult.missingKeywords.length > 0 ? (
-                      analysisResult.missingKeywords.map((keyword: string, idx: number) => (
-                        <span key={idx} className="px-3 py-1 bg-surface-1 border border-border-light rounded text-xs font-medium text-secondary">
-                          {keyword}
-                        </span>
-                      ))
-                    ) : (
-                      <span className="text-xs text-secondary italic">No critical keywords missing. Excellent match!</span>
-                    )}
-                  </div>
-                </div>
+                {errors.role && (
+                  <p className="text-xs text-error font-medium mt-1">{errors.role.message}</p>
+                )}
               </div>
+            </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                {/* Analysis Text */}
-                <div>
-                  <h4 className="text-xs font-black uppercase tracking-widest text-primary mb-3">Diagnostic Report</h4>
-                  <p className="text-sm text-secondary leading-relaxed p-4 bg-surface-2 rounded-lg border border-border-light">
-                    {analysisResult.matchAnalysis}
-                  </p>
-                </div>
-
-                {/* Improvements */}
-                <div>
-                  <h4 className="text-xs font-black uppercase tracking-widest text-primary mb-3">Optimization Tactics</h4>
-                  <ul className="space-y-2">
-                    {analysisResult.suggestedImprovements.map((tip: string, idx: number) => (
-                      <li key={idx} className="flex items-start gap-3 p-3 bg-surface-2 rounded border border-border-light/50">
-                        <Icon name="bolt" size={14} className="text-primary-yellow mt-0.5 shrink-0" />
-                        <span className="text-xs text-secondary">{tip}</span>
-                      </li>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {/* Status */}
+              <div className="space-y-1.5">
+                <label htmlFor="status" className="text-xs font-bold text-text-secondary uppercase tracking-wider block">
+                  Current Status
+                </label>
+                <div className="relative">
+                  <select
+                    {...register('status')}
+                    id="status"
+                    className="input-modern appearance-none cursor-pointer"
+                  >
+                    {statusOptions.map((option) => (
+                      <option key={option.value} value={option.value}>
+                        {option.label}
+                      </option>
                     ))}
-                  </ul>
+                  </select>
+                  <Icon name="arrow-down" size={14} className="absolute right-3 top-1/2 -translate-y-1/2 text-text-muted pointer-events-none" />
                 </div>
               </div>
+
+              {/* Date Applied */}
+              <div className="space-y-1.5">
+                <label htmlFor="dateApplied" className="text-xs font-bold text-text-secondary uppercase tracking-wider block">
+                  Date Applied <span className="text-primary-600">*</span>
+                </label>
+                <input
+                  {...register('dateApplied')}
+                  type="date"
+                  id="dateApplied"
+                  className={`input-modern ${errors.dateApplied ? 'border-error ring-error/20' : ''}`}
+                />
+                {errors.dateApplied && (
+                  <p className="text-xs text-error font-medium mt-1">{errors.dateApplied.message}</p>
+                )}
+              </div>
             </div>
-          )}
-        </div>
+
+            {/* Visa Sponsorship */}
+            <div className="p-4 bg-bg-subtle rounded-lg border border-border-subtle flex items-center gap-3">
+              <input
+                {...register('visaSponsorship')}
+                id="visaSponsorship"
+                type="checkbox"
+                className="w-5 h-5 rounded border-border-strong text-primary-600 focus:ring-primary-500 cursor-pointer"
+              />
+              <label htmlFor="visaSponsorship" className="cursor-pointer select-none">
+                <span className="text-sm font-bold text-text-primary block">Visa Sponsorship Required</span>
+                <p className="text-xs text-text-muted">Does this company sponsor visas?</p>
+              </label>
+            </div>
+
+            {/* Notes */}
+            <div className="space-y-1.5">
+              <div className="flex justify-between items-center">
+                <label htmlFor="notes" className="text-xs font-bold text-text-secondary uppercase tracking-wider block">
+                  Notes / Job Description
+                </label>
+                <span className={`text-[10px] font-mono ${formData.notes.length > 900 ? 'text-primary-600' : 'text-text-muted'}`}>
+                  {formData.notes.length}/1000
+                </span>
+              </div>
+              <textarea
+                {...register('notes')}
+                id="notes"
+                rows={4}
+                className={`input-modern min-h-[120px] resize-y ${errors.notes ? 'border-error ring-error/20' : ''}`}
+                placeholder="Paste the job description or add your own notes here..."
+              />
+              {errors.notes && (
+                <p className="text-xs text-error font-medium mt-1">{errors.notes.message}</p>
+              )}
+            </div>
+
+            {/* AI Analysis Checkbox (New Only) */}
+            {isNewApplication && (
+              <div className="p-4 bg-gradient-to-r from-primary-50 to-transparent border border-primary-100 rounded-lg flex items-start gap-3">
+                <input
+                  {...register('requestAnalysis')}
+                  id="requestAnalysis"
+                  type="checkbox"
+                  className="w-5 h-5 mt-0.5 rounded border-primary-300 text-primary-600 focus:ring-primary-500 cursor-pointer"
+                />
+                <label htmlFor="requestAnalysis" className="cursor-pointer select-none">
+                  <div className="flex items-center gap-2 mb-1">
+                    <Icon name="technical" size={14} className="text-primary-600" />
+                    <span className="text-sm font-bold text-text-primary">Run AI Analysis</span>
+                  </div>
+                  <p className="text-xs text-text-secondary leading-relaxed">
+                    Automatically analyze this job description against your resume to check for fit and missing keywords.
+                  </p>
+                </label>
+              </div>
+            )}
+
+            <div className="pt-6 border-t border-border-subtle flex justify-end gap-3">
+              <button
+                type="button"
+                onClick={() => navigate('/applications')}
+                className="btn-secondary"
+              >
+                Cancel
+              </button>
+              <button
+                type="submit"
+                disabled={hookIsSubmitting || !isDirty}
+                className="btn-primary w-full sm:w-auto"
+              >
+                {hookIsSubmitting ? (
+                  <>
+                    <div className="animate-spin rounded-full h-4 w-4 border-2 border-white/30 border-t-white mr-2"></div>
+                    Saving...
+                  </>
+                ) : (
+                  <>
+                    <Icon name={isNewApplication ? "rocket" : "save"} size={18} />
+                    {isNewApplication ? 'Create Application' : 'Save Changes'}
+                  </>
+                )}
+              </button>
+            </div>
+          </div>
+        </form>
+
+        {/* AI Analysis Section */}
+        {(!isNewApplication || resumeText) && (
+          <div className="premium-card mt-8 overflow-hidden">
+            <div className="p-4 border-b border-border-subtle bg-bg-subtle/50 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-primary-100 text-primary-600 rounded-lg">
+                  <Icon name="technical" size={20} />
+                </div>
+                <div>
+                  <h3 className="font-bold text-text-primary">AI Resume Analysis</h3>
+                  <p className="text-xs text-text-secondary">Insights powered by Gemini</p>
+                </div>
+              </div>
+              {resumeText && !analyzing && !analysisResult && (
+                <button
+                  onClick={handleAnalyze}
+                  className="btn-primary py-1.5 text-xs"
+                >
+                  Run Analysis
+                </button>
+              )}
+            </div>
+
+            <div className="p-6 md:p-8 space-y-8">
+              {/* File Upload */}
+              <div>
+                <label className="block text-xs font-bold uppercase tracking-wider text-text-secondary mb-3">
+                  Resume File (PDF)
+                </label>
+                <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center">
+                  <label className="btn-secondary cursor-pointer relative overflow-hidden">
+                    <input
+                      type="file"
+                      accept=".pdf"
+                      onChange={handleFileChange}
+                      className="absolute inset-0 opacity-0 cursor-pointer"
+                    />
+                    <Icon name="upload" size={16} />
+                    {resumeText ? 'Replace File' : 'Upload Resume'}
+                  </label>
+                  {resumeText ? (
+                    <div className="flex items-center gap-2 text-primary-600 bg-primary-50 px-3 py-1.5 rounded-full text-xs font-bold border border-primary-100">
+                      <Icon name="check-circle" size={14} />
+                      Resume Loaded
+                    </div>
+                  ) : (
+                    <p className="text-xs text-text-muted italic">Upload your resume PDF to enable scoring.</p>
+                  )}
+                </div>
+              </div>
+
+              {/* Analysis State */}
+              {analyzing && (
+                <div className="py-12 flex flex-col items-center justify-center text-center">
+                  <div className="animate-spin rounded-full h-10 w-10 border-4 border-primary-100 border-t-primary-600 mb-4"></div>
+                  <p className="text-sm font-bold text-text-primary animate-pulse">Analyzing...</p>
+                  <p className="text-xs text-text-secondary mt-1">Checking your resume against the job description</p>
+                </div>
+              )}
+
+              {/* Results */}
+              {analysisResult && !analyzing && (
+                <div className="animate-fade-in space-y-8">
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    {/* Score */}
+                    <div className="relative overflow-hidden rounded-xl bg-bg-surface border border-border p-6 flex flex-col items-center justify-center text-center group hover:border-primary-500/30 transition-colors">
+                      <div className={`text-5xl font-black mb-2 tracking-tighter ${analysisResult.fitScore >= 70 ? 'text-green-600' : analysisResult.fitScore >= 40 ? 'text-yellow-500' : 'text-red-500'
+                        }`}>
+                        {analysisResult.fitScore}
+                        <span className="text-2xl align-top opacity-50">%</span>
+                      </div>
+                      <p className="text-xs font-bold uppercase tracking-widest text-text-secondary">Match Score</p>
+                      <div className={`absolute bottom-0 left-0 h-1.5 w-full ${analysisResult.fitScore >= 70 ? 'bg-green-500' : analysisResult.fitScore >= 40 ? 'bg-yellow-500' : 'bg-red-500'
+                        }`} />
+                    </div>
+
+                    {/* Missing Keywords */}
+                    <div className="md:col-span-2 rounded-xl bg-bg-subtle border border-border p-6">
+                      <h4 className="text-xs font-bold uppercase tracking-widest text-text-secondary mb-4 flex items-center gap-2">
+                        <Icon name="warning" size={14} className="text-primary-600" />
+                        Missing Keywords
+                      </h4>
+                      <div className="flex flex-wrap gap-2">
+                        {analysisResult.missingKeywords.length > 0 ? (
+                          analysisResult.missingKeywords.map((keyword: string, idx: number) => (
+                            <span key={idx} className="px-2.5 py-1 bg-bg-surface border border-border-strong rounded-md text-xs font-medium text-text-secondary">
+                              {keyword}
+                            </span>
+                          ))
+                        ) : (
+                          <span className="text-xs text-primary-600 font-medium">Perfect match! No key words missing.</span>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-8 pt-6 border-t border-border-subtle">
+                    <div>
+                      <h4 className="text-xs font-bold uppercase tracking-widest text-text-secondary mb-3">Analysis</h4>
+                      <p className="text-sm text-text-primary leading-relaxed">
+                        {analysisResult.matchAnalysis}
+                      </p>
+                    </div>
+                    <div>
+                      <h4 className="text-xs font-bold uppercase tracking-widest text-text-secondary mb-3">Targeted Improvements</h4>
+                      <ul className="space-y-3">
+                        {analysisResult.suggestedImprovements.map((tip: string, idx: number) => (
+                          <li key={idx} className="flex gap-3 text-sm text-text-primary">
+                            <div className="mt-1 shrink-0 text-primary-600">
+                              <Icon name="bolt" size={14} />
+                            </div>
+                            {tip}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
       </div>
     </div>
   )

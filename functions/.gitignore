@@ -6,7 +6,7 @@ lib.zip
 node_modules/
 
 # Environment files
-.env
+# .env
 .env.local
 .DS_Store
 

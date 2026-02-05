@@ -5,16 +5,16 @@ import { toast } from 'sonner';
  * Adopts H2U pattern for user-friendly status-based messaging
  */
 export const ERROR_MESSAGES: Record<string | number, string> = {
-    400: 'Refusal Protocol: Invalid request structure detected.',
-    401: 'Access Denied: Intelligence session expired. Re-authentication required.',
-    403: 'Permission Error: Data segment restricted for current authorization.',
-    404: 'Missing Record: Requested application node not found.',
-    408: 'Latency Overload: Server taking too long to respond.',
-    429: 'Rate Limit: Too many requests. Cool down period active.',
-    500: 'Core Failure: Internal architecture error detected.',
-    503: 'Tactical Downtime: System is currently under maintenance.',
-    'default': 'Unknown Variable: An unexpected error occurred in the execution layer.',
-    'network-error': 'Signal Loss: Unable to reach the central data cluster.'
+    400: 'Invalid Request: Please check your input and try again.',
+    401: 'Access Denied: Session expired. Please sign in again.',
+    403: 'Permission Error: You do not have access to this resource.',
+    404: 'Not Found: The requested application could not be found.',
+    408: 'Request Timeout: Server took too long to respond.',
+    429: 'Rate Limit: Too many requests. Please wait a moment.',
+    500: 'Server Error: An internal error occurred.',
+    503: 'Maintenance: System is currently under maintenance.',
+    'default': 'Unknown Error: An unexpected error occurred.',
+    'network-error': 'Connection Error: Unable to reach the server.'
 };
 
 export const handleError = (error: unknown, context?: string) => {

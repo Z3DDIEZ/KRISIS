@@ -72,9 +72,10 @@ export const analyzeResume = onCall({
 
         return { success: true, analysisId: resultRef.id, data: analysis };
 
-    } catch (error) {
+    } catch (error: any) {
         logger.error("Analysis Failed", { userId, error });
-        throw new HttpsError("internal", "AI Analysis failed to complete.");
+        // DEV MODE: Expose actual error to client for debugging
+        throw new HttpsError("internal", error.message || "AI Analysis failed to complete.");
     }
 });
 

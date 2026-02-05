@@ -12,7 +12,6 @@ import { formatDateForDisplay } from '../lib/dateUtils'
 import Icon from '../components/ui/Icon'
 import StatCard from '../components/ui/StatCard'
 import { handleError } from '../lib/ErrorHandler'
-import { AsymmetricGrid, AsymmetricCard } from '../components/ui/AsymmetricGrid'
 import UrgentActions from '../components/ui/UrgentActions'
 
 interface Application {
@@ -149,107 +148,99 @@ function Dashboard() {
   }
 
   return (
-    <div className="animate-fade-in min-h-screen p-spacing-4 flex flex-col gap-spacing-6">
+    <div className="animate-fade-in min-h-screen p-6 flex flex-col gap-8 max-w-7xl mx-auto">
       <header className="page-header relative">
-        <div className="absolute -top-spacing-6 -left-spacing-6 w-48 h-48 bg-primary-500/5 rounded-full blur-3xl" />
-        <div className="asymmetric-header">
-          <h1 className="text-4xl lg:text-5xl font-black text-primary tracking-tighter uppercase leading-none mb-spacing-2">
-            Intelligence <br />
-            <span className="text-outline">Dashboard</span>
-          </h1>
-          <p className="text-secondary font-medium tracking-tight page-header__subtitle max-w-md">
-            Swiss-engineered tracking for the modern software professional. Precise. Fast. Minimal.
+        <div className="absolute -top-6 -left-6 w-48 h-48 bg-primary-500/5 rounded-full blur-3xl pointer-events-none" />
+        <div className="flex flex-col gap-2">
+          <h1 className="heading-xl">Dashboard</h1>
+          <p className="text-text-secondary font-medium max-w-lg">
+            Track your job search progress and stay on top of upcoming interviews.
           </p>
         </div>
       </header>
 
-      {/* Stats Grid - Asymmetric Pattern (Decision Driven) */}
-      <AsymmetricGrid pattern="featured">
-        <AsymmetricCard size="large">
-          <StatCard
-            label="Pipeline Volume"
-            value={stats.totalApplications}
-            icon="work"
-            insight="Aggregated across all status nodes"
-            change="1.2% velocity"
-            trend="up"
-          />
-        </AsymmetricCard>
-        <AsymmetricCard size="small">
-          <StatCard
-            label="Active Interviews"
-            value={stats.interviews}
-            icon="person"
-            insight="Live assessment protocols"
-            change="4 new slots"
-            trend="up"
-          />
-        </AsymmetricCard>
-        <AsymmetricCard size="small">
-          <StatCard
-            label="Stagnant Slots"
-            value={stats.urgentCount}
-            icon="warning"
-            insight="No activity detected in 14d+"
-            isUrgent={stats.urgentCount > 0}
-          />
-        </AsymmetricCard>
-        <AsymmetricCard size="large">
-          <StatCard
-            label="Success Quotient"
-            value={`${stats.successRate}%`}
-            icon="trending-up"
-            insight="Current offer conversion rate"
-            change="Optimizing"
-            trend="neutral"
-          />
-        </AsymmetricCard>
-      </AsymmetricGrid>
+      {/* Stats Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <StatCard
+          label="Total Applications"
+          value={stats.totalApplications}
+          icon="work"
+          insight="All active applications"
+          change="1.2% this week"
+          trend="up"
+        />
+        <StatCard
+          label="Active Interviews"
+          value={stats.interviews}
+          icon="person"
+          insight="Upcoming or in-progress"
+          change={stats.interviews > 0 ? "Action required" : undefined}
+          trend="up"
+        />
+        <StatCard
+          label="Needs Attention"
+          value={stats.urgentCount}
+          icon="warning"
+          insight="No activity in 14+ days"
+          isUrgent={stats.urgentCount > 0}
+        />
+        <StatCard
+          label="Success Rate"
+          value={`${stats.successRate}%`}
+          icon="trending-up"
+          insight="Offer conversion rate"
+          change="Optimizing"
+          trend="neutral"
+        />
+      </div>
 
-      {/* Urgent Actions - H2U Pattern */}
+      {/* Urgent Actions */}
       <UrgentActions actions={urgentActionsData} />
 
-      <div className="card">
-        <div className="px-6 py-5 border-b border-border-light flex justify-between items-center">
-          <h3 className="text-xs font-black text-muted uppercase tracking-widest">Recent Activity</h3>
-          <Link to="/applications/new" className="text-[11px] font-black text-primary-500 uppercase tracking-widest hover:text-primary-600 transition-colors">
-            Add Entry +
+      {/* Recent Activity */}
+      <div className="premium-card overflow-hidden">
+        <div className="px-6 py-5 border-b border-border-subtle flex justify-between items-center bg-bg-subtle/30">
+          <h3 className="text-sm font-bold text-text-primary">Recent Activity</h3>
+          <Link to="/applications/new" className="text-xs font-bold text-primary-600 hover:text-primary-700 transition-colors uppercase tracking-wide">
+            + New Application
           </Link>
         </div>
 
         <div className="p-0">
           {applications.length === 0 ? (
-            <div className="p-20 text-center">
-              <div className="w-16 h-16 bg-surface-2 rounded-full flex items-center justify-center mx-auto mb-6">
-                <Icon name="work" size={32} className="text-muted" />
+            <div className="p-16 text-center">
+              <div className="w-16 h-16 bg-bg-subtle rounded-full flex items-center justify-center mx-auto mb-6">
+                <Icon name="work" size={32} className="text-text-secondary" />
               </div>
-              <h3 className="text-lg font-black text-primary mb-2 uppercase">Zero Records Detected</h3>
-              <p className="text-secondary mb-8 max-w-xs mx-auto font-medium">Initiate your pipeline by adding your first job application record.</p>
-              <Link to="/applications/new" className="btn btn-primary px-8">
-                GENERATE FIRST RECORD
+              <h3 className="text-lg font-bold text-text-primary mb-2">Build Your Pipeline</h3>
+              <p className="text-text-secondary mb-8 max-w-sm mx-auto">
+                Start tracking your job applications to get AI-powered insights and stay organized.
+              </p>
+              <Link to="/applications/new" className="btn-primary px-8 py-2.5">
+                Add First Application
               </Link>
             </div>
           ) : (
-            <div className="divide-y divide-border">
+            <div className="divide-y divide-border-subtle">
               {applications.slice(0, 10).map((application) => (
                 <div
                   key={application.id}
-                  className="flex items-center justify-between p-6 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
+                  className="flex items-center justify-between p-6 hover:bg-bg-subtle/50 transition-colors group"
                 >
                   <div className="flex items-center gap-4">
-                    <div className="w-12 h-12 bg-gray-900 text-white rounded flex items-center justify-center font-black text-xl">
+                    <div className="w-12 h-12 bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-xl flex items-center justify-center font-black text-xl text-primary-600 shadow-sm">
                       {application.company.charAt(0)}
                     </div>
                     <div>
-                      <h4 className="font-bold text-primary uppercase text-xs tracking-tight">{application.company}</h4>
-                      <p className="text-[10px] font-black text-muted uppercase tracking-widest">{application.role}</p>
+                      <h4 className="font-bold text-text-primary text-sm group-hover:text-primary-600 transition-colors">{application.company}</h4>
+                      <p className="text-xs font-medium text-text-secondary">{application.role}</p>
                     </div>
                   </div>
 
                   <div className="flex items-center gap-6">
                     <div className="hidden md:block text-right">
-                      <p className="text-[10px] font-black text-muted uppercase tracking-widest mb-1">Applied</p>
-                      <p className="text-xs font-bold text-primary">{formatDateForDisplay(application.dateApplied)}</p>
+                      <p className="text-[10px] font-bold text-text-muted uppercase tracking-wider mb-1">Applied</p>
+                      <p className="text-xs font-bold text-text-primary">{formatDateForDisplay(application.dateApplied)}</p>
                     </div>
                     <div className={`badge ${application.status === 'Applied' ? 'badge-applied' :
                       application.status.includes('Phone') ? 'badge-phone-screen' :
@@ -262,7 +253,7 @@ function Dashboard() {
                     </div>
                     <Link
                       to={`/applications/${application.id}`}
-                      className="p-2 text-muted hover:text-primary transition-colors"
+                      className="p-2 text-text-muted hover:text-primary-600 transition-colors"
                     >
                       <Icon name="visibility" size={18} />
                     </Link>
@@ -270,12 +261,12 @@ function Dashboard() {
                 </div>
               ))}
 
-              <div className="p-6 bg-gray-50/50 dark:bg-gray-800/50 text-center">
+              <div className="p-4 bg-bg-subtle/20 text-center border-t border-border-subtle">
                 <Link
                   to="/applications"
-                  className="text-xs font-black text-muted uppercase tracking-widest hover:text-primary transition-colors flex items-center justify-center gap-2"
+                  className="text-xs font-bold text-text-secondary hover:text-primary-600 transition-colors flex items-center justify-center gap-2 uppercase tracking-wide"
                 >
-                  Inspect Full Pipeline ({applications.length} items)
+                  View All Applications ({applications.length})
                   <Icon name="arrow-forward" size={14} />
                 </Link>
               </div>

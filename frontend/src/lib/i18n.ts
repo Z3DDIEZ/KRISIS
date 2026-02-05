@@ -7,25 +7,25 @@ const resources = {
     en: {
         translation: {
             common: {
-                execute: 'Execute',
+                execute: 'View',
                 cancel: 'Cancel',
                 save: 'Save Changes',
-                delete: 'Delete Protocol',
-                loading: 'Orchestrating Data...',
-                error: 'System Exception',
+                delete: 'Delete Application',
+                loading: 'Loading Data...',
+                error: 'System Error',
             },
             dashboard: {
-                title: 'Intelligence Dashboard',
-                subtitle: 'Swiss-engineered tracking for the modern software professional.',
-                stagnant: 'Stagnant Slots',
-                volume: 'Pipeline Volume',
-                success: 'Success Quotient',
+                title: 'Dashboard',
+                subtitle: 'Track your career progress in real-time.',
+                stagnant: 'Inactive',
+                volume: 'Total Applications',
+                success: 'Success Rate',
             },
             auth: {
-                login: 'Initiate Session',
-                signup: 'Register Node',
-                logout: 'Terminate Session',
-                welcome: 'Welcome back, operator.',
+                login: 'Sign In',
+                signup: 'Create Account',
+                logout: 'Sign Out',
+                welcome: 'Welcome back.',
             }
         }
     }

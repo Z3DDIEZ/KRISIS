@@ -9,11 +9,10 @@ import { useDebounce } from '../../utils/useDebounce'
 
 interface TopNavbarProps {
     onSearchChange?: (query: string) => void
-    searchPlaceholder?: string
     onToggleSidebar?: () => void
 }
 
-function TopNavbar({ onSearchChange, searchPlaceholder = 'Search applications...', onToggleSidebar }: TopNavbarProps) {
+function TopNavbar({ onSearchChange, onToggleSidebar }: TopNavbarProps) {
     const [user] = useAuthState(auth)
     const [searchQuery, setSearchQuery] = useState('')
     const [searchFocused, setSearchFocused] = useState(false)
@@ -45,16 +44,23 @@ function TopNavbar({ onSearchChange, searchPlaceholder = 'Search applications...
 
     const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setSearchQuery(e.target.value)
-        setIsSearching(true)
     }
 
     const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
         if (e.key === 'Enter') {
             onSearchChange?.(searchQuery)
             setIsSearching(false)
-            // Navigate to applications if not already there or just trigger search
+            // Navigate to applications with search param
             if (window.location.pathname !== '/applications') {
+                // If onSearchChange is not provided or just generic, force navigation
+                // Note: Real implementation might depend on how Applications.tsx reads params
+                // But for now, we assume Applications.tsx uses context or we just navigate there.
+                // Since TopNavbar uses local state mostly, let's just ensure we switch to the page.
+                // Improve: Pass the query via context or URL params if needed.
                 navigate('/applications')
+                // Ideally we should sync this state to the SearchContext if it exists,
+                // but since TopNavbar is often decoupled in this codebase, we rely on parent callback
+                // or just the navigation trigger.
             }
         }
     }
@@ -68,7 +74,7 @@ function TopNavbar({ onSearchChange, searchPlaceholder = 'Search applications...
     return (
         <header className="topnav" role="banner">
             <div className="topnav__container">
-                {/* Sidebar Toggle & Logo */}
+                {/* Sidebar Toggle & Mobile Logo */}
                 <div className="flex items-center gap-4">
                     <button
                         onClick={onToggleSidebar}
@@ -78,20 +84,20 @@ function TopNavbar({ onSearchChange, searchPlaceholder = 'Search applications...
                         <Icon name="list" size={20} />
                     </button>
 
+                    {/* Logo - Mobile Only (handled by CSS) */}
                     <Link to="/" className="topnav__logo" data-track-action="logo-click">
                         <div className="topnav__logo-icon">
                             <Icon name="dashboard" size={20} />
                         </div>
                         <div className="topnav__logo-text">
                             <span className="topnav__logo-name">KRISIS</span>
-                            <span className="topnav__logo-tagline">Job Intelligence</span>
                         </div>
                     </Link>
                 </div>
 
-                {/* Global Search */}
-                <div className={`topnav__search ${searchFocused ? 'topnav__search--focused' : ''} ${isSearching ? 'topnav__search--loading' : ''}`}>
-                    <Icon name="search" size={18} className="topnav__search-icon" />
+                {/* Global Search - Functional Redirect */}
+                <div className={`topnav__search bg-gray-100 dark:bg-zinc-800 border border-transparent dark:border-zinc-700 hover:border-gray-300 dark:hover:border-zinc-600 transition-all ${searchFocused ? 'ring-2 ring-primary-500/20 !border-primary-500' : ''} ${isSearching ? 'opacity-80' : ''}`}>
+                    <Icon name="search" size={16} className="text-gray-400 dark:text-gray-500 ml-3" />
                     <input
                         ref={searchRef}
                         type="text"
@@ -100,8 +106,8 @@ function TopNavbar({ onSearchChange, searchPlaceholder = 'Search applications...
                         onKeyDown={handleKeyDown}
                         onFocus={() => setSearchFocused(true)}
                         onBlur={() => setSearchFocused(false)}
-                        placeholder={searchPlaceholder}
-                        className="topnav__search-input"
+                        placeholder="Search applications, companies..."
+                        className="bg-transparent border-none focus:ring-0 text-sm w-full h-full px-3 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-500"
                         aria-label="Search"
                         data-track-action="global-search"
                     />

@@ -39,26 +39,26 @@ export const exportIntelligenceReport = (
 
     doc.setTextColor(255, 255, 255);
     doc.setFontSize(10);
-    doc.text('INTELLIGENCE ARCHITECTURE REPORT', 20, 32);
+    doc.text('CAREER APPLICATION REPORT', 20, 32);
     doc.text(`Generated: ${timestamp}`, 190, 32, { align: 'right' });
 
     // Summary Section
     doc.setTextColor(33, 33, 33);
     doc.setFontSize(14);
-    doc.text('Core Metrics Snapshot', 20, 55);
+    doc.text('Key Metrics', 20, 55);
 
     doc.setFontSize(10);
     doc.setFont('helvetica', 'normal');
-    doc.text(`Timeline Context: ${timeframe.toUpperCase()}`, 20, 62);
+    doc.text(`Timeframe: ${timeframe.toUpperCase()}`, 20, 62);
 
     // Quick Metrics Table
     autoTable(doc, {
         startY: 70,
         head: [['Metric', 'Value', 'Insight']],
         body: [
-            ['Total Pipeline Volume', stats.totalApplications.toString(), 'Aggregated across all status nodes'],
-            ['Interview Velocity', `${stats.responseRate}%`, 'Current market engagement rate'],
-            ['Residency Spons. Rate', `${stats.visaSponsorshipRate}%`, 'Visa requirement frequency'],
+            ['Total Applications', stats.totalApplications.toString(), 'Total tracked applications'],
+            ['Response Rate', `${stats.responseRate}%`, 'Percentage of applications with responses'],
+            ['Visa Sponsorship', `${stats.visaSponsorshipRate}%`, 'Rate of applications requiring sponsorship'],
         ],
         theme: 'striped',
         headStyles: { fillColor: [33, 33, 33], textColor: [255, 255, 255], fontStyle: 'bold' },
@@ -68,7 +68,7 @@ export const exportIntelligenceReport = (
     // Detailed Pipeline
     doc.setFont('helvetica', 'bold');
     doc.setFontSize(12);
-    doc.text('Detailed Application Protocol', 20, doc.lastAutoTable.finalY + 15);
+    doc.text('Detailed Application History', 20, doc.lastAutoTable.finalY + 15);
 
     autoTable(doc, {
         startY: doc.lastAutoTable.finalY + 20,
@@ -96,7 +96,7 @@ export const exportIntelligenceReport = (
         doc.setFontSize(8);
         doc.setTextColor(150, 150, 150);
         doc.text(
-            `KRISIS Job Intelligence Pipeline v3.0 - Page ${i} of ${pageCount}`,
+            `KRISIS Career Tracker - Page ${i} of ${pageCount}`,
             105,
             285,
             { align: 'center' }

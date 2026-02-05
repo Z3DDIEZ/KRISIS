@@ -33,6 +33,6 @@ if (missingVars.length > 0) {
 const app = initializeApp(firebaseConfig)
 export const auth: Auth = getAuth(app)
 export const db: Firestore = getFirestore(app)
-export const functions: Functions = getFunctions(app)
+export const functions: Functions = getFunctions(app, 'africa-south1')
 
 export default app

@@ -180,300 +180,257 @@ function DataManagement({ onDataChange }: DataManagementProps) {
   }
 
   return (
-    <div className="space-y-lg">
+    <div className="space-y-8 animate-fade-in pb-20">
       {/* Header */}
-      <div className="text-center mb-xl">
-        <h2 className="text-2xl font-bold text-primary mb-sm">Data Management</h2>
-        <p className="text-secondary">Import, export, and generate demo data for your applications</p>
+      <div className="text-center mb-12">
+        <h2 className="heading-xl mb-4 bg-clip-text text-transparent bg-gradient-to-r from-primary-600 to-primary-500 inline-block">
+          Data Management
+        </h2>
+        <p className="text-text-secondary max-w-2xl mx-auto">
+          Import, export, and generate demo data for your applications
+        </p>
       </div>
 
       {/* Stats Overview */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-md mb-xl">
-        <div className="stat-card">
-          <div className="stat-card-content">
-            <div className="stat-value text-primary">{applications.length}</div>
-            <div className="stat-label text-secondary uppercase tracking-wide">Total Applications</div>
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+        <div className="premium-card p-6 flex items-center justify-between">
+          <div>
+            <div className="text-3xl font-black text-text-primary">{applications.length}</div>
+            <div className="text-xs font-bold uppercase tracking-wider text-text-secondary mt-1">Total Applications</div>
+          </div>
+          <div className="p-3 bg-primary-100 text-primary-600 rounded-lg">
+            <Icon name="work" size={24} />
           </div>
         </div>
-        <div className="stat-card">
-          <div className="stat-card-content">
-            <div className="stat-value text-primary">
+
+        <div className="premium-card p-6 flex items-center justify-between">
+          <div>
+            <div className="text-3xl font-black text-text-primary">
               {applications.filter(app => app.status === 'Offer').length}
             </div>
-            <div className="stat-label text-secondary uppercase tracking-wide">Offers</div>
+            <div className="text-xs font-bold uppercase tracking-wider text-text-secondary mt-1">Offers Received</div>
+          </div>
+          <div className="p-3 bg-green-100 text-green-600 rounded-lg">
+            <Icon name="check-circle" size={24} />
           </div>
         </div>
-        <div className="stat-card">
-          <div className="stat-card-content">
-            <div className="stat-value text-primary">
+
+        <div className="premium-card p-6 flex items-center justify-between">
+          <div>
+            <div className="text-3xl font-black text-text-primary">
               {applications.length > 0
                 ? Math.round((applications.filter(app => app.status === 'Offer').length / applications.length) * 100)
                 : 0}%
             </div>
-            <div className="stat-label text-secondary uppercase tracking-wide">Success Rate</div>
+            <div className="text-xs font-bold uppercase tracking-wider text-text-secondary mt-1">Success Rate</div>
+          </div>
+          <div className="p-3 bg-blue-100 text-blue-600 rounded-lg">
+            <Icon name="chart" size={24} />
           </div>
         </div>
       </div>
 
       {/* Action Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-lg">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
         {/* Export Card */}
-        <div className="card">
-          <div className="card-header">
-            <h3 className="card-title flex items-center gap-sm">
+        <div className="premium-card p-6 md:p-8">
+          <div className="flex items-center gap-3 mb-6 pb-4 border-b border-border-subtle">
+            <div className="p-2 bg-primary-600/10 text-primary-600 rounded-lg">
               <Icon name="download" size={20} />
-              Export Data
-            </h3>
-          </div>
-          <div className="card-body">
-            <div className="space-y-md">
-              {/* Export Stats */}
-              <div className="grid grid-cols-2 gap-sm text-center">
-                <div className="bg-background-light p-sm rounded-lg">
-                  <div className="text-lg font-semibold text-primary">{applications.length}</div>
-                  <div className="text-xs text-secondary">Total Records</div>
-                </div>
-                <div className="bg-background-light p-sm rounded-lg">
-                  <div className="text-lg font-semibold text-primary">
-                    {new Date().toLocaleDateString()}
-                  </div>
-                  <div className="text-xs text-secondary">Export Date</div>
-                </div>
-              </div>
-
-              {/* Export Details */}
-              <div className="text-sm text-secondary space-y-xs">
-                <div className="flex justify-between">
-                  <span>Format:</span>
-                  <span className="font-medium">CSV (UTF-8 with BOM)</span>
-                </div>
-                <div className="flex justify-between">
-                  <span>Columns:</span>
-                  <span className="font-medium">6 (Company, Role, Date, Status, Visa, Notes)</span>
-                </div>
-                <div className="flex justify-between">
-                  <span>File Size:</span>
-                  <span className="font-medium">~{Math.round(applications.length * 0.1)} KB</span>
-                </div>
-              </div>
-
-              <p className="text-secondary text-sm">
-                Download all your application data as a CSV file for backup, analysis, or migration to other tools.
-              </p>
-
-              <button
-                onClick={handleExportCsv}
-                disabled={applications.length === 0}
-                className="btn btn-primary btn-block"
-              >
-                <Icon name="download" size={16} />
-                Export {applications.length} Records to CSV
-              </button>
-
-              {applications.length === 0 && (
-                <div className="text-center p-md bg-yellow-50 border border-yellow-200 rounded-lg">
-                  <Icon name="warning" size={16} className="text-yellow-600 mb-sm" />
-                  <p className="text-yellow-800 text-sm font-medium">No data to export</p>
-                  <p className="text-yellow-700 text-xs">Add some applications first to create an export</p>
-                </div>
-              )}
             </div>
+            <h3 className="text-lg font-bold text-text-primary">Export Data</h3>
+          </div>
+
+          <div className="space-y-6">
+            {/* Export Stats */}
+            <div className="grid grid-cols-2 gap-4 text-center">
+              <div className="bg-bg-subtle p-4 rounded-lg border border-border-subtle">
+                <div className="text-2xl font-black text-text-primary">{applications.length}</div>
+                <div className="text-xs font-bold uppercase text-text-secondary mt-1">Records</div>
+              </div>
+              <div className="bg-bg-subtle p-4 rounded-lg border border-border-subtle">
+                <div className="text-lg font-bold text-text-primary">
+                  {new Date().toLocaleDateString()}
+                </div>
+                <div className="text-xs font-bold uppercase text-text-secondary mt-1">Date</div>
+              </div>
+            </div>
+
+            {/* Export Details */}
+            <div className="text-sm text-text-secondary space-y-2 bg-bg-subtle/50 p-4 rounded-lg">
+              <div className="flex justify-between">
+                <span>Format:</span>
+                <span className="font-bold text-text-primary">CSV (UTF-8)</span>
+              </div>
+              <div className="flex justify-between">
+                <span>Columns:</span>
+                <span className="font-bold text-text-primary">Company, Role, Status...</span>
+              </div>
+              <div className="flex justify-between">
+                <span>Est. Size:</span>
+                <span className="font-bold text-text-primary">~{Math.round(applications.length * 0.1)} KB</span>
+              </div>
+            </div>
+
+            <p className="text-xs text-text-muted leading-relaxed">
+              Download your full dataset for backup or analysis. Contains all application details and notes.
+            </p>
+
+            <button
+              onClick={handleExportCsv}
+              disabled={applications.length === 0}
+              className="btn btn-primary w-full justify-center py-3"
+            >
+              <Icon name="download" size={18} />
+              Export CSV
+            </button>
+
+            {applications.length === 0 && (
+              <div className="flex items-center gap-3 p-3 bg-yellow-50 text-yellow-800 rounded-lg border border-yellow-200 text-xs">
+                <Icon name="warning" size={14} />
+                <span>No applications to export yet.</span>
+              </div>
+            )}
           </div>
         </div>
 
         {/* Import Card */}
-        <div className="card">
-          <div className="card-header">
-            <h3 className="card-title flex items-center gap-sm">
+        <div className="premium-card p-6 md:p-8">
+          <div className="flex items-center gap-3 mb-6 pb-4 border-b border-border-subtle">
+            <div className="p-2 bg-primary-600/10 text-primary-600 rounded-lg">
               <Icon name="add" size={20} />
-              Import Data
-            </h3>
-          </div>
-          <div className="card-body">
-            <div className="space-y-md">
-              {/* Import Stats */}
-              <div className="grid grid-cols-3 gap-sm text-center">
-                <div className="bg-background-light p-sm rounded-lg">
-                  <div className="text-lg font-semibold text-primary">CSV</div>
-                  <div className="text-xs text-secondary">Format</div>
-                </div>
-                <div className="bg-background-light p-sm rounded-lg">
-                  <div className="text-lg font-semibold text-primary">5MB</div>
-                  <div className="text-xs text-secondary">Max Size</div>
-                </div>
-                <div className="bg-background-light p-sm rounded-lg">
-                  <div className="text-lg font-semibold text-primary">Auto</div>
-                  <div className="text-xs text-secondary">Validation</div>
-                </div>
-              </div>
-
-              {/* Import Features */}
-              <div className="grid grid-cols-1 gap-sm text-sm">
-                <div className="flex items-center gap-sm text-secondary">
-                  <Icon name="check" size={14} className="text-green-600" />
-                  <span>Automatic date format detection</span>
-                </div>
-                <div className="flex items-center gap-sm text-secondary">
-                  <Icon name="check" size={14} className="text-green-600" />
-                  <span>Smart status mapping</span>
-                </div>
-                <div className="flex items-center gap-sm text-secondary">
-                  <Icon name="check" size={14} className="text-green-600" />
-                  <span>Visa sponsorship detection</span>
-                </div>
-                <div className="flex items-center gap-sm text-secondary">
-                  <Icon name="check" size={14} className="text-green-600" />
-                  <span>Row-by-row error reporting</span>
-                </div>
-              </div>
-
-              <p className="text-secondary text-sm">
-                Upload a CSV file to bulk import application data. The system automatically validates and normalizes your data.
-              </p>
-
-              <input
-                ref={fileInputRef}
-                type="file"
-                accept=".csv"
-                onChange={handleImportCsv}
-                className="hidden"
-              />
-
-              <button
-                onClick={handleFileSelect}
-                disabled={isImporting}
-                className="btn btn-secondary btn-block"
-              >
-                {isImporting ? (
-                  <>
-                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-primary border-t-transparent mr-2" />
-                    Importing Data...
-                  </>
-                ) : (
-                  <>
-                    <Icon name="add" size={16} />
-                    Choose CSV File to Import
-                  </>
-                )}
-              </button>
-
-              {importProgress && (
-                <div className="mt-lg space-y-md">
-                  {/* Progress Header */}
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-sm">
-                      <Icon name="settings" size={16} className="text-primary-orange animate-spin" />
-                      <span className="font-medium text-primary">Processing Import</span>
-                    </div>
-                    <span className="text-lg font-semibold text-primary">
-                      {Math.round((importProgress.loaded / importProgress.total) * 100)}%
-                    </span>
-                  </div>
-
-                  {/* Phase Indicator */}
-                  <div className="flex items-center gap-sm text-sm">
-                    <div className={`w-2 h-2 rounded-full ${importProgress.rowsProcessed > 0 ? 'bg-green-500' : 'bg-blue-500'}`}></div>
-                    <span className="text-secondary">
-                      {importProgress.rowsProcessed === 0 ? 'Reading file...' :
-                        importProgress.rowsProcessed < importProgress.total ? 'Validating data...' :
-                          'Saving to database...'}
-                    </span>
-                  </div>
-
-                  {/* Main Progress Bar */}
-                  <div className="space-y-sm">
-                    <div className="flex justify-between text-sm text-secondary">
-                      <span>File Processing</span>
-                      <span>{importProgress.loaded} / {importProgress.total} bytes</span>
-                    </div>
-                    <div className="w-full bg-background-light rounded-full h-3 overflow-hidden">
-                      <div
-                        className="bg-gradient-to-r from-primary-orange to-primary-orange-light h-full rounded-full transition-all duration-500 ease-out"
-                        style={{ width: `${(importProgress.loaded / importProgress.total) * 100}%` }}
-                      />
-                    </div>
-                  </div>
-
-                  {/* Detailed Progress Info */}
-                  <div className="grid grid-cols-2 gap-md text-sm">
-                    <div className="flex items-center gap-sm">
-                      <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
-                      <span className="text-secondary">Rows Processed:</span>
-                      <span className="font-medium text-primary">{importProgress.rowsProcessed}</span>
-                    </div>
-                    <div className="flex items-center gap-sm">
-                      <div className={`w-2 h-2 rounded-full ${importProgress.errors > 0 ? 'bg-red-500' : 'bg-green-500'}`}></div>
-                      <span className="text-secondary">Errors Found:</span>
-                      <span className={`font-medium ${importProgress.errors > 0 ? 'text-red-600' : 'text-green-600'}`}>
-                        {importProgress.errors}
-                      </span>
-                    </div>
-                  </div>
-
-                  {/* Current Operation Details */}
-                  <div className="text-xs text-muted bg-background-light p-sm rounded-lg">
-                    <div className="flex items-center gap-sm">
-                      <Icon name="info" size={12} />
-                      <span>
-                        {importProgress.rowsProcessed === 0 ? 'Reading and parsing CSV file...' :
-                          importProgress.rowsProcessed < importProgress.total ? 'Validating data types and required fields...' :
-                            'Saving validated records to database...'}
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              )}
             </div>
+            <h3 className="text-lg font-bold text-text-primary">Import Data</h3>
+          </div>
+
+          <div className="space-y-6">
+            {/* Import Stats */}
+            <div className="grid grid-cols-3 gap-3 text-center">
+              <div className="bg-bg-subtle p-3 rounded-lg border border-border-subtle">
+                <div className="font-bold text-text-primary">CSV</div>
+                <div className="text-[10px] uppercase text-text-secondary">Type</div>
+              </div>
+              <div className="bg-bg-subtle p-3 rounded-lg border border-border-subtle">
+                <div className="font-bold text-text-primary">5MB</div>
+                <div className="text-[10px] uppercase text-text-secondary">Limit</div>
+              </div>
+              <div className="bg-bg-subtle p-3 rounded-lg border border-border-subtle">
+                <div className="font-bold text-text-primary">Auto</div>
+                <div className="text-[10px] uppercase text-text-secondary">Check</div>
+              </div>
+            </div>
+
+            {/* Import Features */}
+            <div className="grid grid-cols-1 gap-2">
+              <div className="flex items-center gap-2 text-xs text-text-secondary">
+                <Icon name="check" size={12} className="text-green-600" />
+                <span>Smart date & status detection</span>
+              </div>
+              <div className="flex items-center gap-2 text-xs text-text-secondary">
+                <Icon name="check" size={12} className="text-green-600" />
+                <span>Visa sponsorship mapping</span>
+              </div>
+              <div className="flex items-center gap-2 text-xs text-text-secondary">
+                <Icon name="check" size={12} className="text-green-600" />
+                <span>Detailed error reporting</span>
+              </div>
+            </div>
+
+            <p className="text-xs text-text-muted leading-relaxed">
+              Upload a CSV to bulk-import applications. We'll validate the data structure automatically.
+            </p>
+
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept=".csv"
+              onChange={handleImportCsv}
+              className="hidden"
+            />
+
+            <button
+              onClick={handleFileSelect}
+              disabled={isImporting}
+              className="btn btn-secondary w-full justify-center py-3"
+            >
+              {isImporting ? (
+                <>
+                  <div className="animate-spin rounded-full h-4 w-4 border-2 border-inherit border-t-transparent mr-2"></div>
+                  Processing...
+                </>
+              ) : (
+                <>
+                  <Icon name="upload" size={16} />
+                  Select CSV File
+                </>
+              )}
+            </button>
+
+            {importProgress && (
+              <div className="mt-6 p-4 bg-bg-subtle rounded-xl border border-border-subtle space-y-4 animate-fade-in">
+                {/* Progress Header */}
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-bold uppercase text-text-secondary">Importing...</span>
+                  <span className="text-sm font-black text-primary-600">
+                    {Math.round((importProgress.loaded / importProgress.total) * 100)}%
+                  </span>
+                </div>
+
+                {/* Main Progress Bar */}
+                <div className="w-full bg-border-subtle rounded-full h-2 overflow-hidden">
+                  <div
+                    className="bg-primary-600 h-full rounded-full transition-all duration-300 ease-out"
+                    style={{ width: `${(importProgress.loaded / importProgress.total) * 100}%` }}
+                  />
+                </div>
+
+                {/* Detailed Stats */}
+                <div className="grid grid-cols-2 gap-4 pt-2">
+                  <div className="text-center">
+                    <div className="text-xl font-bold text-text-primary">{importProgress.rowsProcessed}</div>
+                    <div className="text-[10px] uppercase text-text-secondary">Processed</div>
+                  </div>
+                  <div className="text-center">
+                    <div className={`text-xl font-bold ${importProgress.errors > 0 ? 'text-red-500' : 'text-green-500'}`}>
+                      {importProgress.errors}
+                    </div>
+                    <div className="text-[10px] uppercase text-text-secondary">Errors</div>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </div>
 
       {/* Demo Data Card */}
-      <div className="card">
-        <div className="card-header">
-          <h3 className="card-title flex items-center gap-sm">
+      <div className="premium-card p-6 md:p-8">
+        <div className="flex items-center gap-3 mb-4">
+          <div className="p-2 bg-primary-600/10 text-primary-600 rounded-lg">
             <Icon name="settings" size={20} />
-            Demo Data Generator
-          </h3>
-        </div>
-        <div className="card-body">
-          <p className="text-secondary mb-md">
-            Generate 30 realistic sample applications to explore KRISIS features and analytics.
-            Includes balanced distribution across different statuses and time periods.
-          </p>
-
-          <div className="flex justify-center">
-            <DemoDataButton
-              onDataGenerated={onDataChange}
-              className="max-w-xs"
-            />
           </div>
+          <h3 className="text-lg font-bold text-text-primary">Demo Data Generator</h3>
+        </div>
+        <p className="text-sm text-text-secondary mb-6 max-w-3xl">
+          Instantly generate 30 realistic sample applications to test the dashboard, analytics, and search features.
+        </p>
+
+        <div className="flex justify-start">
+          <DemoDataButton
+            onDataGenerated={onDataChange}
+            className="btn btn-secondary"
+          />
         </div>
       </div>
 
       {/* File Format Help */}
-      <div className="card">
-        <div className="card-header">
-          <h3 className="card-title">CSV Format Guide</h3>
-        </div>
-        <div className="card-body">
-          <div className="text-sm text-secondary space-y-sm">
-            <p><strong>Exported columns:</strong> Company, Role, Date Applied, Status, Visa Sponsorship, Notes</p>
-            <p><strong>Import columns:</strong> company, role, dateApplied, status (required) + visaSponsorship, notes (optional)</p>
-            <p><strong>Date formats:</strong> YYYY-MM-DD, MM/DD/YYYY, DD/MM/YYYY</p>
-            <p><strong>Status values:</strong> Applied, Phone Screen, Technical Interview, Final Round, Offer, Rejected</p>
-            <p><strong>Visa sponsorship:</strong> true/false, yes/no, 1/0</p>
-          </div>
-
-          <div className="mt-md p-md bg-background-light rounded-lg">
-            <p className="text-sm font-medium text-primary mb-sm">Sample CSV for Import:</p>
-            <pre className="text-xs text-secondary overflow-x-auto">
-              {`company,role,dateApplied,status,visaSponsorship,notes
-Google,Software Engineer,2024-01-15,Applied,true,Excited about this role!
-Microsoft,Frontend Developer,2024-01-10,Phone Screen,true,Great interview experience
-Apple,Data Engineer,2024-01-08,Technical Interview,true,Strong technical team`}
-            </pre>
-          </div>
+      <div className="premium-card p-6 md:p-8">
+        <h3 className="text-sm font-bold uppercase tracking-wider text-text-secondary mb-4">CSV Format Guide</h3>
+        <div className="bg-bg-subtle p-4 rounded-lg border border-border-subtle font-mono text-xs text-text-secondary overflow-x-auto">
+          <div className="mb-2 text-text-primary font-bold">Recommended Headers:</div>
+          <div>company, role, dateApplied, status, visaSponsorship, notes</div>
+          <div className="mt-4 mb-2 text-text-primary font-bold">Sample Row:</div>
+          <div className="text-text-muted">Google, Software Engineer, 2024-01-15, Applied, true, "Referral from John"</div>
         </div>
       </div>
     </div>

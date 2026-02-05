@@ -125,165 +125,161 @@ function Settings() {
   }
 
   return (
-    <div className="max-w-4xl mx-auto py-8 animate-fade-in font-primary">
-      <header className="page-header">
-        <h1 className="text-3xl font-black text-primary tracking-tighter uppercase page-header__title">Configuration</h1>
-        <p className="text-secondary font-medium tracking-tight page-header__subtitle">System parameters and data extraction protocols</p>
+    <div className="max-w-4xl mx-auto py-8 animate-fade-in font-primary p-6">
+      <header className="page-header mb-8">
+        <h1 className="heading-xl">Settings</h1>
+        <p className="text-text-secondary font-medium">Manage your account preferences and data</p>
       </header>
 
-      <div className="flex flex-col gap-12">
+      <div className="flex flex-col gap-8">
         {/* Main Preferences */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           {/* Appearance Card */}
-          <div className="card">
-            <div className="card-header border-b border-border-light">
-              <h3 className="card-title flex items-center gap-2">
-                <Icon name="palette" size={18} />
+          <div className="premium-card p-6">
+            <div className="mb-6 pb-4 border-b border-border-subtle">
+              <h3 className="text-lg font-bold text-text-primary flex items-center gap-2">
+                <Icon name="palette" size={18} className="text-primary-500" />
                 Appearance
               </h3>
             </div>
-            <div className="card-body p-xl">
-              <div className="flex items-center justify-between p-6 bg-surface-2 rounded-xl border border-border-light group hover:border-primary-500/20 transition-all">
-                <div>
-                  <div className="text-sm font-black text-primary mb-1 uppercase tracking-widest">Interface Theme</div>
-                  <div className="text-xs text-secondary font-medium uppercase tracking-tight">
-                    {isDark ? 'Dark mode optimized' : 'Light mode active'}
-                  </div>
+
+            <div className="flex items-center justify-between p-4 bg-bg-subtle/50 rounded-xl border border-border-subtle hover:border-primary-500/20 transition-all">
+              <div>
+                <div className="text-sm font-bold text-text-primary mb-1">Theme</div>
+                <div className="text-xs text-text-secondary font-medium">
+                  {isDark ? 'Dark mode is active' : 'Light mode is active'}
                 </div>
-                <DarkModeToggle />
               </div>
+              <DarkModeToggle />
             </div>
           </div>
 
           {/* Account Settings Card */}
-          <div className="card">
-            <div className="card-header border-b border-border-light">
-              <h3 className="card-title flex items-center gap-2">
-                <Icon name="bolt" size={18} />
-                Global Preferences
+          <div className="premium-card p-6">
+            <div className="mb-6 pb-4 border-b border-border-subtle">
+              <h3 className="text-lg font-bold text-text-primary flex items-center gap-2">
+                <Icon name="bolt" size={18} className="text-primary-500" />
+                Notifications
               </h3>
             </div>
-            <div className="card-body p-xl">
-              <label className="checkbox-group p-4 bg-surface-2 rounded-2xl border border-border-light group hover:border-primary-orange/20 transition-all cursor-pointer">
-                <div className="flex-1">
-                  <div className="text-sm font-bold text-primary mb-0.5">Email Summaries</div>
-                  <div className="text-xs text-secondary font-medium">Weekly progress & AI insights</div>
-                </div>
-                <input
-                  type="checkbox"
-                  id="email-notifications"
-                  className="checkbox"
-                  defaultChecked
-                />
-              </label>
-            </div>
+
+            <label className="flex items-start gap-3 p-4 bg-bg-subtle/50 rounded-xl border border-border-subtle cursor-pointer hover:bg-bg-subtle transition-colors">
+              <input
+                type="checkbox"
+                id="email-notifications"
+                className="mt-1 rounded border-gray-300 text-primary-600 focus:ring-primary-500"
+                defaultChecked
+              />
+              <div className="flex-1">
+                <div className="text-sm font-bold text-text-primary mb-0.5">Weekly Summaries</div>
+                <div className="text-xs text-text-secondary font-medium">Receive weekly progress reports and AI insights via email</div>
+              </div>
+            </label>
           </div>
         </div>
 
         {/* Enhanced Data Export Card */}
-        <div className="card">
-          <div className="card-header border-b border-border-light bg-surface-2/30">
-            <h3 className="card-title flex items-center gap-2">
+        <div className="premium-card p-8">
+          <div className="mb-8 pb-4 border-b border-border-subtle">
+            <h3 className="text-lg font-bold text-text-primary flex items-center gap-2">
               <Icon name="download" size={20} className="text-primary-500" />
-              Data Intelligence & Export
+              Data Export
             </h3>
           </div>
-          <div className="card-body p-xl">
-            {/* Export Stats - Bauhaus Grid */}
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
-              <div className="p-6 bg-surface-contrast text-text-on-contrast rounded-xl border border-white/5 relative overflow-hidden group">
+
+          <div className="space-y-8">
+            {/* Export Stats */}
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+              <div className="p-4 bg-zinc-900 text-white rounded-xl relative overflow-hidden group">
                 <div className="relative z-10">
-                  <div className="text-4xl font-black mb-1">{applications.length}</div>
-                  <div className="text-[10px] font-black opacity-60 uppercase tracking-[0.2em]">Total Pipeline</div>
+                  <div className="text-3xl font-bold mb-1">{applications.length}</div>
+                  <div className="text-xs font-bold opacity-70 uppercase tracking-wide">Total Apps</div>
                 </div>
-                <Icon name="work" size={60} className="absolute -right-4 -bottom-4 opacity-5 group-hover:opacity-10 transition-opacity" />
+                <Icon name="work" size={48} className="absolute -right-4 -bottom-4 opacity-10 group-hover:opacity-20 transition-opacity" />
               </div>
 
-              <div className="p-6 bg-surface-2 rounded-xl border border-border-light relative overflow-hidden group">
+              <div className="p-4 bg-bg-subtle rounded-xl border border-border-subtle relative overflow-hidden group">
                 <div className="relative z-10">
-                  <div className="text-4xl font-black text-primary mb-1">
+                  <div className="text-3xl font-bold text-text-primary mb-1">
                     {applications.filter(app => app.status === 'Offer').length}
                   </div>
-                  <div className="text-[10px] font-black text-muted uppercase tracking-[0.2em]">Successful Offers</div>
+                  <div className="text-xs font-bold text-text-secondary uppercase tracking-wide">Offers</div>
                 </div>
-                <Icon name="verified" size={60} className="absolute -right-4 -bottom-4 opacity-5 group-hover:opacity-10 transition-opacity" />
+                <Icon name="verified" size={48} className="absolute -right-4 -bottom-4 opacity-5 group-hover:opacity-10 transition-opacity" />
               </div>
 
-              <div className="p-6 bg-surface-2 rounded-xl border border-border-light relative overflow-hidden group">
+              <div className="p-4 bg-bg-subtle rounded-xl border border-border-subtle relative overflow-hidden group">
                 <div className="relative z-10">
-                  <div className="text-4xl font-black text-primary mb-1">
+                  <div className="text-3xl font-bold text-text-primary mb-1">
                     {applications.filter(app => app.visaSponsorship).length}
                   </div>
-                  <div className="text-[10px] font-black text-muted uppercase tracking-[0.2em]">Visa Sponsored</div>
+                  <div className="text-xs font-bold text-text-secondary uppercase tracking-wide">Visa Sponsored</div>
                 </div>
-                <Icon name="public" size={60} className="absolute -right-4 -bottom-4 opacity-5 group-hover:opacity-10 transition-opacity" />
+                <Icon name="public" size={48} className="absolute -right-4 -bottom-4 opacity-5 group-hover:opacity-10 transition-opacity" />
               </div>
 
-              <div className="p-6 bg-primary-100/10 rounded-xl border border-primary-500/10 relative overflow-hidden group">
+              <div className="p-4 bg-primary-500/10 rounded-xl border border-primary-500/10 relative overflow-hidden group">
                 <div className="relative z-10">
-                  <div className="text-4xl font-black text-primary-500 mb-1">
+                  <div className="text-3xl font-bold text-primary-600 mb-1">
                     {applications.length > 0
                       ? Math.round((applications.filter(app => app.status !== 'Applied').length / applications.length) * 100)
                       : 0}%
                   </div>
-                  <div className="text-[10px] font-black text-primary-600 uppercase tracking-[0.2em]">Engagement</div>
+                  <div className="text-xs font-bold text-primary-700 uppercase tracking-wide">Active</div>
                 </div>
-                <Icon name="bolt" size={60} className="absolute -right-4 -bottom-4 opacity-10 group-hover:opacity-20 transition-opacity" />
+                <Icon name="bolt" size={48} className="absolute -right-4 -bottom-4 opacity-10 group-hover:opacity-20 transition-opacity" />
               </div>
             </div>
 
             {/* Export Controls */}
-            <div className="space-y-xl">
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-xl">
+            <div className="space-y-6">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 {/* Format Selection */}
                 <div className="form-group">
-                  <label className="form-label">Export Format</label>
-                  <div className="flex bg-surface-2 p-1 rounded-xl border border-border-light">
+                  <label className="text-sm font-bold text-text-primary mb-2 block">Format</label>
+                  <div className="flex bg-bg-subtle p-1 rounded-lg border border-border-subtle">
                     <button
                       onClick={() => setExportFormat('csv')}
-                      className={`flex-1 py-2 rounded-lg text-xs font-bold uppercase transition-all flex items-center justify-center gap-2 ${exportFormat === 'csv' ? 'bg-background-white shadow-sm text-primary-orange border border-border-light' : 'text-secondary hover:text-primary'}`}
+                      className={`flex-1 py-2 rounded-md text-xs font-bold uppercase transition-all flex items-center justify-center gap-2 ${exportFormat === 'csv' ? 'bg-white dark:bg-zinc-800 shadow-sm text-primary-600' : 'text-text-secondary hover:text-text-primary'}`}
                     >
                       <Icon name="table" size={16} />
                       CSV (Excel)
                     </button>
                     <button
                       onClick={() => setExportFormat('json')}
-                      className={`flex-1 py-2 rounded-lg text-xs font-bold uppercase transition-all flex items-center justify-center gap-2 ${exportFormat === 'json' ? 'bg-background-white shadow-sm text-primary-orange border border-border-light' : 'text-secondary hover:text-primary'}`}
+                      className={`flex-1 py-2 rounded-md text-xs font-bold uppercase transition-all flex items-center justify-center gap-2 ${exportFormat === 'json' ? 'bg-white dark:bg-zinc-800 shadow-sm text-primary-600' : 'text-text-secondary hover:text-text-primary'}`}
                     >
                       <Icon name="code" size={16} />
-                      JSON (Data)
+                      JSON
                     </button>
                   </div>
                 </div>
 
                 {/* Scope Selection */}
                 <div className="form-group">
-                  <label className="form-label">Export Scope</label>
-                  <div className="select-wrapper">
-                    <select
-                      value={exportScope}
-                      onChange={(e) => setExportScope(e.target.value as 'all' | 'recent' | 'offers')}
-                      className="input"
-                    >
-                      <option value="all">Entire Application History ({applications.length})</option>
-                      <option value="recent">Recent 30 Days Only</option>
-                      <option value="offers">Successful Offers Only</option>
-                    </select>
-                  </div>
+                  <label className="text-sm font-bold text-text-primary mb-2 block">Export Scope</label>
+                  <select
+                    value={exportScope}
+                    onChange={(e) => setExportScope(e.target.value as 'all' | 'recent' | 'offers')}
+                    className="w-full h-[42px] px-3 rounded-lg border border-border-subtle bg-bg-surface text-text-primary text-sm font-medium focus:border-primary-500 focus:ring-1 focus:ring-primary-500 outline-none transition-all"
+                  >
+                    <option value="all">All Applications ({applications.length})</option>
+                    <option value="recent">Past 30 Days</option>
+                    <option value="offers">Offers Only</option>
+                  </select>
                 </div>
               </div>
 
               {/* Action Area */}
-              <div className="p-8 bg-surface-2 border border-border-light rounded-xl flex flex-col sm:flex-row items-center justify-between gap-10 shadow-sm">
-                <div className="flex items-start gap-5">
-                  <div className="w-12 h-12 bg-primary-500 text-white rounded-xl flex items-center justify-center flex-shrink-0 mt-1 shadow-orange">
-                    <Icon name="info" size={24} />
+              <div className="p-6 bg-bg-subtle/30 border border-border-subtle rounded-xl flex flex-col sm:flex-row items-center justify-between gap-6">
+                <div className="flex items-start gap-4">
+                  <div className="w-10 h-10 bg-primary-100 dark:bg-primary-900/30 text-primary-600 rounded-lg flex items-center justify-center flex-shrink-0 mt-1">
+                    <Icon name="info" size={20} />
                   </div>
                   <div>
-                    <h4 className="text-sm font-black text-primary uppercase tracking-widest mb-1">Data Integrity Check</h4>
-                    <p className="text-xs text-secondary font-medium leading-relaxed max-w-md">
+                    <h4 className="text-sm font-bold text-text-primary mb-1">Export Details</h4>
+                    <p className="text-xs text-text-secondary font-medium leading-relaxed max-w-md">
                       Your export will include all companies, roles, status history, and personal notes.
-                      Encrypted with UTF-8 for maximum compatibility.
                     </p>
                   </div>
                 </div>
@@ -291,29 +287,26 @@ function Settings() {
                 <button
                   onClick={handleExportData}
                   disabled={isExporting || applications.length === 0}
-                  className="btn btn--orange px-10 py-4 h-auto flex flex-col items-center gap-1 shadow-elevated min-w-[240px]"
+                  className="btn-primary px-8 py-3 h-auto min-w-[200px] flex items-center justify-center gap-2"
                 >
                   {isExporting ? (
-                    <div className="flex items-center gap-3">
+                    <>
                       <div className="animate-spin rounded-full h-4 w-4 border-2 border-white/30 border-t-white" />
-                      <span className="font-bold uppercase tracking-tighter text-xs">Processing...</span>
-                    </div>
+                      <span className="font-bold text-xs">Processing...</span>
+                    </>
                   ) : (
                     <>
-                      <div className="flex items-center gap-2">
-                        <Icon name="download" size={18} />
-                        <span className="font-bold uppercase tracking-tight">Generate Backup</span>
-                      </div>
-                      <span className="text-[10px] opacity-70 font-medium">Ready for download</span>
+                      <Icon name="download" size={18} />
+                      <span className="font-bold text-xs uppercase tracking-wide">Download Data</span>
                     </>
                   )}
                 </button>
               </div>
 
               {applications.length === 0 && (
-                <div className="p-6 bg-surface-2 border border-dashed border-border-medium rounded-xl flex items-center gap-4">
-                  <Icon name="warning" size={20} className="text-primary-500" />
-                  <span className="text-xs font-black text-muted uppercase tracking-widest">No data records detected for intelligence protocols.</span>
+                <div className="p-4 bg-yellow-50 dark:bg-yellow-900/10 border border-yellow-200 dark:border-yellow-900/30 rounded-lg flex items-center gap-3 text-yellow-800 dark:text-yellow-200">
+                  <Icon name="warning" size={18} />
+                  <span className="text-xs font-bold">No application data found to export.</span>
                 </div>
               )}
             </div>
@@ -321,13 +314,13 @@ function Settings() {
         </div>
 
         {/* Support & Community Section */}
-        <div className="card border border-border-light bg-surface-2 border-dashed">
-          <div className="card-body p-xl text-center">
-            <h4 className="text-sm font-bold text-primary mb-2">Need Help?</h4>
-            <p className="text-xs text-secondary mb-6 max-w-sm mx-auto">Access our documentation or contact the design team for support with your job intelligence pipeline.</p>
+        <div className="premium-card p-8 border border-dashed border-border-subtle bg-bg-subtle/10">
+          <div className="text-center">
+            <h4 className="text-sm font-bold text-text-primary mb-2">Need Help?</h4>
+            <p className="text-xs text-text-secondary mb-6 max-w-sm mx-auto">Check out our documentation or contact support.</p>
             <div className="flex justify-center gap-4">
-              <button className="btn btn--secondary btn--sm font-bold">Documentation</button>
-              <button className="btn btn--secondary btn--sm font-bold">Feedback</button>
+              <button className="btn-secondary px-6 py-2 text-xs">Documentation</button>
+              <button className="btn-secondary px-6 py-2 text-xs">Contact Support</button>
             </div>
           </div>
         </div>

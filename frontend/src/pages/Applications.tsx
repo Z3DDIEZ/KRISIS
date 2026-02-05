@@ -173,9 +173,17 @@ function Applications() {
     setSelectedApplications(new Set())
   }
 
+  const handleSelectAll = () => {
+    if (selectedApplications.size === filteredApplications.length && filteredApplications.length > 0) {
+      setSelectedApplications(new Set())
+    } else {
+      setSelectedApplications(new Set(filteredApplications.map(app => app.id)))
+    }
+  }
+
   if (loading || isLoading) {
     return (
-      <div className="flex items-center justify-center min-h-64">
+      <div className="flex items-center justify-center min-h-[50vh]">
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-500"></div>
       </div>
     )
@@ -183,162 +191,145 @@ function Applications() {
 
   if (!user) {
     return (
-      <div className="text-center py-12">
-        <p className="text-secondary">Please sign in to view your applications.</p>
+      <div className="text-center py-20">
+        <p className="text-gray-500">Please sign in to view your applications.</p>
       </div>
     )
   }
 
   return (
-    <div className="animate-fade-in flex flex-col gap-spacing-4">
-      <div className="flex flex-col lg:flex-row lg:justify-between lg:items-center gap-6 mb-spacing-4">
-        <header className="page-header">
-          <h1 className="text-4xl font-black text-primary tracking-tighter uppercase leading-none">Applications</h1>
-          <p className="text-secondary font-medium tracking-tight">
-            {filteredApplications.length} cases detected in your active pipeline.
+    <div className="animate-fade-in space-y-6 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <h1 className="text-3xl font-black text-primary-900 tracking-tight">APPLICATIONS</h1>
+          <p className="text-gray-500 font-medium">
+            {filteredApplications.length} active records found
           </p>
-        </header>
-        <div className="flex gap-4">
-          <Link to="/analytics" className="btn btn-secondary">
-            <Icon name="bar-chart" size={16} />
-            Intelligence
-          </Link>
-          <Link to="/applications/new" className="btn btn-orange">
-            <Icon name="add" size={16} />
-            Initialize Record
+        </div>
+        <div className="flex gap-3">
+          <Link to="/applications/new" className="btn btn-primary bg-primary-600 hover:bg-primary-700 text-white shadow-lg shadow-primary-500/20">
+            <Icon name="add" size={18} className="mr-2" />
+            New Application
           </Link>
         </div>
       </div>
 
-      {/* Sticky Filter Bar */}
-      <div className="filter-bar">
-        <div className="relative">
+      {/* Toolbar */}
+      <div className="flex flex-col lg:flex-row gap-4 items-center bg-white dark:bg-zinc-900 p-4 rounded-xl border border-gray-200 dark:border-zinc-800 shadow-sm sticky top-4 z-10 backdrop-blur-xl bg-white/90 dark:bg-zinc-900/90 transition-colors">
+        {/* Search */}
+        <div className="relative flex-1 w-full">
+          <Icon name="search" size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 dark:text-gray-500" />
           <input
             type="text"
-            placeholder="Search applications (Enter to scan)..."
+            placeholder="Search companies, roles..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter') {
-                toast.success('Scanning complete')
-              }
-            }}
-            className="filter-bar__search"
+            className="w-full pl-10 pr-4 py-2 bg-gray-50 dark:bg-zinc-800 border border-gray-200 dark:border-zinc-700 rounded-lg focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-500 transition-all outline-none"
           />
-          <Icon name="search" size={18} className="absolute right-4 top-1/2 -translate-y-1/2 text-muted" />
         </div>
 
-        <div className="filter-bar__controls">
-          <div className="flex items-center gap-2 flex-wrap">
-            <span className="text-[10px] font-black text-muted uppercase tracking-widest mr-2">Protocol:</span>
-            {['Applied', 'Phone Screen', 'Technical Interview', 'Final Round', 'Offer', 'Rejected'].map(status => (
-              <button
-                key={status}
-                onClick={() => setStatusFilter(statusFilter === status ? 'all' : status)}
-                className={`filter-button ${statusFilter === status ? 'filter-button--active' : ''}`}
-              >
-                {status}
-              </button>
+        {/* Filters */}
+        <div className="flex gap-2 overflow-x-auto w-full lg:w-auto pb-2 lg:pb-0">
+          <select
+            value={statusFilter}
+            onChange={(e) => setStatusFilter(e.target.value)}
+            className="px-3 py-2 bg-gray-50 dark:bg-zinc-800 border border-gray-200 dark:border-zinc-700 rounded-lg text-sm font-medium focus:border-primary-500 text-gray-700 dark:text-gray-200 outline-none"
+          >
+            <option value="all">All Statuses</option>
+            {['Applied', 'Phone Screen', 'Technical Interview', 'Final Round', 'Offer', 'Rejected'].map(s => (
+              <option key={s} value={s}>{s}</option>
             ))}
-          </div>
+          </select>
 
-          <div className="h-6 w-px bg-border mx-2 hidden lg:block" />
+          <button
+            onClick={() => setVisaFilter(visaFilter === 'visa' ? 'all' : 'visa')}
+            className={`px-3 py-2 border rounded-lg text-sm font-medium transition-colors whitespace-nowrap ${visaFilter === 'visa'
+              ? 'bg-primary-50 dark:bg-primary-900/20 border-primary-200 dark:border-primary-700 text-primary-700 dark:text-primary-400'
+              : 'bg-gray-50 dark:bg-zinc-800 border-gray-200 dark:border-zinc-700 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-zinc-700'
+              }`}
+          >
+            Visa Only
+          </button>
 
-          <div className="flex items-center gap-2">
-            <span className="text-[10px] font-black text-muted uppercase tracking-widest mr-2">Residency:</span>
-            <button
-              onClick={() => setVisaFilter(visaFilter === 'visa' ? 'all' : 'visa')}
-              className={`filter-button ${visaFilter === 'visa' ? 'filter-button--active' : ''}`}
-            >
-              Visa Required
-            </button>
-            <button
-              onClick={() => setVisaFilter(visaFilter === 'no-visa' ? 'all' : 'no-visa')}
-              className={`filter-button ${visaFilter === 'no-visa' ? 'filter-button--active' : ''}`}
-            >
-              Local
-            </button>
-          </div>
+          <div className="h-6 w-px bg-gray-200 dark:bg-zinc-700 hidden lg:block" />
 
-          <div className="flex items-center gap-2">
-            <span className="text-[10px] font-black text-muted uppercase tracking-widest mr-2">Sort:</span>
-            <select
-              value={sortField}
-              onChange={(e) => setSortField(e.target.value as SortField)}
-              className="filter-button bg-transparent outline-none"
-            >
-              <option value="dateApplied">Applied Date</option>
-              <option value="company">Company</option>
-              <option value="role">Position</option>
-              <option value="status">Status</option>
-            </select>
-            <button
-              onClick={() => setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc')}
-              className="filter-button"
-              aria-label={`Sort ${sortOrder === 'asc' ? 'descending' : 'ascending'}`}
-            >
-              <Icon name={sortOrder === 'asc' ? 'arrow-up' : 'arrow-down'} size={14} />
-            </button>
-          </div>
-
-          <div className="ml-auto flex items-center gap-4">
-            {(searchQuery || statusFilter !== 'all' || visaFilter !== 'all') && (
-              <button onClick={clearFilters} className="text-xs font-bold text-primary-500 uppercase tracking-tight hover:underline">
-                Reset
-              </button>
-            )}
-            <div className="filter-count">
-              Showing {filteredApplications.length} of {applications.length} cases
-            </div>
-          </div>
+          {/* Sort */}
+          <select
+            value={sortField}
+            onChange={(e) => setSortField(e.target.value as SortField)}
+            className="px-3 py-2 bg-gray-50 dark:bg-zinc-800 border border-gray-200 dark:border-zinc-700 rounded-lg text-sm font-medium focus:border-primary-500 text-gray-700 dark:text-gray-200 outline-none"
+          >
+            <option value="dateApplied">App Date</option>
+            <option value="company">Company</option>
+            <option value="status">Status</option>
+          </select>
+          <button
+            onClick={() => setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc')}
+            className="p-2 text-gray-500 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 hover:bg-gray-50 dark:hover:bg-zinc-800 rounded-lg transition-colors border border-gray-200 dark:border-zinc-700"
+          >
+            <Icon name={sortOrder === 'asc' ? 'arrow-up' : 'arrow-down'} size={18} />
+          </button>
         </div>
-      </div>
 
-      {/* View Mode Toggle & Bulk Actions */}
-      <div className="flex flex-wrap items-center justify-between gap-4 mb-8">
-        <div className="flex items-center gap-3">
-          <span className="text-[10px] font-bold text-muted uppercase tracking-widest">View Mode</span>
-          <div className="flex bg-gray-100 dark:bg-gray-800 p-1 rounded-md">
+        {/* Batch Actions & View Mode */}
+        <div className="flex items-center gap-2 pl-4 border-l border-gray-200 dark:border-zinc-700 ml-auto">
+          {/* View Mode */}
+          <div className="flex bg-gray-100 dark:bg-zinc-800 p-0.5 rounded-lg mr-2">
             {(['cards', 'table', 'list'] as ViewMode[]).map(mode => (
               <button
                 key={mode}
                 onClick={() => setViewMode(mode)}
-                className={`flex items-center justify-center w-8 h-8 rounded transition-all ${viewMode === mode ? 'bg-white dark:bg-gray-700 shadow-sm text-primary-500' : 'text-text-secondary hover:text-text-primary'}`}
+                className={`p-1.5 rounded-md transition-all ${viewMode === mode ? 'bg-white dark:bg-zinc-700 shadow-sm text-primary-600 dark:text-primary-400' : 'text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300'}`}
               >
-                <Icon name={mode === 'cards' ? 'grid' : mode === 'table' ? 'table' : 'list'} size={14} />
+                <Icon name={mode === 'cards' ? 'grid' : mode === 'table' ? 'table' : 'list'} size={16} />
               </button>
             ))}
           </div>
-        </div>
 
-        {selectedApplications.size > 0 && (
-          <div className="flex items-center gap-3 animate-fade-in">
-            <span className="text-xs font-bold text-primary-500 px-3 py-1 bg-primary-50 dark:bg-primary-900/20 rounded-full border border-primary-100 dark:border-primary-900/30">
-              {selectedApplications.size} Selected
-            </span>
-            <select
-              onChange={(e) => e.target.value && handleBulkStatusUpdate(e.target.value)}
-              className="h-9 px-3 bg-white dark:bg-gray-800 border border-border rounded-md text-xs font-bold uppercase"
-              defaultValue=""
-            >
-              <option value="">Update Status</option>
-              {['Applied', 'Phone Screen', 'Technical Interview', 'Final Round', 'Offer', 'Rejected'].map(s => (
-                <option key={s} value={s}>{s}</option>
-              ))}
-            </select>
-            <button
-              onClick={handleBulkDelete}
-              className="w-9 h-9 flex items-center justify-center text-error hover:bg-error/10 rounded-md transition-colors border border-border"
-            >
-              <Icon name="delete" size={16} />
-            </button>
-          </div>
-        )}
+          {selectedApplications.size > 0 && (
+            <>
+              <span className="text-sm font-bold text-primary-600 whitespace-nowrap hidden sm:block">
+                {selectedApplications.size} Selected
+              </span>
+              <select
+                onChange={(e) => e.target.value && handleBulkStatusUpdate(e.target.value)}
+                className="h-9 px-3 bg-white border border-gray-200 rounded-lg text-sm font-medium focus:border-primary-500 outline-none"
+                defaultValue=""
+              >
+                <option value="">Status...</option>
+                {['Applied', 'Phone Screen', 'Technical Interview', 'Final Round', 'Offer', 'Rejected'].map(s => (
+                  <option key={s} value={s}>{s}</option>
+                ))}
+              </select>
+              <button
+                onClick={handleBulkDelete}
+                className="p-2 text-red-500 hover:bg-red-50 rounded-lg transition-colors border border-red-100"
+                title="Delete Selected"
+              >
+                <Icon name="delete" size={18} />
+              </button>
+            </>
+          )}
+        </div>
+      </div>
+
+      {/* Global Select All */}
+      <div className="flex items-center gap-2 px-2">
+        <label className="flex items-center gap-2 cursor-pointer text-sm font-medium text-gray-500 select-none">
+          <input
+            type="checkbox"
+            checked={selectedApplications.size === filteredApplications.length && filteredApplications.length > 0}
+            onChange={handleSelectAll}
+            className="w-4 h-4 rounded border-gray-300 text-primary-600 focus:ring-primary-500"
+          />
+          Select All Applications
+        </label>
       </div>
 
       {/* Applications Display */}
       {applications.length === 0 ? (
-        <div className="card py-32 text-center">
+        <div className="premium-card p-12 text-center">
           <div className="bg-gray-100 dark:bg-gray-800 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6">
             <Icon name="work" size={40} className="text-muted" />
           </div>
@@ -349,20 +340,20 @@ function Applications() {
           </Link>
         </div>
       ) : filteredApplications.length === 0 ? (
-        <div className="card py-24 text-center">
+        <div className="premium-card p-12 text-center">
           <div className="bg-gray-100 dark:bg-gray-800 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
             <Icon name="search" size={32} className="text-muted" />
           </div>
           <h3 className="text-lg font-bold text-primary mb-1 uppercase">No matches found</h3>
           <p className="text-secondary mb-6">Try adjusting your filters or search term.</p>
-          <button onClick={clearFilters} className="btn btn-ghost text-primary-500 font-black text-[10px] uppercase tracking-widest">
-            RESET PROTOCOLS
+          <button onClick={clearFilters} className="btn btn-ghost text-primary-500 font-bold text-xs uppercase tracking-widest">
+            Reset Filters
           </button>
         </div>
       ) : viewMode === 'cards' ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredApplications.map((application) => (
-            <div key={application.id} className="card flex flex-col group hover:border-primary-500 transition-all">
+            <div key={application.id} className="premium-card p-6 flex flex-col group hover:border-primary-500 hover:shadow-glow transition-all">
               <div className="flex items-start justify-between mb-4">
                 <div className="flex items-center gap-4">
                   <div className="w-12 h-12 bg-gray-900 text-white rounded flex items-center justify-center font-black text-xl">
@@ -415,7 +406,7 @@ function Applications() {
           ))}
         </div>
       ) : viewMode === 'table' ? (
-        <div className="card overflow-hidden">
+        <div className="premium-card overflow-hidden">
           <div className="table-container">
             <table className="table">
               <thead>
@@ -489,7 +480,7 @@ function Applications() {
       ) : (
         <div className="flex flex-col gap-3">
           {filteredApplications.map(application => (
-            <div key={application.id} className={`card flex items-center p-4 gap-4 hover:shadow-md transition-all ${selectedApplications.has(application.id) ? 'border-primary-500' : ''}`}>
+            <div key={application.id} className={`premium-card p-4 flex items-center gap-4 hover:shadow-md transition-all ${selectedApplications.has(application.id) ? 'border-primary-500' : ''}`}>
               <input
                 type="checkbox"
                 checked={selectedApplications.has(application.id)}

@@ -235,21 +235,21 @@ function Analytics() {
   }
 
   return (
-    <div className="animate-fade-in w-full pb-12">
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-0">
+    <div className="animate-fade-in w-full pb-12 max-w-7xl mx-auto p-6">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-8">
         <header className="page-header">
-          <h1 className="text-3xl font-black text-primary tracking-tighter uppercase page-header__title">Intelligence</h1>
-          <p className="text-secondary font-medium tracking-tight page-header__subtitle">Quantifying your pursuit of excellence</p>
+          <h1 className="heading-xl">Analytics</h1>
+          <p className="text-text-secondary font-medium">Track your application performance and stats</p>
         </header>
 
         {/* Modern Timeframe Switcher & Export */}
-        <div className="flex items-center gap-spacing-3">
+        <div className="flex items-center gap-4">
           <button
             onClick={() => exportIntelligenceReport(applications, analyticsData!, selectedTimeframe)}
-            className="btn btn-secondary flex items-center gap-2 text-[10px] font-black uppercase tracking-widest px-4 py-2"
+            className="flex items-center gap-2 text-xs font-bold text-primary-600 hover:text-primary-700 uppercase tracking-wide px-4 py-2"
           >
-            <Icon name="download" size={14} />
-            Export Intel
+            <Icon name="download" size={16} />
+            Export Data
           </button>
 
           <div className="flex bg-surface-3 p-1 rounded-lg border border-border-light">
@@ -272,22 +272,22 @@ function Analytics() {
       </div>
 
       {!analyticsData ? (
-        <div className="bg-surface-1 border border-dashed border-border-medium rounded-xl p-20 text-center shadow-card">
-          <div className="w-16 h-16 bg-surface-2 rounded-full flex items-center justify-center mx-auto mb-6 text-muted">
+        <div className="premium-card p-20 text-center">
+          <div className="w-16 h-16 bg-bg-subtle rounded-full flex items-center justify-center mx-auto mb-6 text-text-secondary">
             <Icon name="pie-chart" size={32} />
           </div>
-          <h3 className="text-lg font-black text-primary mb-2 uppercase">Insufficient Intelligence Data</h3>
-          <p className="text-secondary max-w-xs mx-auto font-medium">Start tracking applications to generate architectural insights.</p>
+          <h3 className="text-lg font-bold text-text-primary mb-2">Not Enough Data</h3>
+          <p className="text-text-secondary max-w-xs mx-auto font-medium">Start tracking applications to see your insights here.</p>
         </div>
       ) : (
-        <div className="flex flex-col gap-spacing-4">
+        <div className="flex flex-col gap-8">
           {/* Top Metrics Row */}
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-spacing-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             {[
-              { label: 'Pipeline Volume', value: analyticsData.totalApplications, icon: 'work', trend: 'neutral' },
-              { label: 'Interview Velocity', value: `${analyticsData.performanceMetrics.interviewRate}%`, icon: 'bolt', trend: 'up' },
-              { label: 'Success Quotient', value: `${analyticsData.performanceMetrics.offerRate}%`, icon: 'check', trend: 'up' },
-              { label: 'Weekly Intensity', value: analyticsData.performanceMetrics.avgPerWeek, icon: 'trending-up', trend: 'neutral' }
+              { label: 'Total Applications', value: analyticsData.totalApplications, icon: 'work', trend: 'neutral' },
+              { label: 'Interview Rate', value: `${analyticsData.performanceMetrics.interviewRate}%`, icon: 'bolt', trend: 'up' },
+              { label: 'Success Rate', value: `${analyticsData.performanceMetrics.offerRate}%`, icon: 'check', trend: 'up' },
+              { label: 'Apps per Week', value: analyticsData.performanceMetrics.avgPerWeek, icon: 'trending-up', trend: 'neutral' }
             ].map((stat, i) => (
               <StatCard
                 key={i}
@@ -299,16 +299,15 @@ function Analytics() {
             ))}
           </div>
 
-          {/* Core Analytics V3 - Conversion Engine */}
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-spacing-4">
+          {/* Charts Row 1 */}
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             {/* Conversion Funnel */}
-            <div className="card lg:col-span-2 h-[450px] flex flex-col p-spacing-4">
-              <div className="flex justify-between items-center mb-spacing-5">
-                <h3 className="text-xs font-black text-primary uppercase tracking-widest flex items-center gap-2">
-                  <Icon name="bolt" size={16} className="text-primary-500" />
-                  Conversion Pipeline Funnel
+            <div className="premium-card lg:col-span-2 h-[450px] flex flex-col p-8">
+              <div className="flex justify-between items-center mb-8">
+                <h3 className="text-sm font-bold text-text-primary flex items-center gap-2">
+                  <Icon name="bolt" size={18} className="text-primary-600" />
+                  Application Funnel
                 </h3>
-                <span className="text-[10px] font-black text-muted uppercase tracking-widest">Protocol V3.0</span>
               </div>
               <div className="flex-1 w-full">
                 <ResponsiveContainer width="100%" height="100%">
@@ -319,16 +318,17 @@ function Analytics() {
                       type="category"
                       axisLine={false}
                       tickLine={false}
-                      tick={{ fontSize: 10, fontWeight: 900, fill: 'var(--text-secondary)' }}
+                      tick={{ fontSize: 11, fontWeight: 600, fill: 'var(--text-secondary)' }}
                       width={120}
                     />
                     <Tooltip
-                      cursor={{ fill: 'var(--surface-2)' }}
-                      contentStyle={{ background: 'var(--surface-1)', borderRadius: '8px', border: '1px solid var(--border-light)', fontSize: '11px', fontWeight: 700 }}
+                      cursor={{ fill: 'var(--bg-subtle)' }}
+                      contentStyle={{ background: 'var(--bg-surface)', borderRadius: '12px', border: '1px solid var(--border-subtle)', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }}
+                      itemStyle={{ color: 'var(--text-primary)', fontWeight: 600 }}
                     />
                     <Bar dataKey="value" radius={[0, 4, 4, 0]} barSize={40}>
                       {analyticsData.funnelData.map((_, index) => (
-                        <Cell key={`cell-${index}`} fill={index === 0 ? 'var(--gray-200)' : index === 1 ? 'var(--info)' : index === 2 ? 'var(--warning)' : 'var(--success)'} />
+                        <Cell key={`cell-${index}`} fill={index === 0 ? 'var(--gray-300)' : index === 1 ? 'var(--info)' : index === 2 ? 'var(--warning)' : 'var(--success)'} />
                       ))}
                     </Bar>
                   </BarChart>
@@ -336,11 +336,11 @@ function Analytics() {
               </div>
             </div>
 
-            {/* Residency & Role Context */}
-            <div className="flex flex-col gap-spacing-4 lg:col-span-1">
-              {/* Residency Distribution */}
-              <div className="card flex-1 flex flex-col p-spacing-4 overflow-hidden">
-                <h3 className="text-[10px] font-black text-primary uppercase tracking-widest mb-spacing-3">Residency Matrix</h3>
+            {/* Context Cards */}
+            <div className="flex flex-col gap-8 lg:col-span-1">
+              {/* Visa Breakdown */}
+              <div className="premium-card flex-1 flex flex-col p-8 overflow-hidden">
+                <h3 className="text-sm font-bold text-text-primary mb-4">Visa Requirements</h3>
                 <div className="flex-1 flex items-center justify-center relative">
                   <ResponsiveContainer width="100%" height="100%">
                     <PieChart>
@@ -355,28 +355,28 @@ function Analytics() {
                           <Cell key={`cell-${index}`} fill={entry.color} stroke="none" />
                         ))}
                       </Pie>
-                      <Tooltip contentStyle={{ fontSize: '11px', fontWeight: 700 }} />
+                      <Tooltip contentStyle={{ borderRadius: '8px', fontSize: '12px' }} />
                     </PieChart>
                   </ResponsiveContainer>
                   <div className="absolute flex flex-col items-center justify-center pointer-events-none">
-                    <span className="text-xl font-black text-primary leading-none">{analyticsData.visaSponsorshipRate}%</span>
-                    <span className="text-[8px] font-black text-muted uppercase tracking-tighter">Sponsor</span>
+                    <span className="text-2xl font-black text-text-primary leading-none">{analyticsData.visaSponsorshipRate}%</span>
+                    <span className="text-[10px] font-bold text-text-secondary uppercase tracking-wide mt-1">Sponsorship</span>
                   </div>
                 </div>
               </div>
 
-              {/* Top Roles */}
-              <div className="card flex-1 p-spacing-4">
-                <h3 className="text-[10px] font-black text-primary uppercase tracking-widest mb-spacing-3">Target Sectors</h3>
+              {/* Roles */}
+              <div className="premium-card flex-1 p-8">
+                <h3 className="text-sm font-bold text-text-primary mb-4">Top Roles</h3>
                 <div className="space-y-3">
                   {analyticsData.roleBreakdown.slice(0, 3).map((role, i) => (
                     <div key={i} className="flex justify-between items-center group">
-                      <span className="text-[11px] font-bold text-secondary truncate mr-2">{role.name}</span>
+                      <span className="text-xs font-medium text-text-secondary truncate mr-2">{role.name}</span>
                       <div className="flex items-center gap-2">
-                        <div className="h-1.5 bg-gray-100 rounded-full w-20 overflow-hidden">
+                        <div className="h-1.5 bg-gray-100 dark:bg-zinc-800 rounded-full w-20 overflow-hidden">
                           <div className="h-full bg-primary-500" style={{ width: `${(role.count / analyticsData.totalApplications) * 100}%` }} />
                         </div>
-                        <span className="text-[10px] font-black text-primary w-4">{role.count}</span>
+                        <span className="text-xs font-bold text-text-primary w-4">{role.count}</span>
                       </div>
                     </div>
                   ))}
@@ -385,31 +385,31 @@ function Analytics() {
             </div>
           </div>
 
-          {/* Temporal Status Segmentation */}
-          <div className="card h-[450px] flex flex-col p-spacing-4">
-            <div className="flex justify-between items-center mb-spacing-5">
-              <h3 className="text-xs font-black text-primary uppercase tracking-widest flex items-center gap-2">
-                <Icon name="trending-up" size={16} className="text-primary-500" />
-                Temporal Status Architecture
+          {/* Trends Chart */}
+          <div className="premium-card h-[450px] flex flex-col p-8">
+            <div className="flex justify-between items-center mb-8">
+              <h3 className="text-sm font-bold text-text-primary flex items-center gap-2">
+                <Icon name="trending-up" size={18} className="text-primary-600" />
+                Application Activity Over Time
               </h3>
             </div>
             <div className="flex-1 w-full">
               <ResponsiveContainer width="100%" height="100%">
                 <AreaChart data={analyticsData.statusTrend}>
-                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--border-light)" />
+                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--border-subtle)" />
                   <XAxis
                     dataKey="name"
                     axisLine={false}
                     tickLine={false}
-                    tick={{ fontSize: 10, fontWeight: 800, fill: 'var(--text-muted)' }}
+                    tick={{ fontSize: 11, fontWeight: 600, fill: 'var(--text-secondary)' }}
                   />
                   <YAxis
                     axisLine={false}
                     tickLine={false}
-                    tick={{ fontSize: 10, fontWeight: 800, fill: 'var(--text-muted)' }}
+                    tick={{ fontSize: 11, fontWeight: 600, fill: 'var(--text-secondary)' }}
                   />
-                  <Tooltip contentStyle={{ background: 'var(--surface-1)', borderRadius: '8px', border: '1px solid var(--border-light)', fontSize: '11px', fontWeight: 700 }} />
-                  <Legend iconType="circle" wrapperStyle={{ fontSize: 10, fontWeight: 900, textTransform: 'uppercase', letterSpacing: '0.1em', paddingTop: 20 }} />
+                  <Tooltip contentStyle={{ background: 'var(--bg-surface)', borderRadius: '12px', border: '1px solid var(--border-subtle)', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }} />
+                  <Legend iconType="circle" wrapperStyle={{ fontSize: 11, fontWeight: 600, paddingTop: 20 }} />
                   <Area type="monotone" dataKey="Applied" stackId="1" stroke="var(--info)" fill="var(--info)" fillOpacity={0.4} />
                   <Area type="monotone" dataKey="Interview" stackId="1" stroke="var(--warning)" fill="var(--warning)" fillOpacity={0.4} />
                   <Area type="monotone" dataKey="Offer" stackId="1" stroke="var(--success)" fill="var(--success)" fillOpacity={0.4} />
@@ -419,43 +419,56 @@ function Analytics() {
             </div>
           </div>
 
-          {/* Bottom Insights Row */}
+          {/* Bottom Row */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            {/* Top Companies List */}
-            <div className="lg:col-span-1 card">
-              <h3 className="text-[10px] font-black text-muted uppercase tracking-[0.2em] mb-8">Target Networks</h3>
-              <div className="space-y-6">
+            {/* Top Companies */}
+            <div className="lg:col-span-1 premium-card p-6">
+              <h3 className="text-sm font-bold text-gray-900 dark:text-white mb-6">Top Companies</h3>
+              <div className="space-y-3">
                 {analyticsData.topCompanies.map((c, i) => (
-                  <div key={i} className="flex justify-between items-center group">
-                    <div className="flex items-center gap-4">
-                      <div className="w-8 h-8 rounded bg-surface-2 flex items-center justify-center text-[10px] font-black text-muted group-hover:bg-primary-500 group-hover:text-white transition-all">0{i + 1}</div>
-                      <span className="text-sm font-bold text-primary">{c.name}</span>
+                  <div key={i} className="flex justify-between items-center group p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-zinc-800/50 transition-colors border border-transparent hover:border-gray-100 dark:hover:border-zinc-800">
+                    <div className="flex items-center gap-3">
+                      <div className="w-6 h-6 rounded bg-gray-100 dark:bg-zinc-800 flex items-center justify-center text-[10px] font-bold text-gray-500 dark:text-gray-400">0{i + 1}</div>
+                      <span className="text-sm font-medium text-gray-700 dark:text-gray-300">{c.name}</span>
                     </div>
-                    <span className="text-xs font-black text-primary bg-surface-3 px-3 py-1 rounded-full">{c.count}</span>
+                    <span className="text-xs font-bold text-primary-600 bg-primary-50 dark:bg-primary-900/20 px-2 py-1 rounded-md">{c.count}</span>
                   </div>
                 ))}
               </div>
             </div>
 
-            {/* Strategic Advice */}
-            <div className="lg:col-span-2 bg-surface-contrast rounded-lg p-10 shadow-elevated relative overflow-hidden group">
-              <div className="absolute top-0 right-0 p-8 opacity-10 group-hover:opacity-20 transition-opacity">
-                <Icon name="bolt" size={120} className="text-primary-500" />
+            {/* Insights / Recommendations - Professional Style */}
+            <div className="lg:col-span-2 premium-card p-8 flex flex-col justify-center relative overflow-hidden">
+              <div className="absolute top-0 right-0 p-6 opacity-5">
+                <Icon name="bolt" size={100} className="text-primary-500" />
               </div>
+
               <div className="relative z-10">
-                <h3 className="text-primary-500 text-[10px] font-black uppercase tracking-[0.4em] mb-4">Strategic Protocol</h3>
-                <h4 className="text-2xl font-black text-on-contrast mb-8 leading-tight">
+                <div className="flex items-center gap-2 mb-4">
+                  <div className="p-2 rounded-full bg-primary-100 dark:bg-primary-900/30 text-primary-600">
+                    <Icon name="lightbulb" size={18} />
+                  </div>
+                  <h3 className="text-sm font-bold text-gray-900 dark:text-white uppercase tracking-wide">AI Recommendations</h3>
+                </div>
+
+                <h4 className="text-xl font-medium text-gray-800 dark:text-gray-200 mb-6 leading-relaxed max-w-2xl">
                   {analyticsData.responseRate > 40
-                    ? "High-Performance Vector Detected. Maintain current material strategy and scale outreach volume."
-                    : "Optimization Required. Velocity below benchmark. Analyze resume-market fit and refine your narrative."}
+                    ? "Your response rate is strong. Focus on interview preparation and salary negotiation tactics to maximize your conversion rate."
+                    : "Response rate is below market average. We recommend refining your resume keywords and targeting roles that better match your core skills."}
                 </h4>
+
                 <div className="flex gap-4">
-                  <button className="bg-primary-500 hover:bg-primary-600 text-on-contrast px-8 py-3 rounded font-black text-[10px] uppercase tracking-widest transition-all">
-                    Download Audit
+                  <button
+                    onClick={() => exportIntelligenceReport(applications, analyticsData!, selectedTimeframe)}
+                    className="btn-primary flex items-center gap-2"
+                  >
+                    <Icon name="download" size={16} />
+                    Download Report
                   </button>
-                  <button className="bg-transparent border border-border-medium hover:border-surface-contrast text-on-contrast px-8 py-3 rounded font-black text-[10px] uppercase tracking-widest transition-all">
-                    View Benchmarks
-                  </button>
+                  {/* Placeholder for future action */}
+                  {/* <button className="px-4 py-2 text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors">
+                      View Insights
+                    </button> */}
                 </div>
               </div>
             </div>

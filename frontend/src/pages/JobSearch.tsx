@@ -65,41 +65,41 @@ function JobSearch() {
                 createdAt: serverTimestamp(),
                 updatedAt: serverTimestamp()
             })
-            toast.success('Target Acquired: Application Record Created')
+            toast.success('Application saved!')
         } catch (error) {
             toast.error('Failed to save target.')
         }
     }
 
     return (
-        <div className="max-w-6xl mx-auto animate-fade-in font-primary">
+        <div className="max-w-6xl mx-auto animate-fade-in font-primary p-6">
             <header className="mb-12 text-center">
-                <h1 className="text-4xl font-black text-primary mb-2 uppercase tracking-tighter">
-                    Global Job Intelligence
+                <h1 className="heading-xl mb-2">
+                    Job Search
                 </h1>
-                <p className="text-secondary font-medium tracking-tight uppercase text-xs">
-                    Scan global networks for open positions
+                <p className="text-text-secondary font-medium">
+                    Search across thousands of job boards to find your next role
                 </p>
             </header>
 
-            <div className="max-w-2xl mx-auto mb-16">
+            <div className="max-w-2xl mx-auto mb-12">
                 <form onSubmit={handleSearch} className="relative group">
                     <input
                         type="text"
                         value={query}
                         onChange={(e) => setQuery(e.target.value)}
-                        placeholder="Ex: React Developer Remote"
-                        className="w-full h-16 bg-surface-2 border-2 border-border-light focus:border-primary-orange px-6 pr-16 text-lg font-bold outline-none transition-all shadow-sm group-hover:shadow-md"
+                        placeholder="e.g. React Developer Remote"
+                        className="w-full h-14 bg-white dark:bg-zinc-900 border border-border-subtle focus:border-primary-500 rounded-full px-6 pr-14 text-base font-medium outline-none transition-all shadow-sm focus:shadow-md focus:ring-2 focus:ring-primary-500/10 placeholder:text-text-muted"
                     />
                     <button
                         type="submit"
                         disabled={loading}
-                        className="absolute right-2 top-2 h-12 w-12 bg-primary-orange text-white flex items-center justify-center hover:bg-primary-orange/90 transition-colors disabled:opacity-50"
+                        className="absolute right-1.5 top-1.5 h-11 w-11 bg-primary-600 text-white rounded-full flex items-center justify-center hover:bg-primary-700 transition-colors disabled:opacity-50 shadow-md"
                     >
                         {loading ? (
                             <div className="animate-spin rounded-full h-5 w-5 border-2 border-white/30 border-t-white" />
                         ) : (
-                            <Icon name="search" size={24} />
+                            <Icon name="search" size={20} />
                         )}
                     </button>
                 </form>
@@ -107,34 +107,34 @@ function JobSearch() {
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {results.map((job) => (
-                    <div key={job.job_id} className="card group hover:border-primary-orange transition-all flex flex-col h-full">
-                        <div className="card-body p-6 flex flex-col flex-1">
+                    <div key={job.job_id} className="premium-card group hover:border-primary-500/50 transition-all flex flex-col h-full hover:shadow-lg">
+                        <div className="p-6 flex flex-col flex-1">
                             <div className="flex justify-between items-start mb-4">
-                                <div className="w-12 h-12 bg-surface-3 rounded flex items-center justify-center overflow-hidden">
+                                <div className="w-12 h-12 bg-bg-subtle rounded-lg flex items-center justify-center overflow-hidden border border-border-subtle">
                                     {job.employer_logo ? (
                                         <img src={job.employer_logo} alt={job.employer_name} className="w-full h-full object-contain" />
                                     ) : (
-                                        <span className="font-black text-xl text-muted">{job.employer_name.charAt(0)}</span>
+                                        <span className="font-bold text-xl text-text-secondary">{job.employer_name.charAt(0)}</span>
                                     )}
                                 </div>
                                 {job.job_is_remote && (
-                                    <span className="badge bg-primary-green/10 text-primary-green border-primary-green/20">Remote</span>
+                                    <span className="badge badge-success">Remote</span>
                                 )}
                             </div>
 
-                            <h3 className="text-lg font-bold text-primary mb-1 uppercase leading-tight line-clamp-2">
+                            <h3 className="text-lg font-bold text-text-primary mb-1 line-clamp-2">
                                 {job.job_title}
                             </h3>
-                            <p className="text-xs text-primary-orange font-black uppercase tracking-widest mb-4">
+                            <p className="text-xs text-text-secondary font-bold uppercase tracking-wide mb-4">
                                 {job.employer_name}
                             </p>
 
-                            <p className="text-xs text-secondary line-clamp-4 leading-relaxed mb-6 flex-1">
+                            <p className="text-xs text-text-secondary line-clamp-4 leading-relaxed mb-6 flex-1">
                                 {job.job_description}
                             </p>
 
-                            <div className="flex items-center justify-between pt-4 border-t border-border-light mt-auto">
-                                <span className="text-[10px] font-bold text-muted uppercase">
+                            <div className="flex items-center justify-between pt-4 border-t border-border-subtle mt-auto">
+                                <span className="text-xs font-medium text-text-muted">
                                     {job.job_city ? `${job.job_city}, ` : ''}{job.job_country}
                                 </span>
                                 <div className="flex gap-2">
@@ -142,15 +142,15 @@ function JobSearch() {
                                         href={job.job_apply_link}
                                         target="_blank"
                                         rel="noopener noreferrer"
-                                        className="p-2 text-muted hover:text-primary transition-colors"
+                                        className="p-2 text-text-secondary hover:text-primary-600 transition-colors rounded-lg hover:bg-bg-subtle"
                                         title="View Original"
                                     >
                                         <Icon name="visibility" size={18} />
                                     </a>
                                     <button
                                         onClick={() => handleSaveJob(job)}
-                                        className="p-2 text-muted hover:text-primary-orange transition-colors"
-                                        title="Add to Pipeline"
+                                        className="p-2 text-text-secondary hover:text-primary-600 transition-colors rounded-lg hover:bg-bg-subtle"
+                                        title="Save Application"
                                     >
                                         <Icon name="add" size={18} />
                                     </button>
@@ -162,9 +162,12 @@ function JobSearch() {
             </div>
 
             {!loading && results.length === 0 && query && (
-                <div className="text-center py-12 text-muted">
-                    <Icon name="warning" size={32} className="mx-auto mb-4 opacity-50" />
-                    <p className="uppercase text-xs font-bold tracking-widest">No signals detected</p>
+                <div className="premium-card p-12 text-center">
+                    <div className="w-16 h-16 bg-bg-subtle rounded-full flex items-center justify-center mx-auto mb-4 text-text-muted">
+                        <Icon name="search" size={32} />
+                    </div>
+                    <h3 className="text-lg font-bold text-text-primary mb-1">No jobs found</h3>
+                    <p className="text-text-secondary">Try adjusting your search terms or location</p>
                 </div>
             )}
         </div>

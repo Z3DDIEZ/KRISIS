@@ -5,32 +5,41 @@
 /* ========================================
    TOP NAVBAR SHELL
    ======================================== */
+/* ========================================
+   TOP NAVBAR SHELL
+   ======================================== */
 .topnav {
     position: fixed;
     top: 0;
     left: 0;
     right: 0;
     height: 64px;
-    background: var(--background-white);
-    border-bottom: 1px solid var(--border-light);
+    background: var(--bg-surface);
+    /* Use semantic token */
+    border-bottom: 1px solid var(--border);
     z-index: 100;
+    /* Glassmorphism if supported, falling back to decent opacity */
     backdrop-filter: blur(12px);
-    background: rgba(var(--background-white-rgb, 255, 255, 255), 0.92);
+    background: rgba(255, 255, 255, 0.95);
 }
 
 [data-theme="dark"] .topnav {
-    background: rgba(30, 30, 30, 0.95);
+    background: rgba(23, 23, 23, 0.95);
+    /* Matches zinc-900 approx */
+    border-bottom: 1px solid var(--border);
 }
 
 .topnav__container {
     display: flex;
     align-items: center;
+    /* Use grid behavior or specific justification */
     justify-content: space-between;
     height: 100%;
     max-width: 1600px;
     margin: 0 auto;
-    padding: 0 var(--spacing-lg);
-    gap: var(--spacing-xl);
+    padding: 0 var(--spacing-4);
+    /* Reduced padding for more space */
+    gap: var(--spacing-4);
 }
 
 /* ========================================
@@ -41,10 +50,10 @@
     align-items: center;
     gap: var(--spacing-sm);
     text-decoration: none;
+    /* Hide on desktop if sidebar is present, but keep layout stable */
+    min-width: 200px;
+    /* Reserve space if needed, or hide completely */
     display: none;
-    align-items: center;
-    gap: var(--spacing-sm);
-    text-decoration: none;
 }
 
 @media (max-width: 1023px) {
@@ -74,10 +83,13 @@
 /* SEARCH BAR */
 .topnav__search {
     flex: 1;
-    max-width: 600px;
+    max-width: 480px;
+    /* Tighter width for cleaner look */
     position: relative;
     display: flex;
     align-items: center;
+    margin: 0 auto;
+    /* Center in the available space */
 }
 
 .topnav__search-input {
