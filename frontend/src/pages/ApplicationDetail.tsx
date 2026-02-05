@@ -9,9 +9,12 @@ import {
   collection,
   serverTimestamp
 } from 'firebase/firestore'
-import { auth, db } from '../lib/firebase'
+import { auth, db, functions } from '../lib/firebase'
 import { getTodayDate } from '../lib/dateUtils'
 import Icon from '../components/ui/Icon'
+import { extractTextFromPDF } from '../utils/pdfHelpers'
+import { httpsCallable } from 'firebase/functions'
+import { toast } from 'sonner'
 
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -57,7 +60,62 @@ function ApplicationDetail() {
   })
 
   const [isLoading, setIsLoading] = useState(id && id !== 'new')
+  const [resumeText, setResumeText] = useState<string>('')
+  const [analyzing, setAnalyzing] = useState(false)
+  const [analysisResult, setAnalysisResult] = useState<any>(null)
+
   const formData = watch()
+
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+
+    if (file.type !== 'application/pdf') {
+      toast.error('Tactical Error: Only PDF files are supported.')
+      return
+    }
+
+    try {
+      const text = await extractTextFromPDF(file)
+      setResumeText(text)
+      toast.success('Resume data extracted successfully.')
+    } catch (error) {
+      toast.error('Failed to parse resume PDF.')
+    }
+  }
+
+  const handleAnalyze = async (e: React.MouseEvent) => {
+    e.preventDefault()
+    if (!resumeText) {
+      toast.error('Missing Resume: Upload a PDF first.')
+      return
+    }
+    // For now we use the 'notes' field as Job Description if Role is vague, 
+    // but ideally we'd have a separate JD field. 
+    // Let's assume the user puts the JD in "Notes" for now or we prompt them.
+    // Actually, let's use the Role + Company as a minimal JD if Notes is short.
+    const jobDescription = formData.notes.length > 50
+      ? formData.notes
+      : `Role: ${formData.role} at ${formData.company}.`
+
+    setAnalyzing(true)
+    try {
+      const analyzeFn = httpsCallable(functions, 'analyzeResume')
+      const result: any = await analyzeFn({ resumeText, jobDescription })
+
+      if (result.data.success) {
+        setAnalysisResult(result.data.data)
+        toast.success('Analysis complete.')
+      } else {
+        throw new Error('Analysis returned failure.')
+      }
+    } catch (error: any) {
+      console.error("Analysis Error:", error)
+      toast.error(`Analysis failed: ${error.message}`)
+    } finally {
+      setAnalyzing(false)
+    }
+  }
 
   // Load existing application data
   useEffect(() => {
@@ -313,13 +371,6 @@ function ApplicationDetail() {
           {/* Form Actions */}
           <div className="card-footer flex justify-end gap-spacing-3 pt-spacing-4 border-t border-border-light mt-spacing-4">
             <button
-              type="button"
-              onClick={() => navigate('/applications')}
-              className="btn btn-secondary px-8 h-12 rounded-none font-black uppercase text-[10px] tracking-[0.2em]"
-            >
-              Abort
-            </button>
-            <button
               type="submit"
               disabled={hookIsSubmitting || !isDirty}
               className="btn btn-primary px-10 h-12 rounded-none font-black uppercase text-[10px] tracking-[0.2em] bg-primary-orange text-white hover:brightness-110 disabled:grayscale disabled:opacity-50 transition-all shadow-lg"
@@ -329,8 +380,123 @@ function ApplicationDetail() {
           </div>
         </div>
       </form>
-    </div>
-  )
+
+      {/* AI Analysis Section (Only for existing applications or if resume is added) */}
+      <div className="card mt-xl border border-border-light shadow-lg animate-fade-in delay-100">
+        <div className="card-header border-b border-border-light bg-surface-2/50 flex justify-between items-center">
+          <h3 className="card-title flex items-center gap-2 text-primary">
+            <Icon name="technical" size={20} className="text-primary-orange" />
+            Resume Compatibility Analysis
+          </h3>
+          {resumeText && !analyzing && !analysisResult && (
+            <button
+              onClick={handleAnalyze}
+              className="btn btn--sm btn--orange font-black uppercase tracking-widest text-[10px]"
+            >
+              Run Analysis
+            </button>
+          )}
+        </div>
+        <div className="card-body p-spacing-6">
+          {/* File Upload Area */}
+          <div className="mb-lg">
+            <label className="block text-xs font-black uppercase tracking-widest text-muted mb-3">
+              Resume Source File (PDF Only)
+            </label>
+            <div className="flex items-center gap-4">
+              <label className="btn btn--secondary cursor-pointer relative overflow-hidden">
+                <input
+                  type="file"
+                  accept=".pdf"
+                  onChange={handleFileChange}
+                  className="absolute inset-0 opacity-0 cursor-pointer"
+                />
+                <span className="flex items-center gap-2">
+                  <Icon name="upload" size={16} />
+                  {resumeText ? 'Replace File' : 'Upload Resume'}
+                </span>
+              </label>
+              {resumeText && (
+                <div className="flex items-center gap-2 text-primary-green">
+                  <Icon name="check_circle" size={16} />
+                  <span className="text-xs font-bold uppercase">Resume Parsed Successfully</span>
+                </div>
+              )}
+            </div>
+            <p className="text-[10px] text-secondary mt-2 opacity-70">
+              Upload your resume to unlock AI-driven compatibility scoring and improvement suggestions.
+            </p>
+          </div>
+
+          {/* Analysis Loading State */}
+          {analyzing && (
+            <div className="py-12 flex flex-col items-center justify-center text-center">
+              <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-primary-orange mb-4"></div>
+              <p className="text-xs font-black uppercase tracking-widest text-primary animate-pulse">Running Neural Diagnostics...</p>
+              <p className="text-[10px] text-muted mt-2">Comparing skillset vectors against role requirements</p>
+            </div>
+          )}
+
+          {/* Analysis Results */}
+          {analysisResult && !analyzing && (
+            <div className="animate-fade-in">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                {/* Score Card */}
+                <div className="p-6 bg-surface-2 rounded-xl border border-border-light flex flex-col items-center justify-center text-center relative overflow-hidden">
+                  <div className={`text-5xl font-black mb-2 ${analysisResult.fitScore >= 70 ? 'text-primary-green' : analysisResult.fitScore >= 40 ? 'text-yellow-500' : 'text-primary-red'}`}>
+                    {analysisResult.fitScore}%
+                  </div>
+                  <div className="text-[10px] font-black uppercase tracking-[0.2em] text-muted">Compatibility Score</div>
+                  <div className={`absolute bottom-0 left-0 h-1 w-full ${analysisResult.fitScore >= 70 ? 'bg-primary-green' : analysisResult.fitScore >= 40 ? 'bg-yellow-500' : 'bg-primary-red'}`}></div>
+                </div>
+
+                {/* Missing Keywords */}
+                <div className="md:col-span-2 p-6 bg-surface-2 rounded-xl border border-border-light">
+                  <h4 className="text-xs font-black uppercase tracking-widest text-primary mb-4 flex items-center gap-2">
+                    <Icon name="warning" size={14} className="text-primary-orange" />
+                    Missing Critical Keywords
+                  </h4>
+                  <div className="flex flex-wrap gap-2">
+                    {analysisResult.missingKeywords.length > 0 ? (
+                      analysisResult.missingKeywords.map((keyword: string, idx: number) => (
+                        <span key={idx} className="px-3 py-1 bg-surface-1 border border-border-light rounded text-xs font-medium text-secondary">
+                          {keyword}
+                        </span>
+                      ))
+                    ) : (
+                      <span className="text-xs text-secondary italic">No critical keywords missing. Excellent match!</span>
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                {/* Analysis Text */}
+                <div>
+                  <h4 className="text-xs font-black uppercase tracking-widest text-primary mb-3">Diagnostic Report</h4>
+                  <p className="text-sm text-secondary leading-relaxed p-4 bg-surface-2 rounded-lg border border-border-light">
+                    {analysisResult.matchAnalysis}
+                  </p>
+                </div>
+
+                {/* Improvements */}
+                <div>
+                  <h4 className="text-xs font-black uppercase tracking-widest text-primary mb-3">Optimization Tactics</h4>
+                  <ul className="space-y-2">
+                    {analysisResult.suggestedImprovements.map((tip: string, idx: number) => (
+                      <li key={idx} className="flex items-start gap-3 p-3 bg-surface-2 rounded border border-border-light/50">
+                        <Icon name="bolt" size={14} className="text-primary-yellow mt-0.5 shrink-0" />
+                        <span className="text-xs text-secondary">{tip}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+      )
 }
 
-export default ApplicationDetail
+      export default ApplicationDetail

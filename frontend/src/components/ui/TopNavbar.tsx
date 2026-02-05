@@ -120,6 +120,16 @@ function TopNavbar({ onSearchChange, searchPlaceholder = 'Search applications...
 
                 {/* Actions */}
                 <div className="topnav__actions">
+                    {/* Job Search - External */}
+                    <Link
+                        to="/jobs"
+                        className="topnav__action-btn bezel-icon text-secondary hover:text-primary hover:bg-surface-2 mr-2"
+                        title="Search Job Market"
+                        data-track-action="job-search"
+                    >
+                        <Icon name="search" size={20} />
+                    </Link>
+
                     {/* Quick Add Button - Now Icon Only as requested */}
                     <Link
                         to="/applications/new"

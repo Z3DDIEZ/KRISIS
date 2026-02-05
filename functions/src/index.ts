@@ -2,6 +2,7 @@ import { onCall, HttpsError } from "firebase-functions/v2/https";
 import * as logger from "firebase-functions/logger";
 import * as admin from "firebase-admin";
 import { GeminiService } from "./services/gemini";
+import { JSearchService } from "./services/jsearch";
 import { assertAuthenticated } from "./middleware/auth";
 
 // Initialize Firebase Admin (if not already initialized)
@@ -74,5 +75,54 @@ export const analyzeResume = onCall({
     } catch (error) {
         logger.error("Analysis Failed", { userId, error });
         throw new HttpsError("internal", "AI Analysis failed to complete.");
+    }
+});
+
+export const searchJobs = onCall({
+    region: "africa-south1",
+    maxInstances: 10,
+    cors: true,
+}, async (request) => {
+    // 1. Auth Check
+    const userId = assertAuthenticated(request);
+
+    // 2. Rate Limit (Simple Daily Counter)
+    const today = new Date().toISOString().split('T')[0];
+    const counterRef = db.doc(`users/${userId}/counters/dailyJobSearch`);
+
+    try {
+        await db.runTransaction(async (t) => {
+            const doc = await t.get(counterRef);
+            const data = doc.data() || { count: 0, date: today };
+
+            if (data.date !== today) { data.count = 0; data.date = today; }
+
+            if (data.count >= 20) {
+                throw new HttpsError("resource-exhausted", "Daily job search quota exceeded (20/day).");
+            }
+
+            t.set(counterRef, { count: data.count + 1, date: today }, { merge: true });
+        });
+    } catch (error: any) {
+        if (error.code === 'resource-exhausted') throw error;
+        throw new HttpsError("internal", "Quota check failed.");
+    }
+
+    // 3. Perform Search
+    try {
+        const { query, page, date_posted, remote_jobs_only } = request.data;
+        if (!query) throw new HttpsError("invalid-argument", "Query is required");
+
+        const results = await JSearchService.search({
+            query,
+            page: page || 1,
+            date_posted,
+            remote_jobs_only
+        });
+
+        return results;
+    } catch (error: any) {
+        logger.error("Job Search Failed", { userId, error });
+        throw new HttpsError("internal", "Job Search Reference Failed.");
     }
 });
