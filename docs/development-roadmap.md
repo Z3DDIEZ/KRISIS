@@ -9,6 +9,8 @@
 **Target**: 1,000 users, $10-15/month operating cost
 **Success Criteria**: Production deployment with 99.5% uptime, AI analysis working for 80%+ of applications
 
+**Portfolio-first note:** The [critical assessment](./krisis_assessment.md) recommends shipping an MVP in 2–4 weeks (live demo, README screenshots, optional blog post) for maximum portfolio impact. Use [AUDIT_ACTION_PLAN.md](./AUDIT_ACTION_PLAN.md) for current priorities alongside this roadmap.
+
 ---
 
 ## 6-Month Timeline Overview

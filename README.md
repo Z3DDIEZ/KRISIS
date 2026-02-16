@@ -133,8 +133,15 @@ You can export your data at any time:
 2. Click **Export Data** to download a CSV file of all your applications.
 
 
+## 📚 Documentation
+
+- **[docs/README.md](docs/README.md)** — Index of all documentation
+- **[docs/AUDIT_ACTION_PLAN.md](docs/AUDIT_ACTION_PLAN.md)** — Current priorities and audit outcomes (portfolio-first)
+- **[docs/development-roadmap.md](docs/development-roadmap.md)** — 6-month roadmap and phases
+- **[docs/architecture.md](docs/architecture.md)** — GCP/Firebase architecture
+
 ## 🙋 Support
 
 For questions or support:
-- Check the documentation in the `docs/` folder
-- Review the `docs/development-roadmap.md` for future plans
+- Check the documentation in the `docs/` folder (start with [docs/README.md](docs/README.md))
+- Review the [development roadmap](docs/development-roadmap.md) for future plans

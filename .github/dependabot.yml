@@ -1,21 +1,60 @@
+# Dependabot configuration for KRISIS
+# https://docs.github.com/en/code-security/dependabot/dependabot-version-updates/configuration-options-for-the-dependabot.yml-file
+
 version: 2
 updates:
+  # Root workspace (tooling, overrides)
   - package-ecosystem: "npm"
     directory: "/"
     schedule:
-      interval: "daily"
-    open-pull-requests-limit: 10
+      interval: "weekly"
+      day: "monday"
+    open-pull-requests-limit: 5
+    commit-message:
+      prefix: "chore(deps)"
     groups:
-      dependencies:
-        patterns:
-          - "*"
+      dev-dependencies:
+        dependency-type: "development"
+        patterns: ["*"]
+    labels:
+      - "dependencies"
 
+  # Frontend app
   - package-ecosystem: "npm"
     directory: "/frontend"
     schedule:
-      interval: "daily"
+      interval: "weekly"
+      day: "monday"
     open-pull-requests-limit: 10
+    commit-message:
+      prefix: "chore(frontend-deps)"
     groups:
-      dependencies:
-        patterns:
-          - "*"
+      production:
+        dependency-type: "production"
+        patterns: ["*"]
+      development:
+        dependency-type: "development"
+        patterns: ["*"]
+    labels:
+      - "dependencies"
+      - "frontend"
+
+  # Cloud Functions (backend)
+  - package-ecosystem: "npm"
+    directory: "/functions"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    open-pull-requests-limit: 10
+    commit-message:
+      prefix: "chore(functions-deps)"
+    groups:
+      production:
+        dependency-type: "production"
+        patterns: ["*"]
+      development:
+        dependency-type: "development"
+        patterns: ["*"]
+    labels:
+      - "dependencies"
+      - "functions"

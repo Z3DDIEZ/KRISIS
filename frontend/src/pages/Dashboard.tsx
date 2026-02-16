@@ -11,6 +11,7 @@ import { auth, db } from '../lib/firebase'
 import { formatDateForDisplay } from '../lib/dateUtils'
 import Icon from '../components/ui/Icon'
 import StatCard from '../components/ui/StatCard'
+import PageHeader from '../components/ui/PageHeader'
 import { handleError } from '../lib/ErrorHandler'
 import UrgentActions from '../components/ui/UrgentActions'
 
@@ -149,18 +150,22 @@ function Dashboard() {
 
   return (
     <div className="animate-fade-in min-h-screen p-6 flex flex-col gap-8 max-w-7xl mx-auto">
-      <header className="page-header relative">
-        <div className="absolute -top-6 -left-6 w-48 h-48 bg-primary-500/5 rounded-full blur-3xl pointer-events-none" />
-        <div className="flex flex-col gap-2">
-          <h1 className="heading-xl">Dashboard</h1>
-          <p className="text-text-secondary font-medium max-w-lg">
-            Track your job search progress and stay on top of upcoming interviews.
-          </p>
-        </div>
-      </header>
+      <PageHeader
+        title="Dashboard"
+        description="Track your job search progress and stay on top of upcoming interviews."
+        action={
+          <Link
+            to="/applications/new"
+            className="btn-primary inline-flex items-center gap-2 px-4 py-2.5 text-sm font-bold uppercase tracking-wide rounded-lg"
+          >
+            <Icon name="work" size={18} />
+            New Application
+          </Link>
+        }
+      />
 
       {/* Stats Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6" aria-label="Pipeline summary">
         <StatCard
           label="Total Applications"
           value={stats.totalApplications}
@@ -192,31 +197,29 @@ function Dashboard() {
           change="Optimizing"
           trend="neutral"
         />
-      </div>
+      </section>
 
       {/* Urgent Actions */}
       <UrgentActions actions={urgentActionsData} />
 
       {/* Recent Activity */}
-      <div className="premium-card overflow-hidden">
+      <section className="premium-card overflow-hidden" aria-labelledby="recent-activity-heading">
         <div className="px-6 py-5 border-b border-border-subtle flex justify-between items-center bg-bg-subtle/30">
-          <h3 className="text-sm font-bold text-text-primary">Recent Activity</h3>
-          <Link to="/applications/new" className="text-xs font-bold text-primary-600 hover:text-primary-700 transition-colors uppercase tracking-wide">
-            + New Application
-          </Link>
+          <h2 id="recent-activity-heading" className="text-sm font-bold text-text-primary">Recent Activity</h2>
         </div>
 
         <div className="p-0">
           {applications.length === 0 ? (
-            <div className="p-16 text-center">
-              <div className="w-16 h-16 bg-bg-subtle rounded-full flex items-center justify-center mx-auto mb-6">
-                <Icon name="work" size={32} className="text-text-secondary" />
+            <div className="p-16 text-center empty-state">
+              <div className="w-20 h-20 bg-primary-500/10 rounded-2xl flex items-center justify-center mx-auto mb-6">
+                <Icon name="work" size={40} className="text-primary-600" />
               </div>
-              <h3 className="text-lg font-bold text-text-primary mb-2">Build Your Pipeline</h3>
-              <p className="text-text-secondary mb-8 max-w-sm mx-auto">
+              <h3 className="text-xl font-bold text-text-primary mb-2">Build Your Pipeline</h3>
+              <p className="text-text-secondary mb-8 max-w-sm mx-auto text-sm leading-relaxed">
                 Start tracking your job applications to get AI-powered insights and stay organized.
               </p>
-              <Link to="/applications/new" className="btn-primary px-8 py-2.5">
+              <Link to="/applications/new" className="btn-primary inline-flex items-center gap-2 px-8 py-3 rounded-lg font-bold uppercase tracking-wide">
+                <Icon name="work" size={18} />
                 Add First Application
               </Link>
             </div>
@@ -267,13 +270,13 @@ function Dashboard() {
                   className="text-xs font-bold text-text-secondary hover:text-primary-600 transition-colors flex items-center justify-center gap-2 uppercase tracking-wide"
                 >
                   View All Applications ({applications.length})
-                  <Icon name="arrow-forward" size={14} />
+                  <Icon name="arrow-right" size={14} />
                 </Link>
               </div>
             </div>
           )}
         </div>
-      </div>
+      </section>
     </div>
   )
 }
