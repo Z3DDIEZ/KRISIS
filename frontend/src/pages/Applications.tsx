@@ -14,7 +14,10 @@ import { auth, db } from '../lib/firebase'
 import { formatDateForDisplay } from '../lib/dateUtils'
 import { toast } from 'sonner'
 import Icon from '../components/ui/Icon'
-import { useSearch } from '../context/SearchContext'
+import { useSearch } from '../hooks/use-search'
+import { Card } from '../components/ui/Card'
+import { Button } from '../components/ui/Button'
+import { Badge } from '../components/ui/Badge'
 
 interface Application {
   id: string
@@ -206,6 +209,15 @@ function Applications() {
     }
   }
 
+  const getBadgeVariant = (status: string) => {
+    if (status === 'Applied') return 'applied'
+    if (status.includes('Phone')) return 'phone-screen'
+    if (status.includes('Technical')) return 'technical'
+    if (status.includes('Final')) return 'final'
+    if (status === 'Offer') return 'offer'
+    return 'rejected'
+  }
+
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-[50vh]">
@@ -217,7 +229,9 @@ function Applications() {
   if (!user) {
     return (
       <div className="text-center py-20">
-        <p className="text-gray-500">Please sign in to view your applications.</p>
+        <p className="text-zinc-500 dark:text-zinc-400">
+          Please sign in to view your applications.
+        </p>
       </div>
     )
   }
@@ -235,37 +249,38 @@ function Applications() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-black text-primary-900 tracking-tight">APPLICATIONS</h1>
-          <p className="text-gray-500 font-medium">
+          <h1 className="text-3xl font-black text-zinc-900 dark:text-white tracking-tight">
+            APPLICATIONS
+          </h1>
+          <p className="text-zinc-500 dark:text-zinc-400 font-medium">
             {filteredApplications.length} active records found
           </p>
         </div>
         <div className="flex gap-3">
-          <Link
-            to="/applications/new"
-            className="btn btn-primary bg-primary-600 hover:bg-primary-700 text-white shadow-lg shadow-primary-500/20"
-          >
-            <Icon name="add" size={18} className="mr-2" />
-            New Application
+          <Link to="/applications/new">
+            <Button variant="primary" className="shadow-lg shadow-primary-500/20">
+              <Icon name="add" size={18} className="mr-2" />
+              New Application
+            </Button>
           </Link>
         </div>
       </div>
 
       {/* Toolbar */}
-      <div className="flex flex-col lg:flex-row gap-4 items-center p-4 rounded-xl border border-gray-200 dark:border-zinc-800 shadow-sm sticky top-4 z-10 backdrop-blur-xl bg-white/90 dark:bg-zinc-900/90 transition-colors">
+      <div className="flex flex-col lg:flex-row gap-4 items-center p-4 rounded-xl border border-zinc-200 dark:border-zinc-800 shadow-sm sticky top-4 z-10 backdrop-blur-xl bg-white/90 dark:bg-zinc-900/90 transition-colors">
         {/* Search */}
         <div className="relative flex-1 w-full">
           <Icon
             name="search"
             size={18}
-            className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 dark:text-gray-500"
+            className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-400 dark:text-zinc-500"
           />
           <input
             type="text"
             placeholder="Search companies, roles..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-10 pr-4 py-2 bg-gray-50 dark:bg-zinc-800 border border-gray-200 dark:border-zinc-700 rounded-lg focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-500 transition-all outline-none"
+            className="w-full pl-10 pr-4 py-2 bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-lg focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 text-zinc-900 dark:text-white placeholder-zinc-500 dark:placeholder-zinc-500 transition-all outline-none"
           />
         </div>
 
@@ -274,7 +289,7 @@ function Applications() {
           <select
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
-            className="px-3 py-2 bg-gray-50 dark:bg-zinc-800 border border-gray-200 dark:border-zinc-700 rounded-lg text-sm font-medium focus:border-primary-500 text-gray-700 dark:text-gray-200 outline-none"
+            className="px-3 py-2 bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-lg text-sm font-medium focus:border-primary-500 text-zinc-700 dark:text-zinc-200 outline-none"
           >
             <option value="all">All Statuses</option>
             {[
@@ -296,19 +311,19 @@ function Applications() {
             className={`px-3 py-2 border rounded-lg text-sm font-medium transition-colors whitespace-nowrap ${
               visaFilter === 'visa'
                 ? 'bg-primary-50 dark:bg-primary-900/20 border-primary-200 dark:border-primary-700 text-primary-700 dark:text-primary-400'
-                : 'bg-gray-50 dark:bg-zinc-800 border-gray-200 dark:border-zinc-700 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-zinc-700'
+                : 'bg-zinc-50 dark:bg-zinc-800 border-zinc-200 dark:border-zinc-700 text-zinc-600 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-700'
             }`}
           >
             Visa Only
           </button>
 
-          <div className="h-6 w-px bg-gray-200 dark:bg-zinc-700 hidden lg:block" />
+          <div className="h-6 w-px bg-zinc-200 dark:bg-zinc-700 hidden lg:block" />
 
           {/* Sort */}
           <select
             value={sortField}
             onChange={(e) => setSortField(e.target.value as SortField)}
-            className="px-3 py-2 bg-gray-50 dark:bg-zinc-800 border border-gray-200 dark:border-zinc-700 rounded-lg text-sm font-medium focus:border-primary-500 text-gray-700 dark:text-gray-200 outline-none"
+            className="px-3 py-2 bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-lg text-sm font-medium focus:border-primary-500 text-zinc-700 dark:text-zinc-200 outline-none"
           >
             <option value="dateApplied">App Date</option>
             <option value="company">Company</option>
@@ -316,21 +331,21 @@ function Applications() {
           </select>
           <button
             onClick={() => setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc')}
-            className="p-2 text-gray-500 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 hover:bg-gray-50 dark:hover:bg-zinc-800 rounded-lg transition-colors border border-gray-200 dark:border-zinc-700"
+            className="p-2 text-zinc-500 dark:text-zinc-400 hover:text-primary-600 dark:hover:text-primary-400 hover:bg-zinc-50 dark:hover:bg-zinc-800 rounded-lg transition-colors border border-zinc-200 dark:border-zinc-700"
           >
             <Icon name={sortOrder === 'asc' ? 'arrow-up' : 'arrow-down'} size={18} />
           </button>
         </div>
 
         {/* Batch Actions & View Mode */}
-        <div className="flex items-center gap-2 pl-4 border-l border-gray-200 dark:border-zinc-700 ml-auto">
+        <div className="flex items-center gap-2 pl-4 border-l border-zinc-200 dark:border-zinc-700 ml-auto">
           {/* View Mode */}
-          <div className="flex bg-gray-100 dark:bg-zinc-800 p-0.5 rounded-lg mr-2">
+          <div className="flex bg-zinc-100 dark:bg-zinc-800 p-0.5 rounded-lg mr-2">
             {(['cards', 'table', 'list'] as ViewMode[]).map((mode) => (
               <button
                 key={mode}
                 onClick={() => setViewMode(mode)}
-                className={`p-1.5 rounded-md transition-all ${viewMode === mode ? 'bg-white dark:bg-zinc-700 shadow-sm text-primary-600 dark:text-primary-400' : 'text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300'}`}
+                className={`p-1.5 rounded-md transition-all ${viewMode === mode ? 'bg-white dark:bg-zinc-700 shadow-sm text-primary-600 dark:text-primary-400' : 'text-zinc-400 dark:text-zinc-500 hover:text-zinc-600 dark:hover:text-zinc-300'}`}
               >
                 <Icon
                   name={mode === 'cards' ? 'grid' : mode === 'table' ? 'table' : 'list'}
@@ -347,7 +362,7 @@ function Applications() {
               </span>
               <select
                 onChange={(e) => e.target.value && handleBulkStatusUpdate(e.target.value)}
-                className="h-9 px-3 bg-white border border-gray-200 rounded-lg text-sm font-medium focus:border-primary-500 outline-none"
+                className="h-9 px-3 bg-white border border-zinc-200 rounded-lg text-sm font-medium focus:border-primary-500 outline-none"
                 defaultValue=""
               >
                 <option value="">Status...</option>
@@ -378,7 +393,7 @@ function Applications() {
 
       {/* Global Select All */}
       <div className="flex items-center gap-2 px-2">
-        <label className="flex items-center gap-2 cursor-pointer text-sm font-medium text-gray-500 select-none">
+        <label className="flex items-center gap-2 cursor-pointer text-sm font-medium text-zinc-500 select-none">
           <input
             type="checkbox"
             checked={
@@ -386,7 +401,7 @@ function Applications() {
               filteredApplications.length > 0
             }
             onChange={handleSelectAll}
-            className="w-4 h-4 rounded border-gray-300 text-primary-600 focus:ring-primary-500"
+            className="w-4 h-4 rounded border-zinc-300 text-primary-600 focus:ring-primary-500"
           />
           Select All Applications
         </label>
@@ -394,49 +409,56 @@ function Applications() {
 
       {/* Applications Display */}
       {applications.length === 0 ? (
-        <div className="premium-card p-12 text-center">
-          <div className="bg-gray-100 dark:bg-gray-800 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6">
-            <Icon name="work" size={40} className="text-muted" />
+        <Card className="p-12 text-center">
+          <div className="bg-zinc-100 dark:bg-zinc-800 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6">
+            <Icon name="work" size={40} className="text-zinc-400" />
           </div>
-          <h3 className="text-xl font-bold text-primary mb-2 uppercase">Build Your Pipeline</h3>
-          <p className="text-secondary max-w-sm mx-auto mb-8">
+          <h3 className="text-xl font-bold text-primary-600 mb-2 uppercase">Build Your Pipeline</h3>
+          <p className="text-zinc-500 dark:text-zinc-400 max-w-sm mx-auto mb-8">
             Start tracking your job applications to get AI-powered insights and stay organized.
           </p>
-          <Link to="/applications/new" className="btn btn-orange px-8">
-            Add Your First Application
+          <Link to="/applications/new">
+            <Button variant="primary" size="lg">
+              Add Your First Application
+            </Button>
           </Link>
-        </div>
+        </Card>
       ) : filteredApplications.length === 0 ? (
-        <div className="premium-card p-12 text-center">
-          <div className="bg-gray-100 dark:bg-gray-800 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-            <Icon name="search" size={32} className="text-muted" />
+        <Card className="p-12 text-center">
+          <div className="bg-zinc-100 dark:bg-zinc-800 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+            <Icon name="search" size={32} className="text-zinc-400" />
           </div>
-          <h3 className="text-lg font-bold text-primary mb-1 uppercase">No matches found</h3>
-          <p className="text-secondary mb-6">Try adjusting your filters or search term.</p>
-          <button
+          <h3 className="text-lg font-bold text-primary-600 mb-1 uppercase">No matches found</h3>
+          <p className="text-zinc-500 dark:text-zinc-400 mb-6">
+            Try adjusting your filters or search term.
+          </p>
+          <Button
+            variant="ghost"
             onClick={clearFilters}
-            className="btn btn-ghost text-primary-500 font-bold text-xs uppercase tracking-widest"
+            className="text-xs uppercase tracking-widest"
           >
             Reset Filters
-          </button>
-        </div>
+          </Button>
+        </Card>
       ) : viewMode === 'cards' ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredApplications.map((application) => (
-            <div
+            <Card
               key={application.id}
-              className="premium-card p-6 flex flex-col group hover:border-primary-500 hover:shadow-glow transition-all"
+              className={`p-6 flex flex-col group ${selectedApplications.has(application.id) ? 'ring-2 ring-primary-500' : ''}`}
             >
               <div className="flex items-start justify-between mb-4">
                 <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 bg-gray-900 text-white rounded flex items-center justify-center font-black text-xl">
+                  <div className="w-12 h-12 bg-zinc-900 text-white rounded flex items-center justify-center font-black text-xl">
                     {application.company.charAt(0)}
                   </div>
                   <div>
-                    <h4 className="font-bold text-primary group-hover:text-primary-500 transition-colors uppercase text-sm">
+                    <h4 className="font-bold text-zinc-900 dark:text-white group-hover:text-primary-600 transition-colors uppercase text-sm">
                       {application.company}
                     </h4>
-                    <p className="text-xs text-secondary font-medium">{application.role}</p>
+                    <p className="text-xs text-zinc-500 dark:text-zinc-400 font-medium">
+                      {application.role}
+                    </p>
                   </div>
                 </div>
                 <input
@@ -448,59 +470,43 @@ function Applications() {
               </div>
 
               <div className="flex items-center gap-2 mb-6">
-                <div
-                  className={`badge ${
-                    application.status === 'Applied'
-                      ? 'badge-applied'
-                      : application.status === 'Phone Screen'
-                        ? 'badge-phone-screen'
-                        : application.status === 'Technical Interview'
-                          ? 'badge-technical'
-                          : application.status === 'Final Round'
-                            ? 'badge-final'
-                            : application.status === 'Offer'
-                              ? 'badge-offer'
-                              : 'badge-rejected'
-                  }`}
-                >
-                  {application.status}
-                </div>
+                <Badge variant={getBadgeVariant(application.status)}>{application.status}</Badge>
                 {application.visaSponsorship && (
-                  <div className="badge border border-primary-500/20 text-primary-500 bg-primary-500/5">
+                  <Badge variant="information" className="gap-1">
                     <Icon name="check" size={10} /> Visa
-                  </div>
+                  </Badge>
                 )}
               </div>
 
-              <div className="mt-auto pt-4 border-t border-border flex items-center justify-between">
-                <span className="text-[10px] font-black text-muted uppercase tracking-widest">
+              <div className="mt-auto pt-4 border-t border-zinc-100 dark:border-zinc-800 flex items-center justify-between">
+                <span className="text-[10px] font-black text-zinc-400 uppercase tracking-widest">
                   Applied {formatDateForDisplay(application.dateApplied)}
                 </span>
                 <div className="flex gap-2">
                   <Link
                     to={`/applications/${application.id}`}
-                    className="p-2 text-muted hover:text-primary transition-colors"
+                    className="p-2 text-zinc-400 hover:text-primary-600 transition-colors"
                   >
                     <Icon name="visibility" size={16} />
                   </Link>
                   <button
                     onClick={() => handleDelete(application.id, application.company)}
-                    className="p-2 text-muted hover:text-error transition-colors"
+                    className="p-2 text-zinc-400 hover:text-red-500 transition-colors"
                   >
                     <Icon name="delete" size={16} />
                   </button>
                 </div>
               </div>
-            </div>
+            </Card>
           ))}
         </div>
       ) : viewMode === 'table' ? (
-        <div className="premium-card overflow-hidden">
-          <div className="table-container">
-            <table className="table">
-              <thead>
+        <Card className="overflow-hidden">
+          <div className="overflow-x-auto">
+            <table className="w-full text-left">
+              <thead className="bg-zinc-50 dark:bg-zinc-900/50 text-xs text-zinc-500 uppercase tracking-wider border-b border-zinc-200 dark:border-zinc-800">
                 <tr>
-                  <th className="w-10">
+                  <th className="px-6 py-3 w-10">
                     <input
                       type="checkbox"
                       className="checkbox"
@@ -515,24 +521,24 @@ function Applications() {
                       }}
                     />
                   </th>
-                  <th>Company</th>
-                  <th>Position</th>
-                  <th>Status</th>
-                  <th>Date Applied</th>
-                  <th className="text-right">Actions</th>
+                  <th className="px-6 py-3">Company</th>
+                  <th className="px-6 py-3">Position</th>
+                  <th className="px-6 py-3">Status</th>
+                  <th className="px-6 py-3">Date Applied</th>
+                  <th className="px-6 py-3 text-right">Actions</th>
                 </tr>
               </thead>
-              <tbody>
+              <tbody className="divide-y divide-zinc-100 dark:divide-zinc-800">
                 {filteredApplications.map((application) => (
                   <tr
                     key={application.id}
-                    className={
+                    className={`hover:bg-zinc-50 dark:hover:bg-zinc-800/50 transition-colors ${
                       selectedApplications.has(application.id)
                         ? 'bg-primary-50 dark:bg-primary-900/10'
                         : ''
-                    }
+                    }`}
                   >
-                    <td>
+                    <td className="px-6 py-4">
                       <input
                         type="checkbox"
                         checked={selectedApplications.has(application.id)}
@@ -540,46 +546,38 @@ function Applications() {
                         className="checkbox"
                       />
                     </td>
-                    <td>
-                      <div className="table__company">
-                        <div className="table__logo">
+                    <td className="px-6 py-4">
+                      <div className="flex items-center gap-3">
+                        <div className="w-8 h-8 rounded bg-zinc-900 text-white flex items-center justify-center font-bold text-xs">
                           {application.company.charAt(0).toUpperCase()}
                         </div>
-                        <span className="table__company-name">{application.company}</span>
+                        <span className="font-bold text-zinc-900 dark:text-white text-sm">
+                          {application.company}
+                        </span>
                       </div>
                     </td>
-                    <td className="table__role">{application.role}</td>
-                    <td>
-                      <span
-                        className={`badge ${
-                          application.status === 'Applied'
-                            ? 'badge-applied'
-                            : application.status === 'Phone Screen'
-                              ? 'badge-phone-screen'
-                              : application.status === 'Technical Interview'
-                                ? 'badge-technical'
-                                : application.status === 'Final Round'
-                                  ? 'badge-final'
-                                  : application.status === 'Offer'
-                                    ? 'badge-offer'
-                                    : 'badge-rejected'
-                        }`}
-                      >
-                        {application.status}
-                      </span>
+                    <td className="px-6 py-4 text-sm text-zinc-600 dark:text-zinc-300">
+                      {application.role}
                     </td>
-                    <td className="table__date">{formatDateForDisplay(application.dateApplied)}</td>
-                    <td className="text-right">
+                    <td className="px-6 py-4">
+                      <Badge variant={getBadgeVariant(application.status)}>
+                        {application.status}
+                      </Badge>
+                    </td>
+                    <td className="px-6 py-4 text-sm text-zinc-500">
+                      {formatDateForDisplay(application.dateApplied)}
+                    </td>
+                    <td className="px-6 py-4 text-right">
                       <div className="flex justify-end gap-2">
                         <Link
                           to={`/applications/${application.id}`}
-                          className="p-2 text-muted hover:text-primary transition-colors"
+                          className="p-2 text-zinc-400 hover:text-primary-600 transition-colors"
                         >
                           <Icon name="visibility" size={16} />
                         </Link>
                         <button
                           onClick={() => handleDelete(application.id, application.company)}
-                          className="p-2 text-error hover:bg-error/10 rounded transition-colors"
+                          className="p-2 text-zinc-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/10 rounded transition-colors"
                         >
                           <Icon name="delete" size={16} />
                         </button>
@@ -590,13 +588,13 @@ function Applications() {
               </tbody>
             </table>
           </div>
-        </div>
+        </Card>
       ) : (
         <div className="flex flex-col gap-3">
           {filteredApplications.map((application) => (
-            <div
+            <Card
               key={application.id}
-              className={`premium-card p-4 flex items-center gap-4 hover:shadow-md transition-all ${selectedApplications.has(application.id) ? 'border-primary-500' : ''}`}
+              className={`p-4 flex items-center gap-4 hover:shadow-md transition-all ${selectedApplications.has(application.id) ? 'border-primary-500 ring-1 ring-primary-500' : ''}`}
             >
               <input
                 type="checkbox"
@@ -604,54 +602,40 @@ function Applications() {
                 onChange={() => toggleApplicationSelection(application.id)}
                 className="checkbox"
               />
-              <div className="w-10 h-10 rounded bg-gray-900 text-white flex items-center justify-center font-black">
+              <div className="w-10 h-10 rounded bg-zinc-900 text-white flex items-center justify-center font-black">
                 {application.company.charAt(0)}
               </div>
               <div className="flex-1 min-w-0">
-                <h4 className="font-bold text-primary truncate uppercase text-sm">
+                <h4 className="font-bold text-zinc-900 dark:text-white truncate uppercase text-sm group-hover:text-primary-600 transition-colors">
                   {application.company}
                 </h4>
-                <p className="text-xs text-secondary truncate">{application.role}</p>
+                <p className="text-xs text-zinc-500 dark:text-zinc-400 truncate">
+                  {application.role}
+                </p>
               </div>
               <div className="hidden md:flex items-center gap-2">
-                <span
-                  className={`badge ${
-                    application.status === 'Applied'
-                      ? 'badge-applied'
-                      : application.status === 'Phone Screen'
-                        ? 'badge-phone-screen'
-                        : application.status === 'Technical Interview'
-                          ? 'badge-technical'
-                          : application.status === 'Final Round'
-                            ? 'badge-final'
-                            : application.status === 'Offer'
-                              ? 'badge-offer'
-                              : 'badge-rejected'
-                  }`}
-                >
-                  {application.status}
-                </span>
+                <Badge variant={getBadgeVariant(application.status)}>{application.status}</Badge>
               </div>
               <div className="text-right ml-auto hidden sm:block">
-                <p className="text-[10px] font-black text-muted uppercase tracking-widest">
+                <p className="text-[10px] font-black text-zinc-400 uppercase tracking-widest">
                   {formatDateForDisplay(application.dateApplied)}
                 </p>
               </div>
               <div className="flex gap-1 ml-4">
                 <Link
                   to={`/applications/${application.id}`}
-                  className="p-2 text-muted hover:text-primary transition-colors"
+                  className="p-2 text-zinc-400 hover:text-primary-600 transition-colors"
                 >
                   <Icon name="visibility" size={16} />
                 </Link>
                 <button
                   onClick={() => handleDelete(application.id, application.company)}
-                  className="p-2 text-muted hover:text-error transition-colors"
+                  className="p-2 text-zinc-400 hover:text-red-500 transition-colors"
                 >
                   <Icon name="delete" size={16} />
                 </button>
               </div>
-            </div>
+            </Card>
           ))}
         </div>
       )}

@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
+import { cn } from '../../lib/utils'
 import Icon from './Icon'
 
 interface DataPoint {
@@ -30,9 +31,15 @@ function BarChart({
   showGrid = true,
   showTooltips = true,
   animate = true,
-  className = ''
+  className = '',
 }: BarChartProps) {
-  const [tooltip, setTooltip] = useState<TooltipData>({ x: 0, y: 0, label: '', value: 0, visible: false })
+  const [tooltip, setTooltip] = useState<TooltipData>({
+    x: 0,
+    y: 0,
+    label: '',
+    value: 0,
+    visible: false,
+  })
   const [isVisible, setIsVisible] = useState(false)
   const chartRef = useRef<HTMLDivElement>(null)
 
@@ -53,7 +60,7 @@ function BarChart({
     return () => observer.disconnect()
   }, [])
 
-  const maxValue = Math.max(...data.map(d => d.value), 0)
+  const maxValue = Math.max(...data.map((d) => d.value), 0)
   const padding = 40 // Reduced padding to give more space to chart
 
   // Calculate dynamic Y-axis scale based on max value
@@ -89,12 +96,12 @@ function BarChart({
 
     // Dynamic color based on theme and data
     const colors = [
-      'var(--primary-orange)',
-      'var(--primary-blue)',
-      'var(--status-success)',
-      'var(--status-warning)',
-      'var(--primary-purple, #8B5CF6)',
-      'var(--primary-green, #10B981)'
+      '#EA580C', // primary-600
+      '#2563EB', // blue-600
+      '#059669', // emerald-600
+      '#D97706', // amber-600
+      '#7C3AED', // violet-600
+      '#71717A', // zinc-500
     ]
     return colors[index % colors.length]
   }
@@ -111,13 +118,13 @@ function BarChart({
         y: rect.top - chartRect.top,
         label: point.label,
         value: point.value,
-        visible: true
+        visible: true,
       })
     }
   }
 
   const handleBarLeave = () => {
-    setTooltip(prev => ({ ...prev, visible: false }))
+    setTooltip((prev) => ({ ...prev, visible: false }))
   }
 
   const formatValue = (value: number) => {
@@ -130,15 +137,11 @@ function BarChart({
   }
 
   return (
-    <div
-      ref={chartRef}
-      className={`relative flex flex-col ${className}`}
-      style={{ height }}
-    >
+    <div ref={chartRef} className={cn('relative flex flex-col', className)} style={{ height }}>
       {/* Chart Area */}
       <div className="relative flex-1 flex" style={{ padding: `10px 0 30px ${padding}px` }}>
         {/* Y-axis labels */}
-        <div className="absolute left-0 top-0 bottom-[30px] flex flex-col justify-between text-[10px] font-medium text-secondary pr-3 text-right w-[40px] pointer-events-none">
+        <div className="absolute left-0 top-0 bottom-[30px] flex flex-col justify-between text-[10px] font-black text-zinc-400 dark:text-zinc-500 pr-3 text-right w-[40px] pointer-events-none uppercase tracking-wider">
           {yAxisTicks.map((tick, index) => (
             <span key={index} className="leading-none">
               {formatValue(tick)}
@@ -156,10 +159,10 @@ function BarChart({
                 return (
                   <div
                     key={index}
-                    className="absolute w-full border-t border-border-light/50"
+                    className="absolute w-full border-t border-zinc-100 dark:border-zinc-800/50"
                     style={{
                       bottom: `${ratio * 100}%`,
-                      left: 0
+                      left: 0,
                     }}
                   />
                 )
@@ -180,25 +183,27 @@ function BarChart({
                 >
                   {/* Bar */}
                   <div
-                    className={`w-full rounded-t-sm transition-all duration-700 ease-out cursor-pointer hover:brightness-110 relative ${animate && isVisible ? 'opacity-100' : 'opacity-0 translate-y-4'
-                      }`}
+                    className={cn(
+                      'w-full rounded-t-lg transition-all duration-1000 ease-out cursor-pointer hover:scale-x-105 hover:brightness-110 relative',
+                      animate && isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
+                    )}
                     style={{
                       height: `${percentage}%`,
                       background: barColor,
-                      minHeight: point.value > 0 ? '2px' : '0px',
-                      transitionDelay: animate ? `${index * 50}ms` : '0ms'
+                      minHeight: point.value > 0 ? '4px' : '0px',
+                      transitionDelay: animate ? `${index * 50}ms` : '0ms',
                     }}
                     onMouseEnter={(e) => handleBarHover(e, point)}
                     onMouseLeave={handleBarLeave}
                   >
-                    {/* Hover value indicator */}
-                    <div className="absolute -top-6 left-1/2 -translate-x-1/2 bg-surface-3 text-[10px] font-bold px-1.5 py-0.5 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none shadow-sm">
+                    {/* Hover value indicator (Desktop) */}
+                    <div className="absolute -top-8 left-1/2 -translate-x-1/2 bg-zinc-900 dark:bg-zinc-800 text-white text-[10px] font-black px-2 py-1 rounded-md opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none shadow-xl border border-white/10">
                       {formatValue(point.value)}
                     </div>
                   </div>
 
                   {/* X-axis label */}
-                  <div className="absolute -bottom-6 left-0 right-0 text-[10px] font-medium text-secondary text-center truncate pt-1">
+                  <div className="absolute -bottom-6 left-0 right-0 text-[10px] font-black text-zinc-400 dark:text-zinc-500 text-center truncate pt-1 uppercase tracking-tight">
                     {point.label}
                   </div>
                 </div>
@@ -208,22 +213,25 @@ function BarChart({
         </div>
       </div>
 
-      {/* Tooltip */}
+      {/* Tooltip (Portal-style interaction) */}
       {showTooltips && tooltip.visible && (
         <div
-          className="absolute z-50 pointer-events-none"
+          className="absolute z-50 pointer-events-none animate-fade-in"
           style={{
             left: tooltip.x,
             top: tooltip.y - 10,
-            transform: 'translate(-50%, -100%)'
+            transform: 'translate(-50%, -100%)',
           }}
         >
-          <div className="bg-background-white/95 backdrop-blur-md border border-border-light rounded-lg shadow-xl px-3 py-2 text-xs">
-            <div className="font-bold text-primary mb-0.5">{tooltip.label}</div>
-            <div className="flex items-center gap-2">
-              <div className="w-2 h-2 rounded-full bg-primary-orange" />
-              <span className="text-secondary font-medium">Value:</span>
-              <span className="text-primary font-bold">{formatValue(tooltip.value)}</span>
+          <div className="bg-white/90 dark:bg-zinc-900/90 backdrop-blur-xl border border-zinc-200 dark:border-zinc-800 rounded-xl shadow-2xl px-4 py-3 min-w-[120px]">
+            <div className="text-[10px] font-black text-zinc-400 dark:text-zinc-500 uppercase tracking-widest mb-1">
+              {tooltip.label}
+            </div>
+            <div className="flex items-center justify-between">
+              <span className="text-sm font-black text-zinc-900 dark:text-white">
+                {formatValue(tooltip.value)}
+              </span>
+              <div className="w-2 h-2 rounded-full bg-primary-500 animate-pulse ml-3" />
             </div>
           </div>
         </div>

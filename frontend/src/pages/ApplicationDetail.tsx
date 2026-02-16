@@ -8,12 +8,14 @@ import Icon from '../components/ui/Icon'
 import { extractTextFromPDF } from '../utils/pdfHelpers'
 import { httpsCallable } from 'firebase/functions'
 import { toast } from 'sonner'
-
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { applicationSchema, type ApplicationValues } from '../lib/schemas'
 import { useTranslation } from 'react-i18next'
 import { useUIStore } from '../lib/store'
+import { Card } from '../components/ui/Card'
+import { Button } from '../components/ui/Button'
+import { Badge } from '../components/ui/Badge'
 
 const statusOptions = [
   { value: 'Applied', label: 'Applied' },
@@ -201,7 +203,7 @@ function ApplicationDetail() {
       <div className="flex items-center justify-center min-h-[50vh]">
         <div className="flex flex-col items-center gap-4">
           <div className="animate-spin rounded-full h-8 w-8 border-2 border-primary-500 border-t-transparent"></div>
-          <p className="text-text-secondary text-sm font-bold">
+          <p className="text-zinc-500 dark:text-zinc-400 text-sm font-bold">
             {authLoading ? 'Authenticating...' : 'Loading Application...'}
           </p>
         </div>
@@ -213,66 +215,71 @@ function ApplicationDetail() {
     return (
       <div className="flex items-center justify-center min-h-[50vh]">
         <div className="text-center">
-          <p className="text-text-secondary font-bold mb-4">
+          <p className="text-zinc-500 dark:text-zinc-400 font-bold mb-4">
             Please sign in to view this application
           </p>
-          <Link to="/auth" className="btn-primary">
+          <Button onClick={() => navigate('/auth')} variant="primary">
             Sign In
-          </Link>
+          </Button>
         </div>
       </div>
     )
   }
 
   return (
-    <div className="animate-fade-in min-h-screen bg-bg-subtle pb-20 p-6">
+    <div className="animate-fade-in pb-20 p-6 max-w-4xl mx-auto space-y-6">
       {/* Premium Header */}
-      <div className="premium-card py-6 px-8 mb-8">
-        <div className="max-w-4xl mx-auto flex items-center justify-between">
+      <Card className="py-6 px-8">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <div>
             <div className="flex items-center gap-2 mb-2">
               <Link
                 to="/applications"
-                className="text-text-secondary hover:text-primary-600 transition-colors flex items-center gap-1 text-xs font-bold uppercase tracking-wide"
+                className="text-zinc-500 hover:text-primary-600 transition-colors flex items-center gap-1 text-xs font-bold uppercase tracking-wide"
               >
                 <Icon name="arrow-left" size={14} />
                 Back to Applications
               </Link>
             </div>
-            <h1 className="text-3xl font-bold text-gray-900 dark:text-white tracking-tight">
+            <h1 className="text-3xl font-bold text-zinc-900 dark:text-white tracking-tight">
               {isNewApplication ? 'New Application' : 'Application Details'}
             </h1>
           </div>
           <div className="flex gap-2">
             {!isNewApplication && (
               <div className="hidden sm:block">
-                <span
-                  className={`badge-pill ${
+                <Badge
+                  variant={
                     formData.status === 'Offer'
-                      ? 'bg-green-50 text-green-700 border-green-200'
+                      ? 'success'
                       : formData.status === 'Rejected'
-                        ? 'bg-red-50 text-red-700 border-red-200'
-                        : 'bg-zinc-100 text-zinc-700 border-zinc-200 dark:bg-zinc-800 dark:text-zinc-300 dark:border-zinc-700'
-                  }`}
+                        ? 'error'
+                        : 'neutral'
+                  }
+                  className="px-3 py-1 text-sm"
                 >
                   {formData.status}
-                </span>
+                </Badge>
               </div>
             )}
           </div>
         </div>
-      </div>
+      </Card>
 
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="">
         <form onSubmit={handleSubmit(onFormSubmit)} className="space-y-8">
-          <div className="premium-card p-6 md:p-8 space-y-8">
-            <div className="flex items-center gap-2 mb-6 pb-4 border-b border-border-subtle">
-              <div className="w-10 h-10 rounded-lg bg-primary-600/10 text-primary-600 flex items-center justify-center">
+          <Card className="p-6 md:p-8 space-y-8">
+            <div className="flex items-center gap-3 mb-6 pb-4 border-b border-zinc-100 dark:border-zinc-800">
+              <div className="w-10 h-10 rounded-lg bg-primary-100 dark:bg-primary-900/30 text-primary-600 flex items-center justify-center">
                 <Icon name="work" size={20} />
               </div>
               <div>
-                <h3 className="text-lg font-bold text-text-primary">Role Information</h3>
-                <p className="text-xs text-text-secondary">Key details about this opportunity</p>
+                <h3 className="text-lg font-bold text-zinc-900 dark:text-white">
+                  Role Information
+                </h3>
+                <p className="text-xs text-zinc-500 dark:text-zinc-400 font-medium">
+                  Key details about this opportunity
+                </p>
               </div>
             </div>
 
@@ -281,7 +288,7 @@ function ApplicationDetail() {
               <div className="space-y-1.5">
                 <label
                   htmlFor="company"
-                  className="text-xs font-bold text-text-secondary uppercase tracking-wider block"
+                  className="text-xs font-bold text-zinc-500 dark:text-zinc-400 uppercase tracking-wide block"
                 >
                   Company Name <span className="text-primary-600">*</span>
                 </label>
@@ -289,11 +296,11 @@ function ApplicationDetail() {
                   {...register('company')}
                   type="text"
                   id="company"
-                  className={`input-modern ${errors.company ? 'border-error ring-error/20' : ''}`}
+                  className={`w-full h-10 px-3 rounded-lg border bg-white dark:bg-zinc-900 text-zinc-900 dark:text-white outline-none focus:ring-2 focus:ring-primary-500/20 transition-all font-medium text-sm ${errors.company ? 'border-red-500 ring-red-500/20' : 'border-zinc-200 dark:border-zinc-700 focus:border-primary-500'}`}
                   placeholder="e.g. Acme Corp"
                 />
                 {errors.company && (
-                  <p className="text-xs text-error font-medium mt-1">{errors.company.message}</p>
+                  <p className="text-xs text-red-500 font-medium mt-1">{errors.company.message}</p>
                 )}
               </div>
 
@@ -301,7 +308,7 @@ function ApplicationDetail() {
               <div className="space-y-1.5">
                 <label
                   htmlFor="role"
-                  className="text-xs font-bold text-text-secondary uppercase tracking-wider block"
+                  className="text-xs font-bold text-zinc-500 dark:text-zinc-400 uppercase tracking-wide block"
                 >
                   Role Title <span className="text-primary-600">*</span>
                 </label>
@@ -309,11 +316,11 @@ function ApplicationDetail() {
                   {...register('role')}
                   type="text"
                   id="role"
-                  className={`input-modern ${errors.role ? 'border-error ring-error/20' : ''}`}
+                  className={`w-full h-10 px-3 rounded-lg border bg-white dark:bg-zinc-900 text-zinc-900 dark:text-white outline-none focus:ring-2 focus:ring-primary-500/20 transition-all font-medium text-sm ${errors.role ? 'border-red-500 ring-red-500/20' : 'border-zinc-200 dark:border-zinc-700 focus:border-primary-500'}`}
                   placeholder="e.g. Senior Engineer"
                 />
                 {errors.role && (
-                  <p className="text-xs text-error font-medium mt-1">{errors.role.message}</p>
+                  <p className="text-xs text-red-500 font-medium mt-1">{errors.role.message}</p>
                 )}
               </div>
             </div>
@@ -323,7 +330,7 @@ function ApplicationDetail() {
               <div className="space-y-1.5">
                 <label
                   htmlFor="status"
-                  className="text-xs font-bold text-text-secondary uppercase tracking-wider block"
+                  className="text-xs font-bold text-zinc-500 dark:text-zinc-400 uppercase tracking-wide block"
                 >
                   Current Status
                 </label>
@@ -331,7 +338,7 @@ function ApplicationDetail() {
                   <select
                     {...register('status')}
                     id="status"
-                    className="input-modern appearance-none cursor-pointer"
+                    className="w-full h-10 px-3 rounded-lg border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-zinc-900 dark:text-white outline-none focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 transition-all font-medium text-sm appearance-none cursor-pointer"
                   >
                     {statusOptions.map((option) => (
                       <option key={option.value} value={option.value}>
@@ -342,7 +349,7 @@ function ApplicationDetail() {
                   <Icon
                     name="arrow-down"
                     size={14}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-text-muted pointer-events-none"
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-400 pointer-events-none"
                   />
                 </div>
               </div>
@@ -351,7 +358,7 @@ function ApplicationDetail() {
               <div className="space-y-1.5">
                 <label
                   htmlFor="dateApplied"
-                  className="text-xs font-bold text-text-secondary uppercase tracking-wider block"
+                  className="text-xs font-bold text-zinc-500 dark:text-zinc-400 uppercase tracking-wide block"
                 >
                   Date Applied <span className="text-primary-600">*</span>
                 </label>
@@ -359,10 +366,10 @@ function ApplicationDetail() {
                   {...register('dateApplied')}
                   type="date"
                   id="dateApplied"
-                  className={`input-modern ${errors.dateApplied ? 'border-error ring-error/20' : ''}`}
+                  className={`w-full h-10 px-3 rounded-lg border bg-white dark:bg-zinc-900 text-zinc-900 dark:text-white outline-none focus:ring-2 focus:ring-primary-500/20 transition-all font-medium text-sm ${errors.dateApplied ? 'border-red-500 ring-red-500/20' : 'border-zinc-200 dark:border-zinc-700 focus:border-primary-500'}`}
                 />
                 {errors.dateApplied && (
-                  <p className="text-xs text-error font-medium mt-1">
+                  <p className="text-xs text-red-500 font-medium mt-1">
                     {errors.dateApplied.message}
                   </p>
                 )}
@@ -370,18 +377,20 @@ function ApplicationDetail() {
             </div>
 
             {/* Visa Sponsorship */}
-            <div className="p-4 bg-bg-subtle rounded-lg border border-border-subtle flex items-center gap-3">
+            <div className="p-4 bg-zinc-50 dark:bg-zinc-900/50 rounded-lg border border-zinc-200 dark:border-zinc-800 flex items-center gap-3">
               <input
                 {...register('visaSponsorship')}
                 id="visaSponsorship"
                 type="checkbox"
-                className="w-5 h-5 rounded border-border-strong text-primary-600 focus:ring-primary-500 cursor-pointer"
+                className="w-5 h-5 rounded border-zinc-300 dark:border-zinc-600 text-primary-600 focus:ring-primary-500 cursor-pointer"
               />
               <label htmlFor="visaSponsorship" className="cursor-pointer select-none">
-                <span className="text-sm font-bold text-text-primary block">
+                <span className="text-sm font-bold text-zinc-900 dark:text-white block">
                   Visa Sponsorship Required
                 </span>
-                <p className="text-xs text-text-muted">Does this company sponsor visas?</p>
+                <p className="text-xs text-zinc-500 dark:text-zinc-400">
+                  Does this company sponsor visas?
+                </p>
               </label>
             </div>
 
@@ -390,12 +399,12 @@ function ApplicationDetail() {
               <div className="flex justify-between items-center">
                 <label
                   htmlFor="notes"
-                  className="text-xs font-bold text-text-secondary uppercase tracking-wider block"
+                  className="text-xs font-bold text-zinc-500 dark:text-zinc-400 uppercase tracking-wide block"
                 >
                   Notes / Job Description
                 </label>
                 <span
-                  className={`text-[10px] font-mono ${formData.notes.length > 900 ? 'text-primary-600' : 'text-text-muted'}`}
+                  className={`text-[10px] font-mono ${formData.notes.length > 900 ? 'text-primary-600' : 'text-zinc-400'}`}
                 >
                   {formData.notes.length}/1000
                 </span>
@@ -404,17 +413,17 @@ function ApplicationDetail() {
                 {...register('notes')}
                 id="notes"
                 rows={4}
-                className={`input-modern min-h-[120px] resize-y ${errors.notes ? 'border-error ring-error/20' : ''}`}
+                className={`w-full p-3 rounded-lg border bg-white dark:bg-zinc-900 text-zinc-900 dark:text-white outline-none focus:ring-2 focus:ring-primary-500/20 transition-all font-medium text-sm min-h-[120px] resize-y ${errors.notes ? 'border-red-500 ring-red-500/20' : 'border-zinc-200 dark:border-zinc-700 focus:border-primary-500'}`}
                 placeholder="Paste the job description or add your own notes here..."
               />
               {errors.notes && (
-                <p className="text-xs text-error font-medium mt-1">{errors.notes.message}</p>
+                <p className="text-xs text-red-500 font-medium mt-1">{errors.notes.message}</p>
               )}
             </div>
 
             {/* AI Analysis Checkbox (New Only) */}
             {isNewApplication && (
-              <div className="p-4 bg-linear-to-r from-primary-50 to-transparent border border-primary-100 rounded-lg flex items-start gap-3">
+              <div className="p-4 bg-primary-50/50 dark:bg-primary-900/10 border border-primary-100 dark:border-primary-900/30 rounded-lg flex items-start gap-3">
                 <input
                   {...register('requestAnalysis')}
                   id="requestAnalysis"
@@ -424,9 +433,11 @@ function ApplicationDetail() {
                 <label htmlFor="requestAnalysis" className="cursor-pointer select-none">
                   <div className="flex items-center gap-2 mb-1">
                     <Icon name="technical" size={14} className="text-primary-600" />
-                    <span className="text-sm font-bold text-text-primary">Run AI Analysis</span>
+                    <span className="text-sm font-bold text-zinc-900 dark:text-white">
+                      Run AI Analysis
+                    </span>
                   </div>
-                  <p className="text-xs text-text-secondary leading-relaxed">
+                  <p className="text-xs text-zinc-500 dark:text-zinc-400 leading-relaxed">
                     Automatically analyze this job description against your resume to check for fit
                     and missing keywords.
                   </p>
@@ -434,18 +445,15 @@ function ApplicationDetail() {
               </div>
             )}
 
-            <div className="pt-6 border-t border-border-subtle flex justify-end gap-3">
-              <button
-                type="button"
-                onClick={() => navigate('/applications')}
-                className="btn-secondary"
-              >
+            <div className="pt-6 border-t border-zinc-100 dark:border-zinc-800 flex justify-end gap-3">
+              <Button type="button" onClick={() => navigate('/applications')} variant="secondary">
                 Cancel
-              </button>
-              <button
+              </Button>
+              <Button
                 type="submit"
                 disabled={hookIsSubmitting || !isDirty}
-                className="btn-primary w-full sm:w-auto"
+                variant="primary"
+                className="w-full sm:w-auto min-w-[140px]"
               >
                 {hookIsSubmitting ? (
                   <>
@@ -458,39 +466,41 @@ function ApplicationDetail() {
                     {isNewApplication ? 'Create Application' : 'Save Changes'}
                   </>
                 )}
-              </button>
+              </Button>
             </div>
-          </div>
+          </Card>
         </form>
 
         {/* AI Analysis Section */}
         {(!isNewApplication || resumeText) && (
-          <div className="premium-card mt-8 overflow-hidden">
-            <div className="p-4 border-b border-border-subtle bg-bg-subtle/50 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <Card className="mt-8 overflow-hidden p-0">
+            <div className="p-4 border-b border-zinc-100 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-900/50 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
               <div className="flex items-center gap-3">
-                <div className="p-2 bg-primary-100 text-primary-600 rounded-lg">
+                <div className="p-2 bg-primary-100 dark:bg-primary-900/30 text-primary-600 rounded-lg">
                   <Icon name="technical" size={20} />
                 </div>
                 <div>
-                  <h3 className="font-bold text-text-primary">AI Resume Analysis</h3>
-                  <p className="text-xs text-text-secondary">Insights powered by Gemini</p>
+                  <h3 className="font-bold text-zinc-900 dark:text-white">AI Resume Analysis</h3>
+                  <p className="text-xs text-zinc-500 dark:text-zinc-400">
+                    Insights powered by Gemini
+                  </p>
                 </div>
               </div>
               {resumeText && !analyzing && !analysisResult && (
-                <button onClick={handleAnalyze} className="btn-primary py-1.5 text-xs">
+                <Button onClick={handleAnalyze} variant="primary" size="sm" className="text-xs">
                   Run Analysis
-                </button>
+                </Button>
               )}
             </div>
 
             <div className="p-6 md:p-8 space-y-8">
               {/* File Upload */}
               <div>
-                <label className="block text-xs font-bold uppercase tracking-wider text-text-secondary mb-3">
+                <label className="block text-xs font-bold uppercase tracking-wider text-zinc-500 dark:text-zinc-400 mb-3">
                   Resume File (PDF)
                 </label>
                 <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center">
-                  <label className="btn-secondary cursor-pointer relative overflow-hidden">
+                  <label className="btn inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg font-bold transition-all text-sm bg-zinc-100 hover:bg-zinc-200 text-zinc-900 dark:bg-zinc-800 dark:hover:bg-zinc-700 dark:text-white cursor-pointer relative overflow-hidden">
                     <input
                       type="file"
                       accept=".pdf"
@@ -501,12 +511,12 @@ function ApplicationDetail() {
                     {resumeText ? 'Replace File' : 'Upload Resume'}
                   </label>
                   {resumeText ? (
-                    <div className="flex items-center gap-2 text-primary-600 bg-primary-50 px-3 py-1.5 rounded-full text-xs font-bold border border-primary-100">
+                    <div className="flex items-center gap-2 text-primary-600 bg-primary-50 dark:bg-primary-900/10 px-3 py-1.5 rounded-full text-xs font-bold border border-primary-100 dark:border-primary-900/30">
                       <Icon name="check-circle" size={14} />
                       Resume Loaded
                     </div>
                   ) : (
-                    <p className="text-xs text-text-muted italic">
+                    <p className="text-xs text-zinc-400 italic">
                       Upload your resume PDF to enable scoring.
                     </p>
                   )}
@@ -517,8 +527,10 @@ function ApplicationDetail() {
               {analyzing && (
                 <div className="py-12 flex flex-col items-center justify-center text-center">
                   <div className="animate-spin rounded-full h-10 w-10 border-4 border-primary-100 border-t-primary-600 mb-4"></div>
-                  <p className="text-sm font-bold text-text-primary animate-pulse">Analyzing...</p>
-                  <p className="text-xs text-text-secondary mt-1">
+                  <p className="text-sm font-bold text-zinc-900 dark:text-white animate-pulse">
+                    Analyzing...
+                  </p>
+                  <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-1">
                     Checking your resume against the job description
                   </p>
                 </div>
@@ -529,7 +541,7 @@ function ApplicationDetail() {
                 <div className="animate-fade-in space-y-8">
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                     {/* Score */}
-                    <div className="relative overflow-hidden rounded-xl bg-bg-surface border border-border p-6 flex flex-col items-center justify-center text-center group hover:border-primary-500/30 transition-colors">
+                    <div className="relative overflow-hidden rounded-xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 p-6 flex flex-col items-center justify-center text-center group hover:border-primary-500/30 transition-colors">
                       <div
                         className={`text-5xl font-black mb-2 tracking-tighter ${
                           analysisResult.fitScore >= 70
@@ -542,7 +554,7 @@ function ApplicationDetail() {
                         {analysisResult.fitScore}
                         <span className="text-2xl align-top opacity-50">%</span>
                       </div>
-                      <p className="text-xs font-bold uppercase tracking-widest text-text-secondary">
+                      <p className="text-xs font-bold uppercase tracking-widest text-zinc-500 dark:text-zinc-400">
                         Match Score
                       </p>
                       <div
@@ -557,8 +569,8 @@ function ApplicationDetail() {
                     </div>
 
                     {/* Missing Keywords */}
-                    <div className="md:col-span-2 rounded-xl bg-bg-subtle border border-border p-6">
-                      <h4 className="text-xs font-bold uppercase tracking-widest text-text-secondary mb-4 flex items-center gap-2">
+                    <div className="md:col-span-2 rounded-xl bg-zinc-50 dark:bg-zinc-900/50 border border-zinc-200 dark:border-zinc-800 p-6">
+                      <h4 className="text-xs font-bold uppercase tracking-widest text-zinc-500 dark:text-zinc-400 mb-4 flex items-center gap-2">
                         <Icon name="warning" size={14} className="text-primary-600" />
                         Missing Keywords
                       </h4>
@@ -567,7 +579,7 @@ function ApplicationDetail() {
                           analysisResult.missingKeywords.map((keyword: string, idx: number) => (
                             <span
                               key={idx}
-                              className="px-2.5 py-1 bg-bg-surface border border-border-strong rounded-md text-xs font-medium text-text-secondary"
+                              className="px-2.5 py-1 bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-md text-xs font-medium text-zinc-600 dark:text-zinc-300"
                             >
                               {keyword}
                             </span>
@@ -581,22 +593,25 @@ function ApplicationDetail() {
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-8 pt-6 border-t border-border-subtle">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-8 pt-6 border-t border-zinc-100 dark:border-zinc-800">
                     <div>
-                      <h4 className="text-xs font-bold uppercase tracking-widest text-text-secondary mb-3">
+                      <h4 className="text-xs font-bold uppercase tracking-widest text-zinc-500 dark:text-zinc-400 mb-3">
                         Analysis
                       </h4>
-                      <p className="text-sm text-text-primary leading-relaxed">
+                      <p className="text-sm text-zinc-900 dark:text-white leading-relaxed">
                         {analysisResult.matchAnalysis}
                       </p>
                     </div>
                     <div>
-                      <h4 className="text-xs font-bold uppercase tracking-widest text-text-secondary mb-3">
+                      <h4 className="text-xs font-bold uppercase tracking-widest text-zinc-500 dark:text-zinc-400 mb-3">
                         Targeted Improvements
                       </h4>
                       <ul className="space-y-3">
                         {analysisResult.suggestedImprovements.map((tip: string, idx: number) => (
-                          <li key={idx} className="flex gap-3 text-sm text-text-primary">
+                          <li
+                            key={idx}
+                            className="flex gap-3 text-sm text-zinc-900 dark:text-white"
+                          >
                             <div className="mt-1 shrink-0 text-primary-600">
                               <Icon name="bolt" size={14} />
                             </div>
@@ -609,7 +624,7 @@ function ApplicationDetail() {
                 </div>
               )}
             </div>
-          </div>
+          </Card>
         )}
       </div>
     </div>

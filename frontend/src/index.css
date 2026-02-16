@@ -1,219 +1,62 @@
 @import './styles/main.css';
-
 @import "tailwindcss";
 
 @layer base {
   :root {
-    /* Light Theme (Zinc/Orange) */
-    --bg-surface: #ffffff;
-    --bg-subtle: #fafafa;
-    /* zinc-50 */
-    --bg-elevated: #ffffff;
-
-    --text-primary: #18181b;
-    /* zinc-900 */
-    --text-secondary: #71717a;
-    /* zinc-500 */
-    --text-muted: #a1a1aa;
-    /* zinc-400 */
-    --text-inverse: #ffffff;
-
-    --border-subtle: #e4e4e7;
-    /* zinc-200 */
-    --border-strong: #d4d4d8;
-    /* zinc-300 */
-
-    /* Shadows */
-    --shadow-soft: 0 4px 20px -2px rgba(0, 0, 0, 0.05);
-    --shadow-glow: 0 0 0 1px rgba(249, 115, 22, 0.1), 0 4px 12px rgba(249, 115, 22, 0.1);
-  }
-
-  [data-theme="dark"] {
-    /* Dark Theme (Zinc/Orange) */
-    --bg-surface: #09090b;
-    /* zinc-950 */
-    --bg-subtle: #18181b;
-    /* zinc-900 */
-    --bg-elevated: #27272a;
-    /* zinc-800 */
-
-    --text-primary: #fafafa;
-    /* zinc-50 */
-    --text-secondary: #a1a1aa;
-    /* zinc-400 */
-    --text-muted: #52525b;
-    /* zinc-600 */
-    --text-inverse: #09090b;
-
-    --border-subtle: #27272a;
-    /* zinc-800 */
-    --border-strong: #3f3f46;
-    /* zinc-700 */
-
-    --shadow-soft: 0 0 0 1px #27272a;
-    --shadow-glow: 0 0 0 1px rgba(249, 115, 22, 0.3), 0 0 20px rgba(249, 115, 22, 0.1);
+    /* Base Token Mapping */
+    --bg-app: var(--bg-subtle);
+    --text-app: var(--text-primary);
   }
 
   html {
-    font-family: 'Inter', system-ui, sans-serif;
-    color: var(--text-primary);
-    background-color: var(--bg-subtle);
+    font-family: var(--font-sans);
+    color: var(--text-app);
+    background-color: var(--bg-app);
     -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    font-feature-settings: "cv11", "ss01";
   }
+
+  /* Body classes moved to index.html to avoid @apply */
 }
 
 @layer components {
 
-  /* Premium Card */
-  .premium-card {
-    background-color: var(--bg-surface);
-    border: 1px solid var(--border-subtle);
-    border-radius: 0.75rem;
-    /* rounded-xl */
-    transition: all 300ms cubic-bezier(0.4, 0, 0.2, 1);
-    box-shadow: var(--shadow-soft);
+  /* =================================
+     Animations
+     ================================= */
+  .animate-fade-in {
+    animation: fadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
   }
 
-  .premium-card:hover {
-    border-color: rgba(249, 115, 22, 0.3);
-    /* primary-500/30 */
-    box-shadow: var(--shadow-glow);
-    transform: translateY(-2px);
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(4px);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
   }
 
-  /* Glass Panel */
-  .glass-panel {
-    border-bottom: 1px solid var(--border-subtle);
-    position: sticky;
-    top: 0;
-    z-index: 20;
-    backdrop-filter: blur(24px);
-    /* backdrop-blur-xl */
-    -webkit-backdrop-filter: blur(24px);
-    background-color: rgba(255, 255, 255, 0.8);
+  /* =================================
+     Animations
+     ================================= */
+  .animate-fade-in {
+    animation: fadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
   }
 
-  [data-theme="dark"] .glass-panel {
-    background-color: rgba(9, 9, 11, 0.8);
-  }
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(4px);
+    }
 
-  /* Typography */
-  .heading-xl {
-    font-size: 1.875rem;
-    /* text-3xl */
-    line-height: 2.25rem;
-    font-weight: 900;
-    /* font-black */
-    letter-spacing: -0.05em;
-    /* tracking-tighter */
-    color: var(--text-primary);
-    text-transform: uppercase;
-  }
-
-  .text-gradient {
-    background-clip: text;
-    -webkit-background-clip: text;
-    color: transparent;
-    background-image: linear-gradient(to right, #ea580c, #fb923c);
-    /* from-primary-600 to-primary-400 */
-  }
-
-  /* Buttons */
-  .btn-premium {
-    padding: 0.5rem 1rem;
-    /* px-4 py-2 */
-    border-radius: 0.5rem;
-    /* rounded-lg */
-    font-weight: 700;
-    /* font-bold */
-    font-size: 0.875rem;
-    /* text-sm */
-    transition: all 150ms cubic-bezier(0.4, 0, 0.2, 1);
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    /* gap-2 */
-  }
-
-  .btn-primary {
-    /* extends btn-premium */
-    padding: 0.5rem 1rem;
-    border-radius: 0.5rem;
-    font-weight: 700;
-    font-size: 0.875rem;
-    transition: all 150ms cubic-bezier(0.4, 0, 0.2, 1);
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-
-    background-color: #ea580c;
-    /* primary-600 */
-    color: #ffffff;
-    box-shadow: 0 10px 15px -3px rgba(249, 115, 22, 0.2);
-    /* shadow-primary-500/20 */
-  }
-
-  .btn-primary:hover {
-    background-color: #f97316;
-    /* primary-500 */
-  }
-
-  .btn-secondary {
-    /* extends btn-premium */
-    padding: 0.5rem 1rem;
-    border-radius: 0.5rem;
-    font-weight: 700;
-    font-size: 0.875rem;
-    transition: all 150ms cubic-bezier(0.4, 0, 0.2, 1);
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-
-    background-color: var(--bg-surface);
-    border: 1px solid var(--border-subtle);
-    color: var(--text-secondary);
-  }
-
-  .btn-secondary:hover {
-    color: var(--text-primary);
-    border-color: var(--text-secondary);
-  }
-
-  /* Badges */
-  .badge-pill {
-    padding: 0.125rem 0.625rem;
-    /* px-2.5 py-0.5 */
-    border-radius: 9999px;
-    /* rounded-full */
-    font-size: 10px;
-    font-weight: 900;
-    /* font-black */
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    /* tracking-wider */
-    border-width: 1px;
-    border-style: solid;
-  }
-
-  /* Inputs */
-  .input-modern {
-    width: 100%;
-    padding: 0.625rem 1rem;
-    /* px-4 py-2.5 */
-    background-color: var(--bg-surface);
-    border: 1px solid var(--border-subtle);
-    border-radius: 0.5rem;
-    /* rounded-lg */
-    font-size: 0.875rem;
-    /* text-sm */
-    transition: all 150ms cubic-bezier(0.4, 0, 0.2, 1);
-    outline: none;
-  }
-
-  .input-modern:focus {
-    border-color: #f97316;
-    /* primary-500 */
-    box-shadow: 0 0 0 2px rgba(249, 115, 22, 0.1);
-    /* ring-primary-500/10 */
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
   }
 }

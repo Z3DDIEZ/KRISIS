@@ -46,14 +46,13 @@ function UserMenu() {
 
   // Close menu when clicking outside
   useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+    const handleOutside = (e: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
         setIsOpen(false)
       }
     }
-
-    document.addEventListener('mousedown', handleClickOutside)
-    return () => document.removeEventListener('mousedown', handleClickOutside)
+    document.addEventListener('mousedown', handleOutside)
+    return () => document.removeEventListener('mousedown', handleOutside)
   }, [])
 
   if (!user) return null
@@ -64,48 +63,34 @@ function UserMenu() {
     <div className="relative" ref={menuRef}>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="btn-icon hover-lift transition-all"
-        style={{
-          background: 'var(--primary-500)',
-          color: 'var(--text-on-contrast)',
-          width: '42px',
-          height: '42px',
-          borderRadius: 'var(--radius-md)',
-          fontWeight: 'var(--font-black)',
-          fontSize: '14px',
-          boxShadow: 'var(--shadow-md)',
-        }}
+        className="w-[42px] h-[42px] flex items-center justify-center rounded-xl font-black text-sm bg-primary-600 text-white shadow-lg shadow-primary-500/20 hover:scale-105 transition-all duration-200"
         aria-label="User menu"
       >
         {initials}
       </button>
 
       {isOpen && (
-        <div className="card absolute right-0 mt-sm w-72 shadow-xl z-50 animate-slide-up">
-          <div className="p-md border-b border-border-light">
-            <div className="flex items-center gap-md">
-              <div
-                className="w-14 h-14 rounded-lg flex items-center justify-center font-black text-xl shadow-inner"
-                style={{
-                  background: 'var(--surface-contrast)',
-                  color: 'var(--text-on-contrast)',
-                }}
-              >
+        <div className="absolute right-0 mt-3 w-72 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl shadow-2xl z-50 animate-fade-in divide-y divide-zinc-100 dark:divide-zinc-800/60 overflow-hidden">
+          <div className="p-5">
+            <div className="flex items-center gap-4">
+              <div className="w-14 h-14 rounded-xl flex items-center justify-center font-black text-xl bg-zinc-900 dark:bg-zinc-800 text-white shadow-inner">
                 {initials}
               </div>
               <div className="flex-1 min-w-0">
-                <p className="font-medium text-primary truncate">
-                  {user.displayName || 'No name set'}
+                <p className="font-black text-zinc-900 dark:text-white truncate">
+                  {user.displayName || 'Anonymous User'}
                 </p>
-                <p className="text-sm text-secondary truncate">{user.email}</p>
+                <p className="text-xs font-medium text-zinc-500 dark:text-zinc-400 truncate">
+                  {user.email}
+                </p>
               </div>
             </div>
           </div>
 
-          <div className="p-2">
+          <div className="p-2 space-y-1">
             <Link
               to="/profile"
-              className="flex items-center gap-3 px-4 py-3 text-xs font-black uppercase tracking-widest text-primary hover:bg-surface-2 rounded-lg transition-all"
+              className="flex items-center gap-3 px-4 py-3 text-[10px] font-black uppercase tracking-[0.2em] text-zinc-600 dark:text-zinc-400 hover:bg-zinc-50 dark:hover:bg-zinc-800/50 hover:text-primary-600 dark:hover:text-primary-400 rounded-xl transition-all"
               onClick={() => setIsOpen(false)}
             >
               <Icon name="person" size={16} />
@@ -114,18 +99,18 @@ function UserMenu() {
 
             <Link
               to="/settings"
-              className="flex items-center gap-3 px-4 py-3 text-xs font-black uppercase tracking-widest text-primary hover:bg-surface-2 rounded-lg transition-all"
+              className="flex items-center gap-3 px-4 py-3 text-[10px] font-black uppercase tracking-[0.2em] text-zinc-600 dark:text-zinc-400 hover:bg-zinc-50 dark:hover:bg-zinc-800/50 hover:text-primary-600 dark:hover:text-primary-400 rounded-xl transition-all"
               onClick={() => setIsOpen(false)}
             >
               <Icon name="settings" size={16} />
               Settings
             </Link>
+          </div>
 
-            <hr className="my-2 border-border-light" />
-
+          <div className="p-2">
             <button
               onClick={handleSignOut}
-              className="flex items-center gap-3 w-full px-4 py-3 text-xs font-black uppercase tracking-widest text-red-500 hover:bg-red-500/10 rounded-lg transition-all"
+              className="flex items-center gap-3 w-full px-4 py-3 text-[10px] font-black uppercase tracking-[0.2em] text-red-500 hover:bg-red-50 dark:hover:bg-red-900/10 rounded-xl transition-all"
             >
               <Icon name="logout" size={16} />
               Sign Out

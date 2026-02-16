@@ -5,6 +5,7 @@ import { auth, db } from '../lib/firebase'
 import { generateDemoData, validateDemoData } from '../utils/demoDataGenerator'
 import { toast } from 'sonner'
 import Icon from './ui/Icon'
+import { Button } from './ui/Button'
 
 interface DemoDataButtonProps {
   onDataGenerated?: () => void
@@ -40,7 +41,7 @@ function DemoDataButton({ onDataGenerated, className = '' }: DemoDataButtonProps
           ...application,
           userId: user.uid,
           createdAt: serverTimestamp(),
-          updatedAt: serverTimestamp()
+          updatedAt: serverTimestamp(),
         }
         return addDoc(collection(db, `users/${user.uid}/applications`), docData)
       })
@@ -56,7 +57,6 @@ function DemoDataButton({ onDataGenerated, className = '' }: DemoDataButtonProps
 
       // Call callback if provided
       onDataGenerated?.()
-
     } catch (error: unknown) {
       const errorMessage = error instanceof Error ? error.message : 'Unknown error'
       console.error('Error generating demo data:', error)
@@ -81,63 +81,57 @@ function DemoDataButton({ onDataGenerated, className = '' }: DemoDataButtonProps
 
   return (
     <>
-      <button
+      <Button
         onClick={handleConfirm}
         disabled={isGenerating}
-        className={`relative overflow-hidden bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white font-medium px-6 py-3 rounded-xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none ${className}`}
+        variant="primary"
+        className={`w-full sm:w-auto shadow-lg shadow-primary-500/20 ${className}`}
       >
-        <div className="flex items-center gap-3">
-          <Icon name="add" size={20} />
-          <span>Generate Demo Data</span>
-        </div>
-
-        {/* Animated background gradient */}
-        <div className="absolute inset-0 bg-gradient-to-r from-amber-400 to-amber-500 opacity-0 hover:opacity-20 transition-opacity duration-200" />
-      </button>
+        <Icon name="add" size={18} />
+        Generate Demo Data
+      </Button>
 
       {/* Confirmation Dialog */}
       {showConfirm && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-background-white rounded-2xl shadow-2xl max-w-md w-full p-6 animate-slide-up">
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-fade-in">
+          <div className="bg-white dark:bg-zinc-900 rounded-2xl shadow-2xl max-w-md w-full p-6 animate-slide-up border border-zinc-200 dark:border-zinc-800">
             <div className="text-center">
-              <div className="w-16 h-16 bg-amber-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Icon name="add" size={32} className="text-amber-600" />
+              <div className="w-16 h-16 bg-primary-100 dark:bg-primary-900/30 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Icon name="add" size={32} className="text-primary-600" />
               </div>
 
-              <h3 className="text-xl font-bold text-primary mb-2">Generate Demo Data</h3>
+              <h3 className="text-xl font-bold text-zinc-900 dark:text-white mb-2">
+                Generate Demo Data
+              </h3>
 
-              <p className="text-secondary mb-6 leading-relaxed">
-                This will add 30 realistic sample applications to your account for analytics testing.
-                The data includes various companies, roles, and application statuses to help you explore KRISIS features.
+              <p className="text-zinc-500 dark:text-zinc-400 mb-6 leading-relaxed text-sm">
+                This will add 30 realistic sample applications to your account for analytics
+                testing. The data includes various companies, roles, and application statuses to
+                help you explore KRISIS features.
               </p>
 
-              <div className="text-sm text-muted mb-6 p-3 bg-background-light rounded-lg">
-                <strong>Note:</strong> This action will permanently add data to your account.
-                You can delete individual applications later if needed.
+              <div className="text-xs text-zinc-500 mb-6 p-3 bg-zinc-50 dark:bg-zinc-800/50 rounded-lg text-left">
+                <strong>Note:</strong> This action will permanently add data to your account. You
+                can delete individual applications later if needed.
               </div>
 
               <div className="flex gap-3">
-                <button
+                <Button
                   onClick={handleCancel}
-                  className="flex-1 btn btn-secondary"
+                  variant="secondary"
+                  className="flex-1"
                   disabled={isGenerating}
                 >
                   Cancel
-                </button>
-                <button
+                </Button>
+                <Button
                   onClick={handleGenerateDemoData}
                   disabled={isGenerating}
-                  className="flex-1 btn btn-orange"
+                  variant="primary"
+                  className="flex-1"
                 >
-                  {isGenerating ? (
-                    <>
-                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2" />
-                      Generating...
-                    </>
-                  ) : (
-                    'Generate Data'
-                  )}
-                </button>
+                  {isGenerating ? 'Generating...' : 'Generate Data'}
+                </Button>
               </div>
             </div>
           </div>

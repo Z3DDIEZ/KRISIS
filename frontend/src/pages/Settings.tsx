@@ -6,6 +6,8 @@ import { exportApplicationsToCsv } from '../utils/exportHelpers'
 import { toast } from 'sonner'
 import DarkModeToggle from '../components/ui/DarkModeToggle'
 import Icon from '../components/ui/Icon'
+import { Card } from '../components/ui/Card'
+import { Button } from '../components/ui/Button'
 
 interface Application {
   id: string
@@ -47,7 +49,7 @@ function Settings() {
           status: data.status || 'Applied',
           visaSponsorship: Boolean(data.visaSponsorship),
           notes: data.notes,
-          resumeUrl: data.resumeUrl
+          resumeUrl: data.resumeUrl,
         })
       })
       setApplications(apps)
@@ -70,7 +72,7 @@ function Settings() {
 
     observer.observe(root, {
       attributes: true,
-      attributeFilter: ['data-theme']
+      attributeFilter: ['data-theme'],
     })
 
     return () => observer.disconnect()
@@ -86,11 +88,9 @@ function Settings() {
       if (exportScope === 'recent') {
         const thirtyDaysAgo = new Date()
         thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30)
-        dataToExport = applications.filter(app =>
-          new Date(app.dateApplied) >= thirtyDaysAgo
-        )
+        dataToExport = applications.filter((app) => new Date(app.dateApplied) >= thirtyDaysAgo)
       } else if (exportScope === 'offers') {
-        dataToExport = applications.filter(app => app.status === 'Offer')
+        dataToExport = applications.filter((app) => app.status === 'Offer')
       }
 
       if (exportFormat === 'csv') {
@@ -101,10 +101,10 @@ function Settings() {
         const jsonData = {
           exportDate: new Date().toISOString(),
           totalApplications: dataToExport.length,
-          applications: dataToExport
+          applications: dataToExport,
         }
         const blob = new Blob([JSON.stringify(jsonData, null, 2)], {
-          type: 'application/json'
+          type: 'application/json',
         })
         const url = URL.createObjectURL(blob)
         const a = document.createElement('a')
@@ -125,63 +125,71 @@ function Settings() {
   }
 
   return (
-    <div className="max-w-4xl mx-auto py-8 animate-fade-in font-primary p-6">
-      <header className="page-header mb-8">
-        <h1 className="heading-xl">Settings</h1>
-        <p className="text-text-secondary font-medium">Manage your account preferences and data</p>
+    <div className="max-w-4xl mx-auto animate-fade-in font-primary p-6 space-y-8">
+      <header className="mb-2">
+        <h1 className="text-3xl font-black text-zinc-900 dark:text-white tracking-tight">
+          Settings
+        </h1>
+        <p className="text-zinc-500 dark:text-zinc-400 font-medium">
+          Manage your account preferences and data
+        </p>
       </header>
 
       <div className="flex flex-col gap-8">
         {/* Main Preferences */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           {/* Appearance Card */}
-          <div className="premium-card p-6">
-            <div className="mb-6 pb-4 border-b border-border-subtle">
-              <h3 className="text-lg font-bold text-text-primary flex items-center gap-2">
+          <Card className="p-6">
+            <div className="mb-6 pb-4 border-b border-zinc-100 dark:border-zinc-800">
+              <h3 className="text-lg font-bold text-zinc-900 dark:text-white flex items-center gap-2">
                 <Icon name="palette" size={18} className="text-primary-500" />
                 Appearance
               </h3>
             </div>
 
-            <div className="flex items-center justify-between p-4 bg-bg-subtle/50 rounded-xl border border-border-subtle hover:border-primary-500/20 transition-all">
+            <div className="flex items-center justify-between p-4 bg-zinc-50 dark:bg-zinc-900/50 rounded-xl border border-zinc-200 dark:border-zinc-800 hover:border-primary-500/20 transition-all">
               <div>
-                <div className="text-sm font-bold text-text-primary mb-1">Theme</div>
-                <div className="text-xs text-text-secondary font-medium">
+                <div className="text-sm font-bold text-zinc-900 dark:text-white mb-1">Theme</div>
+                <div className="text-xs text-zinc-500 dark:text-zinc-400 font-medium">
                   {isDark ? 'Dark mode is active' : 'Light mode is active'}
                 </div>
               </div>
               <DarkModeToggle />
             </div>
-          </div>
+          </Card>
 
           {/* Account Settings Card */}
-          <div className="premium-card p-6">
-            <div className="mb-6 pb-4 border-b border-border-subtle">
-              <h3 className="text-lg font-bold text-text-primary flex items-center gap-2">
+          <Card className="p-6">
+            <div className="mb-6 pb-4 border-b border-zinc-100 dark:border-zinc-800">
+              <h3 className="text-lg font-bold text-zinc-900 dark:text-white flex items-center gap-2">
                 <Icon name="bolt" size={18} className="text-primary-500" />
                 Notifications
               </h3>
             </div>
 
-            <label className="flex items-start gap-3 p-4 bg-bg-subtle/50 rounded-xl border border-border-subtle cursor-pointer hover:bg-bg-subtle transition-colors">
+            <label className="flex items-start gap-3 p-4 bg-zinc-50 dark:bg-zinc-900/50 rounded-xl border border-zinc-200 dark:border-zinc-800 cursor-pointer hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors">
               <input
                 type="checkbox"
                 id="email-notifications"
-                className="mt-1 rounded border-gray-300 text-primary-600 focus:ring-primary-500"
+                className="mt-1 rounded border-zinc-300 text-primary-600 focus:ring-primary-500"
                 defaultChecked
               />
               <div className="flex-1">
-                <div className="text-sm font-bold text-text-primary mb-0.5">Weekly Summaries</div>
-                <div className="text-xs text-text-secondary font-medium">Receive weekly progress reports and AI insights via email</div>
+                <div className="text-sm font-bold text-zinc-900 dark:text-white mb-0.5">
+                  Weekly Summaries
+                </div>
+                <div className="text-xs text-zinc-500 dark:text-zinc-400 font-medium">
+                  Receive weekly progress reports and AI insights via email
+                </div>
               </div>
             </label>
-          </div>
+          </Card>
         </div>
 
         {/* Enhanced Data Export Card */}
-        <div className="premium-card p-8">
-          <div className="mb-8 pb-4 border-b border-border-subtle">
-            <h3 className="text-lg font-bold text-text-primary flex items-center gap-2">
+        <Card className="p-8">
+          <div className="mb-8 pb-4 border-b border-zinc-100 dark:border-zinc-800">
+            <h3 className="text-lg font-bold text-zinc-900 dark:text-white flex items-center gap-2">
               <Icon name="download" size={20} className="text-primary-500" />
               Data Export
             </h3>
@@ -193,41 +201,70 @@ function Settings() {
               <div className="p-4 bg-zinc-900 text-white rounded-xl relative overflow-hidden group">
                 <div className="relative z-10">
                   <div className="text-3xl font-bold mb-1">{applications.length}</div>
-                  <div className="text-xs font-bold opacity-70 uppercase tracking-wide">Total Apps</div>
-                </div>
-                <Icon name="work" size={48} className="absolute -right-4 -bottom-4 opacity-10 group-hover:opacity-20 transition-opacity" />
-              </div>
-
-              <div className="p-4 bg-bg-subtle rounded-xl border border-border-subtle relative overflow-hidden group">
-                <div className="relative z-10">
-                  <div className="text-3xl font-bold text-text-primary mb-1">
-                    {applications.filter(app => app.status === 'Offer').length}
+                  <div className="text-xs font-bold opacity-70 uppercase tracking-wide">
+                    Total Apps
                   </div>
-                  <div className="text-xs font-bold text-text-secondary uppercase tracking-wide">Offers</div>
                 </div>
-                <Icon name="verified" size={48} className="absolute -right-4 -bottom-4 opacity-5 group-hover:opacity-10 transition-opacity" />
+                <Icon
+                  name="work"
+                  size={48}
+                  className="absolute -right-4 -bottom-4 opacity-10 group-hover:opacity-20 transition-opacity"
+                />
               </div>
 
-              <div className="p-4 bg-bg-subtle rounded-xl border border-border-subtle relative overflow-hidden group">
+              <div className="p-4 bg-zinc-50 dark:bg-zinc-900/50 rounded-xl border border-zinc-200 dark:border-zinc-800 relative overflow-hidden group">
                 <div className="relative z-10">
-                  <div className="text-3xl font-bold text-text-primary mb-1">
-                    {applications.filter(app => app.visaSponsorship).length}
+                  <div className="text-3xl font-bold text-zinc-900 dark:text-white mb-1">
+                    {applications.filter((app) => app.status === 'Offer').length}
                   </div>
-                  <div className="text-xs font-bold text-text-secondary uppercase tracking-wide">Visa Sponsored</div>
+                  <div className="text-xs font-bold text-zinc-500 dark:text-zinc-400 uppercase tracking-wide">
+                    Offers
+                  </div>
                 </div>
-                <Icon name="public" size={48} className="absolute -right-4 -bottom-4 opacity-5 group-hover:opacity-10 transition-opacity" />
+                <Icon
+                  name="verified"
+                  size={48}
+                  className="absolute -right-4 -bottom-4 opacity-5 group-hover:opacity-10 transition-opacity"
+                />
               </div>
 
-              <div className="p-4 bg-primary-500/10 rounded-xl border border-primary-500/10 relative overflow-hidden group">
+              <div className="p-4 bg-zinc-50 dark:bg-zinc-900/50 rounded-xl border border-zinc-200 dark:border-zinc-800 relative overflow-hidden group">
+                <div className="relative z-10">
+                  <div className="text-3xl font-bold text-zinc-900 dark:text-white mb-1">
+                    {applications.filter((app) => app.visaSponsorship).length}
+                  </div>
+                  <div className="text-xs font-bold text-zinc-500 dark:text-zinc-400 uppercase tracking-wide">
+                    Visa Sponsored
+                  </div>
+                </div>
+                <Icon
+                  name="public"
+                  size={48}
+                  className="absolute -right-4 -bottom-4 opacity-5 group-hover:opacity-10 transition-opacity"
+                />
+              </div>
+
+              <div className="p-4 bg-primary-50 dark:bg-primary-900/10 rounded-xl border border-primary-200 dark:border-primary-800/30 relative overflow-hidden group">
                 <div className="relative z-10">
                   <div className="text-3xl font-bold text-primary-600 mb-1">
                     {applications.length > 0
-                      ? Math.round((applications.filter(app => app.status !== 'Applied').length / applications.length) * 100)
-                      : 0}%
+                      ? Math.round(
+                          (applications.filter((app) => app.status !== 'Applied').length /
+                            applications.length) *
+                            100
+                        )
+                      : 0}
+                    %
                   </div>
-                  <div className="text-xs font-bold text-primary-700 uppercase tracking-wide">Active</div>
+                  <div className="text-xs font-bold text-primary-700 dark:text-primary-400 uppercase tracking-wide">
+                    Active
+                  </div>
                 </div>
-                <Icon name="bolt" size={48} className="absolute -right-4 -bottom-4 opacity-10 group-hover:opacity-20 transition-opacity" />
+                <Icon
+                  name="bolt"
+                  size={48}
+                  className="absolute -right-4 -bottom-4 opacity-10 group-hover:opacity-20 transition-opacity"
+                />
               </div>
             </div>
 
@@ -236,18 +273,20 @@ function Settings() {
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 {/* Format Selection */}
                 <div className="form-group">
-                  <label className="text-sm font-bold text-text-primary mb-2 block">Format</label>
-                  <div className="flex bg-bg-subtle p-1 rounded-lg border border-border-subtle">
+                  <label className="text-sm font-bold text-zinc-900 dark:text-white mb-2 block">
+                    Format
+                  </label>
+                  <div className="flex bg-zinc-100 dark:bg-zinc-800 p-1 rounded-lg border border-zinc-200 dark:border-zinc-700">
                     <button
                       onClick={() => setExportFormat('csv')}
-                      className={`flex-1 py-2 rounded-md text-xs font-bold uppercase transition-all flex items-center justify-center gap-2 ${exportFormat === 'csv' ? 'bg-white dark:bg-zinc-800 shadow-sm text-primary-600' : 'text-text-secondary hover:text-text-primary'}`}
+                      className={`flex-1 py-2 rounded-md text-xs font-bold uppercase transition-all flex items-center justify-center gap-2 ${exportFormat === 'csv' ? 'bg-white dark:bg-zinc-900 shadow-sm text-primary-600' : 'text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-white'}`}
                     >
                       <Icon name="table" size={16} />
                       CSV (Excel)
                     </button>
                     <button
                       onClick={() => setExportFormat('json')}
-                      className={`flex-1 py-2 rounded-md text-xs font-bold uppercase transition-all flex items-center justify-center gap-2 ${exportFormat === 'json' ? 'bg-white dark:bg-zinc-800 shadow-sm text-primary-600' : 'text-text-secondary hover:text-text-primary'}`}
+                      className={`flex-1 py-2 rounded-md text-xs font-bold uppercase transition-all flex items-center justify-center gap-2 ${exportFormat === 'json' ? 'bg-white dark:bg-zinc-900 shadow-sm text-primary-600' : 'text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-white'}`}
                     >
                       <Icon name="code" size={16} />
                       JSON
@@ -257,37 +296,50 @@ function Settings() {
 
                 {/* Scope Selection */}
                 <div className="form-group">
-                  <label className="text-sm font-bold text-text-primary mb-2 block">Export Scope</label>
-                  <select
-                    value={exportScope}
-                    onChange={(e) => setExportScope(e.target.value as 'all' | 'recent' | 'offers')}
-                    className="w-full h-[42px] px-3 rounded-lg border border-border-subtle bg-bg-surface text-text-primary text-sm font-medium focus:border-primary-500 focus:ring-1 focus:ring-primary-500 outline-none transition-all"
-                  >
-                    <option value="all">All Applications ({applications.length})</option>
-                    <option value="recent">Past 30 Days</option>
-                    <option value="offers">Offers Only</option>
-                  </select>
+                  <label className="text-sm font-bold text-zinc-900 dark:text-white mb-2 block">
+                    Export Scope
+                  </label>
+                  <div className="relative">
+                    <select
+                      value={exportScope}
+                      onChange={(e) =>
+                        setExportScope(e.target.value as 'all' | 'recent' | 'offers')
+                      }
+                      className="w-full h-[42px] px-3 rounded-lg border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-zinc-900 dark:text-white text-sm font-medium focus:border-primary-500 focus:ring-1 focus:ring-primary-500 outline-none transition-all appearance-none"
+                    >
+                      <option value="all">All Applications ({applications.length})</option>
+                      <option value="recent">Past 30 Days</option>
+                      <option value="offers">Offers Only</option>
+                    </select>
+                    <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-zinc-500">
+                      <Icon name="expand_more" size={16} />
+                    </div>
+                  </div>
                 </div>
               </div>
 
               {/* Action Area */}
-              <div className="p-6 bg-bg-subtle/30 border border-border-subtle rounded-xl flex flex-col sm:flex-row items-center justify-between gap-6">
+              <div className="p-6 bg-zinc-50 dark:bg-zinc-900/30 border border-zinc-200 dark:border-zinc-800 rounded-xl flex flex-col sm:flex-row items-center justify-between gap-6">
                 <div className="flex items-start gap-4">
-                  <div className="w-10 h-10 bg-primary-100 dark:bg-primary-900/30 text-primary-600 rounded-lg flex items-center justify-center flex-shrink-0 mt-1">
+                  <div className="w-10 h-10 bg-primary-100 dark:bg-primary-900/30 text-primary-600 rounded-lg flex items-center justify-center shrink-0 mt-1">
                     <Icon name="info" size={20} />
                   </div>
                   <div>
-                    <h4 className="text-sm font-bold text-text-primary mb-1">Export Details</h4>
-                    <p className="text-xs text-text-secondary font-medium leading-relaxed max-w-md">
-                      Your export will include all companies, roles, status history, and personal notes.
+                    <h4 className="text-sm font-bold text-zinc-900 dark:text-white mb-1">
+                      Export Details
+                    </h4>
+                    <p className="text-xs text-zinc-500 dark:text-zinc-400 font-medium leading-relaxed max-w-md">
+                      Your export will include all companies, roles, status history, and personal
+                      notes.
                     </p>
                   </div>
                 </div>
 
-                <button
+                <Button
                   onClick={handleExportData}
                   disabled={isExporting || applications.length === 0}
-                  className="btn-primary px-8 py-3 h-auto min-w-[200px] flex items-center justify-center gap-2"
+                  variant="primary"
+                  className="w-full sm:w-auto min-w-[200px] flex items-center justify-center gap-2"
                 >
                   {isExporting ? (
                     <>
@@ -297,10 +349,12 @@ function Settings() {
                   ) : (
                     <>
                       <Icon name="download" size={18} />
-                      <span className="font-bold text-xs uppercase tracking-wide">Download Data</span>
+                      <span className="font-bold text-xs uppercase tracking-wide">
+                        Download Data
+                      </span>
                     </>
                   )}
-                </button>
+                </Button>
               </div>
 
               {applications.length === 0 && (
@@ -311,19 +365,25 @@ function Settings() {
               )}
             </div>
           </div>
-        </div>
+        </Card>
 
         {/* Support & Community Section */}
-        <div className="premium-card p-8 border border-dashed border-border-subtle bg-bg-subtle/10">
+        <Card className="p-8 border border-dashed border-zinc-300 dark:border-zinc-700 bg-zinc-50/50 dark:bg-zinc-900/20 shadow-none">
           <div className="text-center">
-            <h4 className="text-sm font-bold text-text-primary mb-2">Need Help?</h4>
-            <p className="text-xs text-text-secondary mb-6 max-w-sm mx-auto">Check out our documentation or contact support.</p>
+            <h4 className="text-sm font-bold text-zinc-900 dark:text-white mb-2">Need Help?</h4>
+            <p className="text-xs text-zinc-500 dark:text-zinc-400 mb-6 max-w-sm mx-auto">
+              Check out our documentation or contact support.
+            </p>
             <div className="flex justify-center gap-4">
-              <button className="btn-secondary px-6 py-2 text-xs">Documentation</button>
-              <button className="btn-secondary px-6 py-2 text-xs">Contact Support</button>
+              <Button variant="secondary" size="sm">
+                Documentation
+              </Button>
+              <Button variant="secondary" size="sm">
+                Contact Support
+              </Button>
             </div>
           </div>
-        </div>
+        </Card>
       </div>
     </div>
   )

@@ -1,46 +1,54 @@
 /* ========================================
    KRISIS Design Tokens - Typography
-   Swiss Precision & Modular Scale
+   Swiss Precision & Modular Scale (Refined)
    ======================================== */
 
 :root {
     /* Typographic Hierarchy (Swiss/International) */
-    --font-display: 'Inter', 'Helvetica Neue', system-ui, sans-serif;
-    --font-primary: 'Inter', 'Helvetica Neue', system-ui, sans-serif;
+    --font-sans: 'Outfit', 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
 
-    /* Type Scale (Modular scale 1.250 - Major Third) */
-    --text-xs: 0.64rem;
-    /* 10.24px - metadata */
-    --text-sm: 0.8rem;
-    /* 12.8px - labels */
+    /* Type Scale (Modular scale 1.200 - Minor Third) */
+    /* More restrained scale for data-heavy UI */
+    --text-xs: 0.75rem;
+    /* 12px */
+    --text-sm: 0.875rem;
+    /* 14px */
     --text-base: 1rem;
-    /* 16px - body */
-    --text-lg: 1.25rem;
-    /* 20px - subheadings */
-    --text-xl: 1.563rem;
-    /* 25px - headings */
-    --text-2xl: 1.953rem;
-    /* 31.25px - page titles */
-    --text-3xl: 2.441rem;
-    /* 39.06px - display/hero */
+    /* 16px */
+    --text-lg: 1.125rem;
+    /* 18px */
+    --text-xl: 1.25rem;
+    /* 20px */
+    --text-2xl: 1.5rem;
+    /* 24px */
+    --text-3xl: 1.875rem;
+    /* 30px */
+    --text-4xl: 2.25rem;
+    /* 36px */
 
     /* Line heights */
-    --lh-tight: 1.2;
-    /* Display/headlines */
-    --lh-normal: 1.6;
-    /* Body text */
-    --lh-loose: 1.8;
-    /* Long-form content */
+    --lh-tight: 1.1;
+    /* Headings */
+    --lh-snug: 1.3;
+    /* Subheadings */
+    --lh-base: 1.5;
+    /* Body */
+    --lh-relaxed: 1.75;
+    /* Longform */
 
     /* Letter spacing (Swiss precision) */
-    --tracking-tight: -0.025em;
-    --tracking-normal: 0;
+    /* Negative tracking for headings to feel premium/tight */
+    --tracking-tighter: -0.05em;
+    --tracking-tight: -0.03em;
+    --tracking-normal: 0em;
     --tracking-wide: 0.025em;
+    /* Uppercase labels */
 
     /* Font Weights */
     --font-normal: 400;
     --font-medium: 500;
     --font-semibold: 600;
     --font-bold: 700;
+    --font-black: 900;
 }
