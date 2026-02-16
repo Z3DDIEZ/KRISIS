@@ -25,12 +25,67 @@ function Dropdown({
   items,
   position = 'bottom-left',
   className = '',
-  disabled = false
+  disabled = false,
 }: DropdownProps) {
   const [isOpen, setIsOpen] = useState(false)
   const [activeSubmenu, setActiveSubmenu] = useState<string | null>(null)
   const triggerRef = useRef<HTMLDivElement>(null)
   const dropdownRef = useRef<HTMLDivElement>(null)
+
+  const [dropdownStyle, setDropdownStyle] = useState<React.CSSProperties>({})
+
+  useEffect(() => {
+    const updatePosition = () => {
+      if (!isOpen || !triggerRef.current) return
+
+      const rect = triggerRef.current.getBoundingClientRect()
+      const viewportHeight = window.innerHeight
+      const viewportWidth = window.innerWidth
+
+      let top = rect.bottom + 8
+      let left = rect.left
+
+      // Adjust position based on specified position
+      switch (position) {
+        case 'bottom-right':
+          left = rect.right - 200 // Assuming dropdown width
+          break
+        case 'top-left':
+          top = rect.top - 300 // Assuming dropdown height
+          break
+        case 'top-right':
+          top = rect.top - 300
+          left = rect.right - 200
+          break
+        default: // bottom-left
+          break
+      }
+
+      // Ensure dropdown stays within viewport
+      if (top + 300 > viewportHeight) {
+        top = rect.top - 300
+      }
+      if (left + 200 > viewportWidth) {
+        left = viewportWidth - 200 - 16
+      }
+      if (left < 16) {
+        left = 16
+      }
+
+      setDropdownStyle({ top, left })
+    }
+
+    if (isOpen) {
+      updatePosition()
+      window.addEventListener('scroll', updatePosition, true)
+      window.addEventListener('resize', updatePosition)
+    }
+
+    return () => {
+      window.removeEventListener('scroll', updatePosition, true)
+      window.removeEventListener('resize', updatePosition)
+    }
+  }, [isOpen, position])
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -77,55 +132,11 @@ function Dropdown({
     setIsOpen(false)
     setActiveSubmenu(null)
   }
-
-  const getDropdownPosition = () => {
-    if (!triggerRef.current) return { top: 0, left: 0 }
-
-    const rect = triggerRef.current.getBoundingClientRect()
-    const viewportHeight = window.innerHeight
-    const viewportWidth = window.innerWidth
-
-    let top = rect.bottom + 8
-    let left = rect.left
-
-    // Adjust position based on specified position
-    switch (position) {
-      case 'bottom-right':
-        left = rect.right - 200 // Assuming dropdown width
-        break
-      case 'top-left':
-        top = rect.top - 300 // Assuming dropdown height
-        break
-      case 'top-right':
-        top = rect.top - 300
-        left = rect.right - 200
-        break
-      default: // bottom-left
-        break
-    }
-
-    // Ensure dropdown stays within viewport
-    if (top + 300 > viewportHeight) {
-      top = rect.top - 300
-    }
-    if (left + 200 > viewportWidth) {
-      left = viewportWidth - 200 - 16
-    }
-    if (left < 16) {
-      left = 16
-    }
-
-    return { top, left }
-  }
+  // removed getDropdownPosition from here
 
   const renderMenuItem = (item: DropdownItem, depth = 0) => {
     if (item.separator) {
-      return (
-        <div
-          key={`separator-${depth}`}
-          className="border-t border-border-light my-1"
-        />
-      )
+      return <div key={`separator-${depth}`} className="border-t border-border-light my-1" />
     }
 
     const hasChildren = item.children && item.children.length > 0
@@ -170,26 +181,21 @@ function Dropdown({
 
   return (
     <div className={`relative ${className}`}>
-      <div
-        ref={triggerRef}
-        onClick={() => setIsOpen(!isOpen)}
-        className="cursor-pointer"
-      >
+      <div ref={triggerRef} onClick={() => setIsOpen(!isOpen)} className="cursor-pointer">
         {trigger}
       </div>
 
-      {isOpen && createPortal(
-        <div
-          ref={dropdownRef}
-          className="fixed z-50 bg-background-white border border-border-light rounded-lg shadow-xl min-w-48 animate-fade-in-scale"
-          style={getDropdownPosition()}
-        >
-          <div className="py-2">
-            {items.map((item) => renderMenuItem(item))}
-          </div>
-        </div>,
-        document.body
-      )}
+      {isOpen &&
+        createPortal(
+          <div
+            ref={dropdownRef}
+            className="fixed z-50 bg-background-white border border-border-light rounded-lg shadow-xl min-w-48 animate-fade-in-scale"
+            style={dropdownStyle}
+          >
+            <div className="py-2">{items.map((item) => renderMenuItem(item))}</div>
+          </div>,
+          document.body
+        )}
     </div>
   )
 }

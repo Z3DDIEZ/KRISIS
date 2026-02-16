@@ -11,29 +11,29 @@ interface MainLayoutProps {
 
 function MainLayout({ children }: MainLayoutProps) {
   const location = useLocation()
-  const [sidebarState, setSidebarState] = useState<'expanded' | 'collapsed'>('expanded')
+  const [sidebarState, setSidebarState] = useState<'expanded' | 'collapsed'>(() => {
+    const savedState = localStorage.getItem('sidebar-state')
+    return savedState === 'collapsed' || savedState === 'expanded' ? savedState : 'expanded'
+  })
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
 
   const getLayoutPattern = () => {
-    const path = location.pathname;
-    if (path === '/settings' || path === '/profile') return 'anchored-nav';
+    const path = location.pathname
+    if (path === '/settings' || path === '/profile') return 'anchored-nav'
     // Use power-sidebar for all application paths to ensure consistent grid structure
-    if (path.startsWith('/applications')) return 'power-sidebar';
-    return 'power-sidebar';
+    if (path.startsWith('/applications')) return 'power-sidebar'
+    return 'power-sidebar'
   }
 
-  const layoutPattern = getLayoutPattern();
+  const layoutPattern = getLayoutPattern()
 
   useEffect(() => {
-    const savedState = localStorage.getItem('sidebar-state')
-    if (savedState === 'collapsed' || savedState === 'expanded') {
-      setSidebarState(savedState)
-    }
-  }, [])
-
-  useEffect(() => {
-    setMobileSidebarOpen(false)
+    // Defer the state update to avoid "set state in effect" lint warning
+    const timer = setTimeout(() => {
+      setMobileSidebarOpen(false)
+    }, 0)
+    return () => clearTimeout(timer)
   }, [location.pathname])
 
   const toggleSidebar = () => {
@@ -65,11 +65,7 @@ function MainLayout({ children }: MainLayoutProps) {
           Skip to main content
         </a>
 
-        <TopNavbar
-          onSearchChange={setSearchQuery}
-          searchPlaceholder="Search applications, companies..."
-          onToggleSidebar={toggleSidebar}
-        />
+        <TopNavbar onSearchChange={setSearchQuery} onToggleSidebar={toggleSidebar} />
 
         <aside
           className={`layout__sidebar ${mobileSidebarOpen ? 'layout__sidebar--mobile-open' : ''}`}
@@ -80,7 +76,17 @@ function MainLayout({ children }: MainLayoutProps) {
             onClick={() => setMobileSidebarOpen(false)}
             aria-label="Close menu"
           >
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
               <line x1="18" y1="6" x2="6" y2="18"></line>
               <line x1="6" y1="6" x2="18" y2="18"></line>
             </svg>
@@ -101,7 +107,17 @@ function MainLayout({ children }: MainLayoutProps) {
           aria-label="Open menu"
           aria-expanded={mobileSidebarOpen}
         >
-          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
             <line x1="3" y1="12" x2="21" y2="12"></line>
             <line x1="3" y1="6" x2="21" y2="6"></line>
             <line x1="3" y1="18" x2="21" y2="18"></line>
@@ -115,9 +131,7 @@ function MainLayout({ children }: MainLayoutProps) {
         />
 
         <main className="layout__main" id="main-content" role="main">
-          <div className="layout__inner">
-            {children}
-          </div>
+          <div className="layout__inner">{children}</div>
           <BackToTop />
         </main>
       </div>

@@ -1,7 +1,11 @@
-
 import { useState, useEffect } from 'react'
 import { useAuthState } from 'react-firebase-hooks/auth'
-import { updateProfile, sendEmailVerification, sendPasswordResetEmail, deleteUser } from 'firebase/auth'
+import {
+  updateProfile,
+  sendEmailVerification,
+  sendPasswordResetEmail,
+  deleteUser,
+} from 'firebase/auth'
 import { auth, db } from '../lib/firebase'
 import { doc, getDoc, setDoc } from 'firebase/firestore'
 import { toast } from 'sonner'
@@ -16,7 +20,9 @@ function getInitials(displayName: string | null): string {
   // Remove parenthetical parts (like "(LORDZEDDATHON)")
   const cleanName = displayName.replace(/\([^)]*\)/g, '').trim()
 
-  const nameParts = cleanName.split(' ').filter(part => part.length > 0 && !part.startsWith('(') && !part.endsWith(')'))
+  const nameParts = cleanName
+    .split(' ')
+    .filter((part) => part.length > 0 && !part.startsWith('(') && !part.endsWith(')'))
   if (nameParts.length === 0) return ''
 
   if (nameParts.length === 1) {
@@ -54,7 +60,7 @@ function Profile() {
           setResumeText(docSnap.data().defaultResume)
         }
       } catch (error) {
-        console.error("Failed to load resume protocol", error)
+        console.error('Failed to load resume protocol', error)
       }
     }
     loadResume()
@@ -69,7 +75,7 @@ function Profile() {
       const text = await extractTextFromPDF(file)
       setResumeText(text)
       toast.success('Resume extracted successfully')
-    } catch (error) {
+    } catch {
       toast.error('Failed to parse PDF')
     } finally {
       setIsProcessingResume(false)
@@ -80,11 +86,15 @@ function Profile() {
     if (!user) return
     setIsSavingResume(true)
     try {
-      await setDoc(doc(db, 'users', user.uid), {
-        defaultResume: resumeText
-      }, { merge: true })
+      await setDoc(
+        doc(db, 'users', user.uid),
+        {
+          defaultResume: resumeText,
+        },
+        { merge: true }
+      )
       toast.success('Standard Resume Protocol Saved')
-    } catch (error) {
+    } catch {
       toast.error('Failed to save resume')
     } finally {
       setIsSavingResume(false)
@@ -110,7 +120,7 @@ function Profile() {
     setIsUpdating(true)
     try {
       await updateProfile(user, {
-        displayName: trimmedName
+        displayName: trimmedName,
       })
       toast.success('Profile updated successfully!')
       setIsEditing(false)
@@ -188,12 +198,13 @@ function Profile() {
     )
   }
 
-
   return (
     <div className="max-w-4xl mx-auto animate-fade-in p-6">
       <header className="page-header mb-8">
         <h1 className="heading-xl">Profile</h1>
-        <p className="text-text-secondary font-medium">Manage your professional identity and account settings</p>
+        <p className="text-text-secondary font-medium">
+          Manage your professional identity and account settings
+        </p>
       </header>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -211,15 +222,26 @@ function Profile() {
             </h3>
             <p className="text-text-secondary text-sm font-medium mb-4 break-all">{user.email}</p>
 
-            <div className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-bold ${user.emailVerified ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400' : 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400'}`}>
-              <div className={`w-2 h-2 rounded-full ${user.emailVerified ? 'bg-green-500' : 'bg-yellow-500 animate-pulse'} `} />
+            <div
+              className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-bold ${user.emailVerified ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400' : 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400'}`}
+            >
+              <div
+                className={`w-2 h-2 rounded-full ${user.emailVerified ? 'bg-green-500' : 'bg-yellow-500 animate-pulse'} `}
+              />
               <span>{user.emailVerified ? 'Verified' : 'Unverified'}</span>
             </div>
 
             <div className="mt-8 pt-6 border-t border-border-subtle">
-              <div className="text-xs font-bold text-text-muted uppercase tracking-wide">Member Since</div>
+              <div className="text-xs font-bold text-text-muted uppercase tracking-wide">
+                Member Since
+              </div>
               <div className="text-sm font-bold text-text-primary mt-1">
-                {user.metadata.creationTime ? new Date(user.metadata.creationTime).toLocaleDateString('en-US', { month: 'long', year: 'numeric' }) : 'Unknown'}
+                {user.metadata.creationTime
+                  ? new Date(user.metadata.creationTime).toLocaleDateString('en-US', {
+                      month: 'long',
+                      year: 'numeric',
+                    })
+                  : 'Unknown'}
               </div>
             </div>
           </div>
@@ -238,7 +260,10 @@ function Profile() {
             {/* Profile Information Form */}
             <form onSubmit={handleUpdateProfile} className="space-y-6">
               <div className="form-group">
-                <label htmlFor="displayName" className="text-sm font-bold text-text-primary mb-2 block">
+                <label
+                  htmlFor="displayName"
+                  className="text-sm font-bold text-text-primary mb-2 block"
+                >
                   Display Name
                 </label>
                 {isEditing ? (
@@ -274,7 +299,9 @@ function Profile() {
                   </div>
                 ) : (
                   <div className="flex items-center justify-between p-4 bg-bg-subtle/50 rounded-lg border border-border-subtle group hover:border-primary-500/50 transition-colors">
-                    <span className="text-text-primary font-medium">{user.displayName || 'Not specified'}</span>
+                    <span className="text-text-primary font-medium">
+                      {user.displayName || 'Not specified'}
+                    </span>
                     <button
                       type="button"
                       onClick={() => setIsEditing(true)}
@@ -287,7 +314,9 @@ function Profile() {
               </div>
 
               <div className="form-group">
-                <label className="text-sm font-bold text-text-primary mb-2 block">Email Address</label>
+                <label className="text-sm font-bold text-text-primary mb-2 block">
+                  Email Address
+                </label>
                 <div className="flex items-center gap-3 p-4 bg-bg-subtle/30 rounded-lg border border-border-subtle text-text-secondary">
                   <Icon name="mail" size={18} className="text-text-muted" />
                   <span className="font-medium">{user.email}</span>
@@ -308,7 +337,8 @@ function Profile() {
 
             <div className="space-y-6">
               <p className="text-text-secondary text-sm">
-                Upload your primary resume. This content will be automatically used to populate new applications.
+                Upload your primary resume. This content will be automatically used to populate new
+                applications.
               </p>
 
               <div className="flex flex-col gap-4">
@@ -320,7 +350,11 @@ function Profile() {
                     className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
                   />
                   <div className="flex items-center justify-center gap-3 p-6 border-2 border-dashed border-border-subtle rounded-xl group-hover:border-primary-500/50 group-hover:bg-primary-500/5 transition-all bg-bg-subtle/20">
-                    <Icon name="upload_file" size={24} className="text-text-muted group-hover:text-primary-500 transition-colors" />
+                    <Icon
+                      name="upload_file"
+                      size={24}
+                      className="text-text-muted group-hover:text-primary-500 transition-colors"
+                    />
                     <span className="text-sm font-bold text-text-muted group-hover:text-primary-600 transition-colors">
                       {isProcessingResume ? 'Processing PDF...' : 'Click to Upload Resume (PDF)'}
                     </span>
@@ -328,7 +362,9 @@ function Profile() {
                 </div>
 
                 <div className="form-group">
-                  <label className="text-sm font-bold text-text-primary mb-2 block">Extracted Content</label>
+                  <label className="text-sm font-bold text-text-primary mb-2 block">
+                    Extracted Content
+                  </label>
                   <textarea
                     value={resumeText}
                     onChange={(e) => setResumeText(e.target.value)}
@@ -362,9 +398,15 @@ function Profile() {
             <div className="space-y-6">
               {!user.emailVerified && (
                 <div className="bg-orange-50 dark:bg-orange-900/10 border border-orange-200 dark:border-orange-800/30 rounded-xl p-6 flex gap-4 items-start">
-                  <Icon name="warning" size={20} className="text-orange-600 dark:text-orange-400 mt-1" />
+                  <Icon
+                    name="warning"
+                    size={20}
+                    className="text-orange-600 dark:text-orange-400 mt-1"
+                  />
                   <div className="flex-1">
-                    <h4 className="text-sm font-bold text-orange-800 dark:text-orange-200 mb-1">Verify your email</h4>
+                    <h4 className="text-sm font-bold text-orange-800 dark:text-orange-200 mb-1">
+                      Verify your email
+                    </h4>
                     <p className="text-xs text-orange-700 dark:text-orange-300 mb-3 leading-relaxed">
                       Please verify your email address to secure your account.
                     </p>
@@ -385,8 +427,14 @@ function Profile() {
                   disabled={isResettingPassword}
                   className="p-6 bg-bg-subtle hover:bg-bg-subtle/80 rounded-xl border border-border-subtle flex flex-col items-center gap-3 transition-colors group"
                 >
-                  <Icon name="lock" size={20} className="text-text-muted group-hover:text-primary-500 transition-colors" />
-                  <span className="text-xs font-bold text-text-secondary uppercase tracking-wide group-hover:text-primary-600">Reset Password</span>
+                  <Icon
+                    name="lock"
+                    size={20}
+                    className="text-text-muted group-hover:text-primary-500 transition-colors"
+                  />
+                  <span className="text-xs font-bold text-text-secondary uppercase tracking-wide group-hover:text-primary-600">
+                    Reset Password
+                  </span>
                 </button>
 
                 {!showDeleteConfirm ? (
@@ -394,14 +442,23 @@ function Profile() {
                     onClick={() => setShowDeleteConfirm(true)}
                     className="p-6 bg-red-50 dark:bg-red-900/10 hover:bg-red-100 dark:hover:bg-red-900/20 rounded-xl border border-red-100 dark:border-red-900/30 flex flex-col items-center gap-3 transition-colors group"
                   >
-                    <Icon name="delete" size={20} className="text-red-400 group-hover:text-red-500 transition-colors" />
-                    <span className="text-xs font-bold text-red-600/70 group-hover:text-red-600 uppercase tracking-wide">Delete Account</span>
+                    <Icon
+                      name="delete"
+                      size={20}
+                      className="text-red-400 group-hover:text-red-500 transition-colors"
+                    />
+                    <span className="text-xs font-bold text-red-600/70 group-hover:text-red-600 uppercase tracking-wide">
+                      Delete Account
+                    </span>
                   </button>
                 ) : (
                   <div className="col-span-full bg-red-50 dark:bg-red-900/10 border border-red-200 dark:border-red-900/30 rounded-xl p-6 animate-fade-in">
-                    <h4 className="text-sm font-bold text-red-700 dark:text-red-400 mb-2">Are you sure?</h4>
+                    <h4 className="text-sm font-bold text-red-700 dark:text-red-400 mb-2">
+                      Are you sure?
+                    </h4>
                     <p className="text-xs text-red-600/80 dark:text-red-400/80 font-medium mb-4 leading-relaxed max-w-md">
-                      This will permanently delete your account and all application data. This action cannot be undone.
+                      This will permanently delete your account and all application data. This
+                      action cannot be undone.
                     </p>
                     <div className="flex gap-3">
                       <button

@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react'
 import Icon from './Icon'
 
-
 function DarkModeToggle() {
   // Initialize with saved theme or system preference to prevent flash
   const [isDark, setIsDark] = useState(() => {
@@ -21,7 +20,6 @@ function DarkModeToggle() {
 
     const shouldBeDark = savedTheme === 'dark' || (!savedTheme && prefersDark)
 
-    setIsDark(shouldBeDark)
     root.setAttribute('data-theme', shouldBeDark ? 'dark' : 'light')
   }, [])
 
@@ -42,7 +40,11 @@ function DarkModeToggle() {
       aria-label={isDark ? 'Toggle light mode' : 'Toggle dark mode'}
       title={isDark ? 'Toggle light mode' : 'Toggle dark mode'}
     >
-      <Icon name={isDark ? 'lightbulb' : 'bolt'} size={20} className={isDark ? 'text-yellow-500' : 'text-primary-500'} />
+      <Icon
+        name={isDark ? 'lightbulb' : 'bolt'}
+        size={20}
+        className={isDark ? 'text-yellow-500' : 'text-primary-500'}
+      />
     </button>
   )
 }

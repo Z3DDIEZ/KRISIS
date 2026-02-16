@@ -1,14 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useParams, useNavigate, Link } from 'react-router-dom'
 import { useAuthState } from 'react-firebase-hooks/auth'
-import {
-  doc,
-  getDoc,
-  addDoc,
-  updateDoc,
-  collection,
-  serverTimestamp
-} from 'firebase/firestore'
+import { doc, getDoc, addDoc, updateDoc, collection, serverTimestamp } from 'firebase/firestore'
 import { auth, db, functions } from '../lib/firebase'
 import { getTodayDate } from '../lib/dateUtils'
 import Icon from '../components/ui/Icon'
@@ -28,14 +21,14 @@ const statusOptions = [
   { value: 'Technical Interview', label: 'Technical Interview' },
   { value: 'Final Round', label: 'Final Round' },
   { value: 'Offer', label: 'Offer' },
-  { value: 'Rejected', label: 'Rejected' }
+  { value: 'Rejected', label: 'Rejected' },
 ]
 
 function ApplicationDetail() {
   const { id } = useParams()
   const navigate = useNavigate()
   const { t } = useTranslation()
-  const dispatchNotification = useUIStore(state => state.dispatchNotification)
+  const dispatchNotification = useUIStore((state) => state.dispatchNotification)
   const [user, authLoading] = useAuthState(auth)
   const isNewApplication = id === 'new'
 
@@ -45,7 +38,7 @@ function ApplicationDetail() {
     setValue,
     reset,
     watch,
-    formState: { errors, isDirty, isSubmitting: hookIsSubmitting }
+    formState: { errors, isDirty, isSubmitting: hookIsSubmitting },
   } = useForm<ApplicationValues>({
     resolver: zodResolver(applicationSchema),
     defaultValues: {
@@ -57,8 +50,8 @@ function ApplicationDetail() {
       visaSponsorship: false,
       requestAnalysis: false,
       resumeUrl: '',
-      latestAnalysis: undefined
-    }
+      latestAnalysis: undefined,
+    },
   })
 
   const [isLoading, setIsLoading] = useState(id && id !== 'new')
@@ -81,7 +74,7 @@ function ApplicationDetail() {
       const text = await extractTextFromPDF(file)
       setResumeText(text)
       toast.success('Resume data extracted successfully.')
-    } catch (error) {
+    } catch {
       toast.error('Failed to parse resume PDF.')
     }
   }
@@ -98,28 +91,29 @@ function ApplicationDetail() {
       return
     }
 
-    const jobDescription = formData.notes.length > 50
-      ? formData.notes
-      : `Role: ${formData.role} at ${formData.company}.`
+    const jobDescription =
+      formData.notes.length > 50 ? formData.notes : `Role: ${formData.role} at ${formData.company}.`
 
     setAnalyzing(true)
     try {
       const analyzeFn = httpsCallable(functions, 'analyzeResume')
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const result: any = await analyzeFn({ resumeText, jobDescription })
 
       if (result.data.success) {
         const analysisData = {
           ...result.data.data,
-          analyzedAt: new Date().toISOString()
+          analyzedAt: new Date().toISOString(),
         }
         setValue('latestAnalysis', analysisData, { shouldDirty: true, shouldValidate: true })
         toast.success('Analysis complete. Save changes to persist.')
       } else {
         throw new Error('Analysis returned failure.')
       }
-    } catch (error: any) {
-      console.error("Analysis Error:", error)
-      toast.error(`Analysis failed: ${error.message}`)
+    } catch (error: unknown) {
+      console.error('Analysis Error:', error)
+      const message = error instanceof Error ? error.message : 'Unknown error'
+      toast.error(`Analysis failed: ${message}`)
     } finally {
       setAnalyzing(false)
     }
@@ -153,7 +147,7 @@ function ApplicationDetail() {
           resumeUrl: data.resumeUrl || '',
           visaSponsorship: Boolean(data.visaSponsorship),
           requestAnalysis: false,
-          latestAnalysis: data.latestAnalysis
+          latestAnalysis: data.latestAnalysis,
         }
         reset(loadedData)
       } else {
@@ -173,17 +167,15 @@ function ApplicationDetail() {
 
     try {
       // Deep Sanitize: JSON.stringify removes all keys with 'undefined' values automatically
-      const sanitizedData = JSON.parse(JSON.stringify(data));
+      const sanitizedData = JSON.parse(JSON.stringify(data))
 
       const applicationData = {
         ...sanitizedData,
         updatedAt: serverTimestamp(),
         ...(isNewApplication && {
-          createdAt: serverTimestamp()
-        })
+          createdAt: serverTimestamp(),
+        }),
       }
-
-
 
       if (isNewApplication) {
         const docRef = await addDoc(
@@ -193,10 +185,7 @@ function ApplicationDetail() {
         dispatchNotification('Application created successfully.', 'success')
         navigate(`/applications/${docRef.id}`)
       } else {
-        await updateDoc(
-          doc(db, `users/${user.uid}/applications/${id}`),
-          applicationData
-        )
+        await updateDoc(doc(db, `users/${user.uid}/applications/${id}`), applicationData)
         dispatchNotification('Application updated successfully.', 'success')
       }
     } catch (error: unknown) {
@@ -224,8 +213,12 @@ function ApplicationDetail() {
     return (
       <div className="flex items-center justify-center min-h-[50vh]">
         <div className="text-center">
-          <p className="text-text-secondary font-bold mb-4">Please sign in to view this application</p>
-          <Link to="/auth" className="btn-primary">Sign In</Link>
+          <p className="text-text-secondary font-bold mb-4">
+            Please sign in to view this application
+          </p>
+          <Link to="/auth" className="btn-primary">
+            Sign In
+          </Link>
         </div>
       </div>
     )
@@ -238,7 +231,10 @@ function ApplicationDetail() {
         <div className="max-w-4xl mx-auto flex items-center justify-between">
           <div>
             <div className="flex items-center gap-2 mb-2">
-              <Link to="/applications" className="text-text-secondary hover:text-primary-600 transition-colors flex items-center gap-1 text-xs font-bold uppercase tracking-wide">
+              <Link
+                to="/applications"
+                className="text-text-secondary hover:text-primary-600 transition-colors flex items-center gap-1 text-xs font-bold uppercase tracking-wide"
+              >
                 <Icon name="arrow-left" size={14} />
                 Back to Applications
               </Link>
@@ -250,10 +246,15 @@ function ApplicationDetail() {
           <div className="flex gap-2">
             {!isNewApplication && (
               <div className="hidden sm:block">
-                <span className={`badge-pill ${formData.status === 'Offer' ? 'bg-green-50 text-green-700 border-green-200' :
-                  formData.status === 'Rejected' ? 'bg-red-50 text-red-700 border-red-200' :
-                    'bg-zinc-100 text-zinc-700 border-zinc-200 dark:bg-zinc-800 dark:text-zinc-300 dark:border-zinc-700'
-                  }`}>
+                <span
+                  className={`badge-pill ${
+                    formData.status === 'Offer'
+                      ? 'bg-green-50 text-green-700 border-green-200'
+                      : formData.status === 'Rejected'
+                        ? 'bg-red-50 text-red-700 border-red-200'
+                        : 'bg-zinc-100 text-zinc-700 border-zinc-200 dark:bg-zinc-800 dark:text-zinc-300 dark:border-zinc-700'
+                  }`}
+                >
                   {formData.status}
                 </span>
               </div>
@@ -264,7 +265,6 @@ function ApplicationDetail() {
 
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         <form onSubmit={handleSubmit(onFormSubmit)} className="space-y-8">
-
           <div className="premium-card p-6 md:p-8 space-y-8">
             <div className="flex items-center gap-2 mb-6 pb-4 border-b border-border-subtle">
               <div className="w-10 h-10 rounded-lg bg-primary-600/10 text-primary-600 flex items-center justify-center">
@@ -279,7 +279,10 @@ function ApplicationDetail() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {/* Company */}
               <div className="space-y-1.5">
-                <label htmlFor="company" className="text-xs font-bold text-text-secondary uppercase tracking-wider block">
+                <label
+                  htmlFor="company"
+                  className="text-xs font-bold text-text-secondary uppercase tracking-wider block"
+                >
                   Company Name <span className="text-primary-600">*</span>
                 </label>
                 <input
@@ -296,7 +299,10 @@ function ApplicationDetail() {
 
               {/* Role */}
               <div className="space-y-1.5">
-                <label htmlFor="role" className="text-xs font-bold text-text-secondary uppercase tracking-wider block">
+                <label
+                  htmlFor="role"
+                  className="text-xs font-bold text-text-secondary uppercase tracking-wider block"
+                >
                   Role Title <span className="text-primary-600">*</span>
                 </label>
                 <input
@@ -315,7 +321,10 @@ function ApplicationDetail() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {/* Status */}
               <div className="space-y-1.5">
-                <label htmlFor="status" className="text-xs font-bold text-text-secondary uppercase tracking-wider block">
+                <label
+                  htmlFor="status"
+                  className="text-xs font-bold text-text-secondary uppercase tracking-wider block"
+                >
                   Current Status
                 </label>
                 <div className="relative">
@@ -330,13 +339,20 @@ function ApplicationDetail() {
                       </option>
                     ))}
                   </select>
-                  <Icon name="arrow-down" size={14} className="absolute right-3 top-1/2 -translate-y-1/2 text-text-muted pointer-events-none" />
+                  <Icon
+                    name="arrow-down"
+                    size={14}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-text-muted pointer-events-none"
+                  />
                 </div>
               </div>
 
               {/* Date Applied */}
               <div className="space-y-1.5">
-                <label htmlFor="dateApplied" className="text-xs font-bold text-text-secondary uppercase tracking-wider block">
+                <label
+                  htmlFor="dateApplied"
+                  className="text-xs font-bold text-text-secondary uppercase tracking-wider block"
+                >
                   Date Applied <span className="text-primary-600">*</span>
                 </label>
                 <input
@@ -346,7 +362,9 @@ function ApplicationDetail() {
                   className={`input-modern ${errors.dateApplied ? 'border-error ring-error/20' : ''}`}
                 />
                 {errors.dateApplied && (
-                  <p className="text-xs text-error font-medium mt-1">{errors.dateApplied.message}</p>
+                  <p className="text-xs text-error font-medium mt-1">
+                    {errors.dateApplied.message}
+                  </p>
                 )}
               </div>
             </div>
@@ -360,7 +378,9 @@ function ApplicationDetail() {
                 className="w-5 h-5 rounded border-border-strong text-primary-600 focus:ring-primary-500 cursor-pointer"
               />
               <label htmlFor="visaSponsorship" className="cursor-pointer select-none">
-                <span className="text-sm font-bold text-text-primary block">Visa Sponsorship Required</span>
+                <span className="text-sm font-bold text-text-primary block">
+                  Visa Sponsorship Required
+                </span>
                 <p className="text-xs text-text-muted">Does this company sponsor visas?</p>
               </label>
             </div>
@@ -368,10 +388,15 @@ function ApplicationDetail() {
             {/* Notes */}
             <div className="space-y-1.5">
               <div className="flex justify-between items-center">
-                <label htmlFor="notes" className="text-xs font-bold text-text-secondary uppercase tracking-wider block">
+                <label
+                  htmlFor="notes"
+                  className="text-xs font-bold text-text-secondary uppercase tracking-wider block"
+                >
                   Notes / Job Description
                 </label>
-                <span className={`text-[10px] font-mono ${formData.notes.length > 900 ? 'text-primary-600' : 'text-text-muted'}`}>
+                <span
+                  className={`text-[10px] font-mono ${formData.notes.length > 900 ? 'text-primary-600' : 'text-text-muted'}`}
+                >
                   {formData.notes.length}/1000
                 </span>
               </div>
@@ -389,7 +414,7 @@ function ApplicationDetail() {
 
             {/* AI Analysis Checkbox (New Only) */}
             {isNewApplication && (
-              <div className="p-4 bg-gradient-to-r from-primary-50 to-transparent border border-primary-100 rounded-lg flex items-start gap-3">
+              <div className="p-4 bg-linear-to-r from-primary-50 to-transparent border border-primary-100 rounded-lg flex items-start gap-3">
                 <input
                   {...register('requestAnalysis')}
                   id="requestAnalysis"
@@ -402,7 +427,8 @@ function ApplicationDetail() {
                     <span className="text-sm font-bold text-text-primary">Run AI Analysis</span>
                   </div>
                   <p className="text-xs text-text-secondary leading-relaxed">
-                    Automatically analyze this job description against your resume to check for fit and missing keywords.
+                    Automatically analyze this job description against your resume to check for fit
+                    and missing keywords.
                   </p>
                 </label>
               </div>
@@ -428,7 +454,7 @@ function ApplicationDetail() {
                   </>
                 ) : (
                   <>
-                    <Icon name={isNewApplication ? "rocket" : "save"} size={18} />
+                    <Icon name={isNewApplication ? 'rocket' : 'save'} size={18} />
                     {isNewApplication ? 'Create Application' : 'Save Changes'}
                   </>
                 )}
@@ -451,10 +477,7 @@ function ApplicationDetail() {
                 </div>
               </div>
               {resumeText && !analyzing && !analysisResult && (
-                <button
-                  onClick={handleAnalyze}
-                  className="btn-primary py-1.5 text-xs"
-                >
+                <button onClick={handleAnalyze} className="btn-primary py-1.5 text-xs">
                   Run Analysis
                 </button>
               )}
@@ -483,7 +506,9 @@ function ApplicationDetail() {
                       Resume Loaded
                     </div>
                   ) : (
-                    <p className="text-xs text-text-muted italic">Upload your resume PDF to enable scoring.</p>
+                    <p className="text-xs text-text-muted italic">
+                      Upload your resume PDF to enable scoring.
+                    </p>
                   )}
                 </div>
               </div>
@@ -493,7 +518,9 @@ function ApplicationDetail() {
                 <div className="py-12 flex flex-col items-center justify-center text-center">
                   <div className="animate-spin rounded-full h-10 w-10 border-4 border-primary-100 border-t-primary-600 mb-4"></div>
                   <p className="text-sm font-bold text-text-primary animate-pulse">Analyzing...</p>
-                  <p className="text-xs text-text-secondary mt-1">Checking your resume against the job description</p>
+                  <p className="text-xs text-text-secondary mt-1">
+                    Checking your resume against the job description
+                  </p>
                 </div>
               )}
 
@@ -503,14 +530,30 @@ function ApplicationDetail() {
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                     {/* Score */}
                     <div className="relative overflow-hidden rounded-xl bg-bg-surface border border-border p-6 flex flex-col items-center justify-center text-center group hover:border-primary-500/30 transition-colors">
-                      <div className={`text-5xl font-black mb-2 tracking-tighter ${analysisResult.fitScore >= 70 ? 'text-green-600' : analysisResult.fitScore >= 40 ? 'text-yellow-500' : 'text-red-500'
-                        }`}>
+                      <div
+                        className={`text-5xl font-black mb-2 tracking-tighter ${
+                          analysisResult.fitScore >= 70
+                            ? 'text-green-600'
+                            : analysisResult.fitScore >= 40
+                              ? 'text-yellow-500'
+                              : 'text-red-500'
+                        }`}
+                      >
                         {analysisResult.fitScore}
                         <span className="text-2xl align-top opacity-50">%</span>
                       </div>
-                      <p className="text-xs font-bold uppercase tracking-widest text-text-secondary">Match Score</p>
-                      <div className={`absolute bottom-0 left-0 h-1.5 w-full ${analysisResult.fitScore >= 70 ? 'bg-green-500' : analysisResult.fitScore >= 40 ? 'bg-yellow-500' : 'bg-red-500'
-                        }`} />
+                      <p className="text-xs font-bold uppercase tracking-widest text-text-secondary">
+                        Match Score
+                      </p>
+                      <div
+                        className={`absolute bottom-0 left-0 h-1.5 w-full ${
+                          analysisResult.fitScore >= 70
+                            ? 'bg-green-500'
+                            : analysisResult.fitScore >= 40
+                              ? 'bg-yellow-500'
+                              : 'bg-red-500'
+                        }`}
+                      />
                     </div>
 
                     {/* Missing Keywords */}
@@ -522,12 +565,17 @@ function ApplicationDetail() {
                       <div className="flex flex-wrap gap-2">
                         {analysisResult.missingKeywords.length > 0 ? (
                           analysisResult.missingKeywords.map((keyword: string, idx: number) => (
-                            <span key={idx} className="px-2.5 py-1 bg-bg-surface border border-border-strong rounded-md text-xs font-medium text-text-secondary">
+                            <span
+                              key={idx}
+                              className="px-2.5 py-1 bg-bg-surface border border-border-strong rounded-md text-xs font-medium text-text-secondary"
+                            >
                               {keyword}
                             </span>
                           ))
                         ) : (
-                          <span className="text-xs text-primary-600 font-medium">Perfect match! No key words missing.</span>
+                          <span className="text-xs text-primary-600 font-medium">
+                            Perfect match! No key words missing.
+                          </span>
                         )}
                       </div>
                     </div>
@@ -535,13 +583,17 @@ function ApplicationDetail() {
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-8 pt-6 border-t border-border-subtle">
                     <div>
-                      <h4 className="text-xs font-bold uppercase tracking-widest text-text-secondary mb-3">Analysis</h4>
+                      <h4 className="text-xs font-bold uppercase tracking-widest text-text-secondary mb-3">
+                        Analysis
+                      </h4>
                       <p className="text-sm text-text-primary leading-relaxed">
                         {analysisResult.matchAnalysis}
                       </p>
                     </div>
                     <div>
-                      <h4 className="text-xs font-bold uppercase tracking-widest text-text-secondary mb-3">Targeted Improvements</h4>
+                      <h4 className="text-xs font-bold uppercase tracking-widest text-text-secondary mb-3">
+                        Targeted Improvements
+                      </h4>
                       <ul className="space-y-3">
                         {analysisResult.suggestedImprovements.map((tip: string, idx: number) => (
                           <li key={idx} className="flex gap-3 text-sm text-text-primary">

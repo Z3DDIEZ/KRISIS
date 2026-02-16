@@ -14,7 +14,9 @@ function getInitials(displayName: string | null): string {
   // Remove parenthetical parts (like "(LORDZEDDATHON)")
   const cleanName = displayName.replace(/\([^)]*\)/g, '').trim()
 
-  const nameParts = cleanName.split(' ').filter(part => part.length > 0 && !part.startsWith('(') && !part.endsWith(')'))
+  const nameParts = cleanName
+    .split(' ')
+    .filter((part) => part.length > 0 && !part.startsWith('(') && !part.endsWith(')'))
   if (nameParts.length === 0) return ''
 
   if (nameParts.length === 1) {
@@ -37,7 +39,7 @@ function UserMenu() {
       await signOut(auth)
       toast.success('Signed out successfully')
       navigate('/auth')
-    } catch (error) {
+    } catch {
       toast.error('Failed to sign out')
     }
   }
@@ -71,7 +73,7 @@ function UserMenu() {
           borderRadius: 'var(--radius-md)',
           fontWeight: 'var(--font-black)',
           fontSize: '14px',
-          boxShadow: 'var(--shadow-md)'
+          boxShadow: 'var(--shadow-md)',
         }}
         aria-label="User menu"
       >
@@ -86,7 +88,7 @@ function UserMenu() {
                 className="w-14 h-14 rounded-lg flex items-center justify-center font-black text-xl shadow-inner"
                 style={{
                   background: 'var(--surface-contrast)',
-                  color: 'var(--text-on-contrast)'
+                  color: 'var(--text-on-contrast)',
                 }}
               >
                 {initials}
@@ -95,9 +97,7 @@ function UserMenu() {
                 <p className="font-medium text-primary truncate">
                   {user.displayName || 'No name set'}
                 </p>
-                <p className="text-sm text-secondary truncate">
-                  {user.email}
-                </p>
+                <p className="text-sm text-secondary truncate">{user.email}</p>
               </div>
             </div>
           </div>
