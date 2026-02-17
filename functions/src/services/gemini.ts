@@ -1,48 +1,42 @@
-import {
-  GoogleGenerativeAI,
-  SchemaType,
-  GenerationConfig,
-} from "@google/generative-ai";
+import { GoogleGenAI } from "@google/genai";
 
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || "");
-// Gemini Pro (1.0) is the most widely available stable model
-const model = genAI.getGenerativeModel({ model: "gemini-pro" });
+// Use environment variable for model ID, defaulting to reliable flash model
+const MODEL_ID = process.env.GEMINI_MODEL_ID || "gemini-2.5-flash";
 
-// Define strict schema for resume analysis results
-// This ensures the AI always returns data we can programmatically use
+// JSON Schema for resume analysis results (Standard JSON Schema format)
 const analysisSchema = {
-  type: SchemaType.OBJECT,
+  type: "object",
   properties: {
     fitScore: {
-      type: SchemaType.NUMBER,
+      type: "number",
       description: "Score from 0-100 indicating fit for the role.",
     },
     matchAnalysis: {
-      type: SchemaType.STRING,
+      type: "string",
       description: "Detailed analysis of alignment.",
     },
     missingKeywords: {
-      type: SchemaType.ARRAY,
-      items: { type: SchemaType.STRING },
+      type: "array",
+      items: { type: "string" },
       description: "Skills missing from resume.",
     },
     suggestedImprovements: {
-      type: SchemaType.ARRAY,
-      items: { type: SchemaType.STRING },
+      type: "array",
+      items: { type: "string" },
       description: "Actionable suggestions.",
     },
     ghostingRisk: {
-      type: SchemaType.NUMBER,
+      type: "number",
       description:
         "Score from 0-100 indicating risk of no response based on role trends and alignment.",
     },
     tacticalSignal: {
-      type: SchemaType.STRING,
+      type: "string",
       description:
         "One-sentence high-level tactical advice for this specific application.",
     },
     urgencyLevel: {
-      type: SchemaType.NUMBER,
+      type: "number",
       description: "Urgency from 1 to 5 for taking next steps.",
     },
   },
@@ -57,12 +51,6 @@ const analysisSchema = {
   ],
 };
 
-const generationConfig: GenerationConfig = {
-  temperature: 0.4, // Lower temperature for more consistent structured data
-  responseMimeType: "application/json",
-  responseSchema: analysisSchema,
-};
-
 export class GeminiService {
   /**
    * Cleans Gemini response text to extract raw JSON if it's wrapped in markdown fences.
@@ -74,26 +62,30 @@ export class GeminiService {
   }
 
   /**
-   * Analyzes a resume against a job description using Gemini Pro.
+   * Analyzes a resume against a job description using the configured Gemini model.
    */
   static async analyzeResume(resumeText: string, jobDescription: string) {
     if (!process.env.GEMINI_API_KEY) {
       throw new Error("Missing GEMINI_API_KEY environment variable.");
     }
 
+    // Initialize the SDK lazily (inside the function) to avoid deployment errors
+    // when env vars might not be set in the global scope during analysis.
+    const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+
     const prompt = `
         You are an ELITE STRATEGIC RECRUITMENT INTELLIGENCE OFFICER.
-        Analyze the provided data with TACTICAL PRECISION. 
-        
+        Analyze the provided data with TACTICAL PRECISION.
+
         GOAL: Provide a cold, objective assessment of alignment and hidden risks.
-        
+
         CONTEXT:
         JOB DESCRIPTION:
         ${jobDescription}
 
         RESUME TEXT:
         ${resumeText}
-        
+
         INSTRUCTIONS:
         - Assess 'fitScore' based on hard requirements.
         - Assess 'ghostingRisk' by evaluating the company profile vs resume seniority (e.g., overqualified = high risk).
@@ -102,15 +94,30 @@ export class GeminiService {
         `;
 
     try {
-      const result = await model.generateContent({
-        contents: [{ role: "user", parts: [{ text: prompt }] }],
-        generationConfig,
+      const result = await ai.models.generateContent({
+        model: MODEL_ID,
+        contents: [
+          {
+            role: "user",
+            parts: [{ text: prompt }],
+          },
+        ],
+        config: {
+          temperature: 0.4,
+          responseMimeType: "application/json",
+          responseSchema: analysisSchema,
+        },
       });
 
-      const responseText = result.response.text();
+      // Access text property directly (it's a getter/property, not a function in new SDK)
+      const responseText = result.text;
+
+      if (!responseText) {
+        throw new Error("Empty response from AI model");
+      }
 
       // Log for diagnostics in Firebase Console
-      console.log("Raw Gemini Output:", responseText);
+      console.log(`Raw Gemini Output (${MODEL_ID}):`, responseText);
 
       const cleanedJson = this.cleanJsonResponse(responseText);
       return JSON.parse(cleanedJson);
@@ -118,9 +125,15 @@ export class GeminiService {
       console.error("Gemini Analysis Execution Error:", {
         message: error.message,
         stack: error.stack,
-        details: error.response?.promptFeedback,
+        model: MODEL_ID,
+        details: JSON.stringify(error),
       });
       throw new Error(`Intelligence Protocol Failure: ${error.message}`);
     }
+  }
+
+  // Helper to expose the current model ID being used
+  static getCurrentModelId(): string {
+    return MODEL_ID;
   }
 }

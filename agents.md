@@ -7,7 +7,7 @@ Project-specific constraints for AI agents and contributors. Use in addition to 
 ## 1. Stack and boundaries
 
 - **Frontend:** React 18, TypeScript, Vite. State: Zustand + TanStack Query. Styling: design-system.css (tokens) + Tailwind + SCSS.
-- **Backend:** Cloud Functions (2nd Gen, TypeScript), Firebase Auth, Firestore. AI: Gemini API with schema-validated responses.
+- **Backend:** Cloud Functions (2nd Gen, TypeScript), Firebase Auth, Firestore. AI: Gemini 2.5 Flash via `@google/genai` with schema-validated responses.
 - **Domain:** No framework imports in domain types; keep Firestore/Gemini behind services.
 
 ---

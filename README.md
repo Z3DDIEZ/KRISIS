@@ -12,7 +12,8 @@ The platform has transitioned from legacy experimental designs to a unified, pro
 
 - **Strategic Command**: A high-density dashboard for real-time pipeline visualization.
 - **Intelligent Ingestion**: Automated sector-wide job search via deep-learning integration.
-- **Decision Protocols**: Tactical urgent-action grids and asymmetric intelligence layouts.
+- **Decision Protocols**: Tactical urgent-action grids and asymmetric intelligence layouts with "Daily Tactical Briefs".
+- **Browser Extension**: KRISIS CLIPPER for one-click job ingestion from LinkedIn/Indeed.
 - **High-Fidelity Reporting**: Strategic PDF generation for regional pipeline analysis.
 - **Global Readiness**: Standardized i18n architecture for multi-market deployment.
 
@@ -31,8 +32,9 @@ The platform has transitioned from legacy experimental designs to a unified, pro
 
 ### Infrastructure & Intelligence
 
-- **BaaS**: Supabase & Firebase (Auth/Firestore/Edge Functions)
-- **AI**: Google Gemini Pro (Strategic Ingestion & Behavioral Analysis)
+- **BaaS**: Firebase (Auth/Firestore/Functions)
+- **AI**: Google Gemini 2.5 Flash (Strategic Ingestion & Behavioral Analysis)
+- **SDK**: @google/genai (Latest Native Integration)
 - **Observability**: Standardized Error Handling (Sentry-ready)
 
 ---

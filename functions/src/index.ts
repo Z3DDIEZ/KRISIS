@@ -82,7 +82,7 @@ export const analyzeResume = onCall(
         ...analysis,
         jobDescriptionSnippet: jobDescription.substring(0, 500), // Increased context
         createdAt: admin.firestore.FieldValue.serverTimestamp(),
-        model: "gemini-pro",
+        model: GeminiService.getCurrentModelId(),
         type: "tactical_analysis",
       });
 

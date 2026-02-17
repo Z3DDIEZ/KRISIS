@@ -121,9 +121,15 @@ function ApplicationDetail() {
     }
   }
 
-  // Load existing application data
+  // Load existing application data or handle URL Import
   useEffect(() => {
-    if (id && id !== 'new' && user) {
+    const params = new URLSearchParams(window.location.search)
+    const urlFromParams = params.get('importUrl')
+
+    if (id === 'new' && urlFromParams) {
+      setImportUrl(urlFromParams)
+      handleImport(urlFromParams)
+    } else if (id && id !== 'new' && user) {
       loadApplication()
     } else if (id === 'new' || !id) {
       setIsLoading(false)
@@ -230,14 +236,15 @@ function ApplicationDetail() {
   const [importUrl, setImportUrl] = useState('')
   const [isImporting, setIsImporting] = useState(false)
 
-  const handleImport = async () => {
-    if (!importUrl) return
+  const handleImport = async (overrideUrl?: string) => {
+    const targetUrl = overrideUrl || importUrl
+    if (!targetUrl) return
 
     setIsImporting(true)
     try {
       const ingestFn = httpsCallable(functions, 'ingestJobUrl')
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const result: any = await ingestFn({ url: importUrl })
+      const result: any = await ingestFn({ url: targetUrl })
 
       if (result.data.success) {
         const jobData = result.data.data
@@ -245,8 +252,8 @@ function ApplicationDetail() {
         setValue('role', jobData.role || '', { shouldDirty: true })
 
         const description = jobData.description
-          ? `${jobData.description}\n\nSource: ${importUrl}`
-          : `Source: ${importUrl}`
+          ? `${jobData.description}\n\nSource: ${targetUrl}`
+          : `Source: ${targetUrl}`
 
         setValue('notes', description, { shouldDirty: true })
         setValue('dateApplied', getTodayDate(), { shouldDirty: true })
@@ -323,7 +330,7 @@ function ApplicationDetail() {
               />
             </div>
             <Button
-              onClick={handleImport}
+              onClick={() => handleImport()}
               disabled={!importUrl || isImporting}
               variant="primary"
               className="w-full md:w-auto"

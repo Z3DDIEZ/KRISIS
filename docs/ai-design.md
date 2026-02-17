@@ -7,6 +7,7 @@
 ### Core Constraints
 
 KRISIS does **NOT**:
+
 - Predict outcomes
 - Make decisions
 - Chat conversationally
@@ -15,6 +16,7 @@ KRISIS does **NOT**:
 - Guarantee results
 
 KRISIS **ONLY**:
+
 - Evaluates alignment
 - Scores matches (0-100)
 - Identifies gaps
@@ -39,15 +41,15 @@ KRISIS **ONLY**:
 ```typescript
 // AI Service Configuration
 const GEMINI_CONFIG = {
-  model: 'gemini-1.5-flash', // Cost-effective for structured tasks
+  model: "gemini-2.5-flash", // Cost-effective for structured tasks
   maxTokens: 2048,
   temperature: 0.7,
   safetySettings: [
     {
-      category: 'HARM_CATEGORY_HARASSMENT',
-      threshold: 'BLOCK_MEDIUM_AND_ABOVE'
-    }
-  ]
+      category: "HARM_CATEGORY_HARASSMENT",
+      threshold: "BLOCK_MEDIUM_AND_ABOVE",
+    },
+  ],
 };
 ```
 
@@ -55,12 +57,12 @@ const GEMINI_CONFIG = {
 
 ```typescript
 // Rate limiter for Gemini API calls
-import { RateLimiterMemory } from 'rate-limiter-flexible';
+import { RateLimiterMemory } from "rate-limiter-flexible";
 
 const geminiRateLimiter = new RateLimiterMemory({
   points: 60, // 60 requests per minute
   duration: 60,
-  blockDuration: 60 // Block for 1 minute if exceeded
+  blockDuration: 60, // Block for 1 minute if exceeded
 });
 
 async function callGeminiAPI(userId: string, prompt: string) {
@@ -69,10 +71,9 @@ async function callGeminiAPI(userId: string, prompt: string) {
 
     const result = await model.generateContent(prompt);
     return result.response.text();
-
   } catch (error) {
-    if (error instanceof Error && error.message.includes('rate limit')) {
-      throw new Error('Too many AI requests. Please try again in 1 minute.');
+    if (error instanceof Error && error.message.includes("rate limit")) {
+      throw new Error("Too many AI requests. Please try again in 1 minute.");
     }
     throw error;
   }
@@ -108,6 +109,9 @@ Return a JSON object with EXACTLY the following structure:
 
 {
   "fitScore": number (0–100),
+  "ghostingRisk": number (0-100),
+  "tacticalSignal": string (one sentence tactical advice),
+  "urgencyLevel": number (1-5),
   "matchingSkills": string[] (3–5 items),
   "gaps": string[] (2–3 items),
   "nextSteps": string[] (2–4 items)
@@ -151,9 +155,9 @@ function validateAIResponse(data: any): boolean {
     data.nextSteps.length >= 2 &&
     data.nextSteps.length <= 4 &&
     // Validate string content
-    data.matchingSkills.every(s => typeof s === 'string' && s.length > 0) &&
-    data.gaps.every(s => typeof s === 'string' && s.length > 0) &&
-    data.nextSteps.every(s => typeof s === 'string' && s.length > 0)
+    data.matchingSkills.every((s) => typeof s === "string" && s.length > 0) &&
+    data.gaps.every((s) => typeof s === "string" && s.length > 0) &&
+    data.nextSteps.every((s) => typeof s === "string" && s.length > 0)
   );
 }
 ```
@@ -163,7 +167,9 @@ function validateAIResponse(data: any): boolean {
 ```typescript
 const MAX_RETRIES = 2;
 
-async function generateAnalysis(applicationData: ApplicationData): Promise<AnalysisResult> {
+async function generateAnalysis(
+  applicationData: ApplicationData,
+): Promise<AnalysisResult> {
   for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
     const prompt = buildAnalysisPrompt(applicationData);
     const result = await callGeminiAPI(applicationData.userId, prompt);
@@ -185,6 +191,7 @@ async function generateAnalysis(applicationData: ApplicationData): Promise<Analy
 ```
 
 **Key Rules**:
+
 - Maximum 2 retries
 - No infinite loops
 - No silent degradation
@@ -197,30 +204,36 @@ async function generateAnalysis(applicationData: ApplicationData): Promise<Analy
 ### Gemini Timeout/API Error
 
 **Backend Response**:
+
 - Log error with correlation ID
 - Do not write partial data
 - Return controlled failure state
 
 **Frontend UX**:
+
 > "We couldn't analyze this application right now. Please try again later."
 
 ### Schema Violation (Hallucination)
 
 **Backend Response**:
+
 - Discard invalid response
 - Log validation failure
 - Increment error metrics
 
 **Frontend UX**:
+
 > "Analysis failed due to formatting issues. Please retry."
 
 ### Rate Limit Exceeded
 
 **Backend Response**:
+
 - Enforce per-user quota
 - Reject early with clear error
 
 **Frontend UX**:
+
 > "You've reached your analysis limit for now. Please try again later."
 
 ---
@@ -232,8 +245,8 @@ async function generateAnalysis(applicationData: ApplicationData): Promise<Analy
 ```typescript
 // Quota enforcement
 const USER_QUOTAS = {
-  weeklyAnalyses: 50,  // AI analysis calls per week
-  monthlyGenerations: 100  // Content generations per month
+  weeklyAnalyses: 50, // AI analysis calls per week
+  monthlyGenerations: 100, // Content generations per month
 };
 
 async function checkQuota(userId: string, action: string): Promise<boolean> {
@@ -245,15 +258,20 @@ async function checkQuota(userId: string, action: string): Promise<boolean> {
 ### Caching Strategy
 
 **Cache Key Generation**:
+
 ```typescript
 function generateCacheKey(application: ApplicationData): string {
-  return crypto.createHash('sha256')
-    .update(`${application.company}-${application.role}-${application.resumeHash}`)
-    .digest('hex');
+  return crypto
+    .createHash("sha256")
+    .update(
+      `${application.company}-${application.role}-${application.resumeHash}`,
+    )
+    .digest("hex");
 }
 ```
 
 **Cache Lookup**:
+
 - Same company + role + resume = reuse analysis
 - Reduces API calls and costs
 - Prevents inconsistent results
@@ -264,7 +282,7 @@ function generateCacheKey(application: ApplicationData): string {
 // Only analyze when explicitly requested
 interface ApplicationData {
   // ... other fields
-  requestAnalysis?: boolean;  // Must be true to trigger AI
+  requestAnalysis?: boolean; // Must be true to trigger AI
 }
 
 if (!application.requestAnalysis) {
@@ -273,6 +291,7 @@ if (!application.requestAnalysis) {
 ```
 
 This prevents:
+
 - Accidental Gemini calls
 - Background processing costs
 - Unnecessary quota consumption
@@ -284,6 +303,7 @@ This prevents:
 ### Validation Metrics
 
 **Track These Metrics**:
+
 - Success rate (valid JSON responses)
 - Average analysis time
 - Validation failure rate
@@ -294,7 +314,7 @@ This prevents:
 
 ```typescript
 // Log analysis quality metrics
-await logAnalyticsEvent('ai_analysis_quality', {
+await logAnalyticsEvent("ai_analysis_quality", {
   userId,
   applicationId,
   fitScore,
@@ -302,13 +322,14 @@ await logAnalyticsEvent('ai_analysis_quality', {
   gapsCount: analysis.gaps.length,
   nextStepsCount: analysis.nextSteps.length,
   processingTimeMs: Date.now() - startTime,
-  retryCount: attempt - 1
+  retryCount: attempt - 1,
 });
 ```
 
 ### A/B Testing Framework (Future)
 
 Prepare for prompt optimization:
+
 - Version prompts with unique IDs
 - Track performance by prompt version
 - Gradual rollout of improvements
@@ -320,15 +341,16 @@ Prepare for prompt optimization:
 ### Input Sanitization
 
 **User Input Validation**:
+
 ```typescript
 function sanitizeApplicationData(data: ApplicationData): ApplicationData {
   return {
-    company: data.company?.substring(0, 100) || '',
-    role: data.role?.substring(0, 100) || '',
-    status: ['Applied', 'Interview', 'Rejected', 'Offer'].includes(data.status)
+    company: data.company?.substring(0, 100) || "",
+    role: data.role?.substring(0, 100) || "",
+    status: ["Applied", "Interview", "Rejected", "Offer"].includes(data.status)
       ? data.status
-      : 'Applied',
-    resumeText: data.resumeText?.substring(0, 10000) || '' // Limit size
+      : "Applied",
+    resumeText: data.resumeText?.substring(0, 10000) || "", // Limit size
   };
 }
 ```
@@ -336,13 +358,16 @@ function sanitizeApplicationData(data: ApplicationData): ApplicationData {
 ### Output Sanitization
 
 **AI Response Cleaning**:
+
 ```typescript
 function sanitizeAIOutput(analysis: AnalysisResult): AnalysisResult {
   return {
     fitScore: Math.max(0, Math.min(100, analysis.fitScore)),
-    matchingSkills: analysis.matchingSkills.slice(0, 5).map(s => s.substring(0, 200)),
-    gaps: analysis.gaps.slice(0, 3).map(s => s.substring(0, 200)),
-    nextSteps: analysis.nextSteps.slice(0, 4).map(s => s.substring(0, 200))
+    matchingSkills: analysis.matchingSkills
+      .slice(0, 5)
+      .map((s) => s.substring(0, 200)),
+    gaps: analysis.gaps.slice(0, 3).map((s) => s.substring(0, 200)),
+    nextSteps: analysis.nextSteps.slice(0, 4).map((s) => s.substring(0, 200)),
   };
 }
 ```
@@ -368,11 +393,13 @@ function sanitizeAIOutput(analysis: AnalysisResult): AnalysisResult {
 
 ```typescript
 // Group similar analyses
-async function batchAnalyze(applications: ApplicationData[]): Promise<AnalysisResult[]> {
+async function batchAnalyze(
+  applications: ApplicationData[],
+): Promise<AnalysisResult[]> {
   const batches = groupBySimilarity(applications);
 
   const results = await Promise.all(
-    batches.map(batch => analyzeBatch(batch))
+    batches.map((batch) => analyzeBatch(batch)),
   );
 
   return results.flat();
@@ -382,6 +409,7 @@ async function batchAnalyze(applications: ApplicationData[]): Promise<AnalysisRe
 ### Streaming Responses (Future)
 
 For long-form content generation:
+
 ```typescript
 const result = await model.generateContentStream(prompt);
 for await (const chunk of result.stream) {
@@ -395,32 +423,33 @@ for await (const chunk of result.stream) {
 
 ### Key AI Metrics
 
-| Metric | Target | Alert Threshold |
-|--------|--------|----------------|
-| Success Rate | > 95% | < 90% |
-| Average Latency | < 8s | > 15s |
-| Validation Failures | < 2% | > 5% |
-| Cost per Analysis | < $0.01 | > $0.05 |
+| Metric              | Target  | Alert Threshold |
+| ------------------- | ------- | --------------- |
+| Success Rate        | > 95%   | < 90%           |
+| Average Latency     | < 8s    | > 15s           |
+| Validation Failures | < 2%    | > 5%            |
+| Cost per Analysis   | < $0.01 | > $0.05         |
 
 ### Error Tracking
 
 ```typescript
 // Structured error logging
-logger.error('AI analysis failed', {
+logger.error("AI analysis failed", {
   userId,
   applicationId,
   error: error.message,
   errorType: error.name,
   attemptNumber: attempt,
-  promptVersion: '1.0',
-  severity: 'ERROR',
-  labels: { component: 'ai-service', critical: false }
+  promptVersion: "1.0",
+  severity: "ERROR",
+  labels: { component: "ai-service", critical: false },
 });
 ```
 
 ### Usage Analytics
 
 Track:
+
 - Most requested analysis types
 - User engagement with AI features
 - Conversion from free to paid usage
@@ -452,6 +481,7 @@ Track:
 ### User Communication
 
 **Always include disclaimers**:
+
 > "AI analysis is for informational purposes only and does not guarantee hiring outcomes."
 
 ### Bias Mitigation

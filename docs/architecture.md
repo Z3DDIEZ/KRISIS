@@ -87,6 +87,7 @@
 ### 1. Frontend Layer
 
 #### Technology Stack
+
 - **Framework**: React 18 with TypeScript
 - **Build Tool**: Vite
 - **Styling**: Tailwind CSS (JIT compiler)
@@ -94,20 +95,22 @@
 - **Firebase SDK**: v10.x (Auth + Firestore)
 
 #### Hosting
+
 - **Service**: Firebase Hosting
 - **CDN**: Global edge caching
 - **SSL**: Automatic HTTPS
 - **Deployment**: GitHub Actions → Firebase CLI
 
 #### Key Features
+
 ```typescript
 // Real-time Firestore subscription
 const { data: applications } = useFirestoreCollection(
   collection(db, `users/${userId}/applications`),
   {
     subscribe: true,
-    transform: (doc) => ({ id: doc.id, ...doc.data() })
-  }
+    transform: (doc) => ({ id: doc.id, ...doc.data() }),
+  },
 );
 
 // Optimistic updates
@@ -117,14 +120,15 @@ const { mutate: updateApplication } = useMutation({
   },
   onMutate: async (update) => {
     // Optimistic update
-    queryClient.setQueryData(['applications'], old =>
-      old.map(app => app.id === id ? { ...app, ...update } : app)
+    queryClient.setQueryData(["applications"], (old) =>
+      old.map((app) => (app.id === id ? { ...app, ...update } : app)),
     );
-  }
+  },
 });
 ```
 
 #### Bundle Optimization
+
 ```javascript
 // vite.config.ts
 export default {
@@ -132,15 +136,15 @@ export default {
     rollupOptions: {
       output: {
         manualChunks: {
-          'firebase': ['firebase/app', 'firebase/auth', 'firebase/firestore'],
-          'ui': ['react', 'react-dom'],
-          'charts': ['recharts'],
-          'utils': ['date-fns', 'lodash-es']
-        }
-      }
-    }
-  }
-}
+          firebase: ["firebase/app", "firebase/auth", "firebase/firestore"],
+          ui: ["react", "react-dom"],
+          charts: ["recharts"],
+          utils: ["date-fns", "lodash-es"],
+        },
+      },
+    },
+  },
+};
 ```
 
 ---
@@ -170,6 +174,7 @@ export default {
 ```
 
 #### Security Rules
+
 ```javascript
 // Firestore Security Rules
 rules_version = '2';
@@ -212,16 +217,16 @@ service cloud.firestore {
 
 ```typescript
 // functions/src/aiAnalysis.ts
-import { onDocumentCreated } from 'firebase-functions/v2/firestore';
-import { GoogleGenerativeAI } from '@google/generative-ai';
+import { onDocumentCreated } from "firebase-functions/v2/firestore";
+import { GoogleGenerativeAI } from "@google/generative-ai";
 
 export const analyzeApplication = onDocumentCreated(
   {
-    document: 'users/{userId}/applications/{applicationId}',
-    region: 'us-central1',
-    memory: '512MiB',
+    document: "users/{userId}/applications/{applicationId}",
+    region: "us-central1",
+    memory: "512MiB",
     timeoutSeconds: 60,
-    maxInstances: 10
+    maxInstances: 10,
   },
   async (event) => {
     const { userId, applicationId } = event.params;
@@ -229,9 +234,9 @@ export const analyzeApplication = onDocumentCreated(
 
     if (!application) return;
 
-    // Initialize Gemini
-    const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-    const model = genAI.getGenerativeModel({ model: 'gemini-pro' });
+    // Initialize Gemini 1.5 Flash
+    const genAI = new GoogleGenAI(process.env.GEMINI_API_KEY);
+    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
     // Generate prompt
     const prompt = `
@@ -254,25 +259,25 @@ export const analyzeApplication = onDocumentCreated(
       const analysis = JSON.parse(result.response.text());
 
       // Store analysis
-      await admin.firestore()
+      await admin
+        .firestore()
         .doc(`users/${userId}/aiAnalysis/${applicationId}`)
         .set({
           ...analysis,
           analyzedAt: admin.firestore.FieldValue.serverTimestamp(),
-          version: '1.0'
+          version: "1.0",
         });
 
       // Log event for analytics
-      await logAnalyticsEvent(userId, 'ai_analysis_completed', {
+      await logAnalyticsEvent(userId, "ai_analysis_completed", {
         applicationId,
-        fitScore: analysis.fitScore
+        fitScore: analysis.fitScore,
       });
-
     } catch (error) {
-      console.error('AI analysis failed:', error);
+      console.error("AI analysis failed:", error);
       await reportError(error, { userId, applicationId });
     }
-  }
+  },
 );
 ```
 
@@ -280,19 +285,19 @@ export const analyzeApplication = onDocumentCreated(
 
 ```typescript
 // functions/src/analytics.ts
-import { onSchedule } from 'firebase-functions/v2/scheduler';
+import { onSchedule } from "firebase-functions/v2/scheduler";
 
 export const weeklyAnalytics = onSchedule(
   {
-    schedule: '0 18 * * 0', // Sunday 6 PM
-    timeZone: 'UTC',
-    region: 'us-central1'
+    schedule: "0 18 * * 0", // Sunday 6 PM
+    timeZone: "UTC",
+    region: "us-central1",
   },
   async (event) => {
     const db = admin.firestore();
 
     // Get all active users
-    const usersSnapshot = await db.collection('users').get();
+    const usersSnapshot = await db.collection("users").get();
 
     for (const userDoc of usersSnapshot.docs) {
       const userId = userDoc.id;
@@ -303,10 +308,10 @@ export const weeklyAnalytics = onSchedule(
 
       const appsSnapshot = await db
         .collection(`users/${userId}/applications`)
-        .where('dateApplied', '>=', weekAgo.toISOString())
+        .where("dateApplied", ">=", weekAgo.toISOString())
         .get();
 
-      const applications = appsSnapshot.docs.map(d => d.data());
+      const applications = appsSnapshot.docs.map((d) => d.data());
 
       // Calculate metrics
       const metrics = {
@@ -314,25 +319,23 @@ export const weeklyAnalytics = onSchedule(
         statusBreakdown: countByStatus(applications),
         successRate: calculateSuccessRate(applications),
         averageResponseTime: calculateAvgResponseTime(applications),
-        topCompanies: getTopCompanies(applications, 5)
+        topCompanies: getTopCompanies(applications, 5),
       };
 
       // Store weekly summary
-      await db
-        .doc(`users/${userId}/weeklyAnalytics/${getWeekId()}`)
-        .set({
-          ...metrics,
-          weekStart: weekAgo,
-          weekEnd: new Date(),
-          generatedAt: admin.firestore.FieldValue.serverTimestamp()
-        });
+      await db.doc(`users/${userId}/weeklyAnalytics/${getWeekId()}`).set({
+        ...metrics,
+        weekStart: weekAgo,
+        weekEnd: new Date(),
+        generatedAt: admin.firestore.FieldValue.serverTimestamp(),
+      });
 
       // Send email summary (if enabled)
       if (userDoc.data().emailNotifications) {
         await sendWeeklySummaryEmail(userId, metrics);
       }
     }
-  }
+  },
 );
 ```
 
@@ -340,13 +343,13 @@ export const weeklyAnalytics = onSchedule(
 
 ```typescript
 // functions/src/bigquery.ts
-import { onDocumentWritten } from 'firebase-functions/v2/firestore';
-import { BigQuery } from '@google-cloud/bigquery';
+import { onDocumentWritten } from "firebase-functions/v2/firestore";
+import { BigQuery } from "@google-cloud/bigquery";
 
 export const exportToBigQuery = onDocumentWritten(
   {
-    document: 'users/{userId}/applications/{applicationId}',
-    region: 'us-central1'
+    document: "users/{userId}/applications/{applicationId}",
+    region: "us-central1",
   },
   async (event) => {
     const { userId, applicationId } = event.params;
@@ -354,15 +357,15 @@ export const exportToBigQuery = onDocumentWritten(
     const after = event.data?.after.data();
 
     const bigquery = new BigQuery();
-    const dataset = bigquery.dataset('job_tracker');
-    const table = dataset.table('application_events');
+    const dataset = bigquery.dataset("job_tracker");
+    const table = dataset.table("application_events");
 
     // Determine event type
     let eventType: string;
-    if (!before && after) eventType = 'created';
-    else if (before && !after) eventType = 'deleted';
-    else if (before.status !== after.status) eventType = 'status_changed';
-    else eventType = 'updated';
+    if (!before && after) eventType = "created";
+    else if (before && !after) eventType = "deleted";
+    else if (before.status !== after.status) eventType = "status_changed";
+    else eventType = "updated";
 
     // Stream insert
     await table.insert({
@@ -375,9 +378,9 @@ export const exportToBigQuery = onDocumentWritten(
       role: after?.role || before?.role,
       old_status: before?.status,
       new_status: after?.status,
-      visa_sponsorship: after?.visa || before?.visa
+      visa_sponsorship: after?.visa || before?.visa,
     });
-  }
+  },
 );
 ```
 
@@ -397,17 +400,17 @@ spec:
         autoscaling.knative.dev/maxScale: "10"
     spec:
       containers:
-      - image: gcr.io/PROJECT_ID/job-tracker-api:latest
-        env:
-        - name: DATABASE_URL
-          valueFrom:
-            secretKeyRef:
-              name: firestore-url
-              key: url
-        resources:
-          limits:
-            memory: 512Mi
-            cpu: 1
+        - image: gcr.io/PROJECT_ID/job-tracker-api:latest
+          env:
+            - name: DATABASE_URL
+              valueFrom:
+                secretKeyRef:
+                  name: firestore-url
+                  key: url
+          resources:
+            limits:
+              memory: 512Mi
+              cpu: 1
 ```
 
 ---
@@ -417,6 +420,7 @@ spec:
 #### A. Firestore Database Design
 
 **Collections Structure**:
+
 ```
 /users/{userId}
   ├─ email: string
@@ -454,26 +458,27 @@ spec:
 ```
 
 **Indexes**:
+
 ```javascript
 // Firestore Indexes
 [
   {
-    collectionGroup: 'applications',
-    queryScope: 'COLLECTION',
+    collectionGroup: "applications",
+    queryScope: "COLLECTION",
     fields: [
-      { fieldPath: 'dateApplied', order: 'DESCENDING' },
-      { fieldPath: 'status', order: 'ASCENDING' }
-    ]
+      { fieldPath: "dateApplied", order: "DESCENDING" },
+      { fieldPath: "status", order: "ASCENDING" },
+    ],
   },
   {
-    collectionGroup: 'applications',
-    queryScope: 'COLLECTION',
+    collectionGroup: "applications",
+    queryScope: "COLLECTION",
     fields: [
-      { fieldPath: 'company', order: 'ASCENDING' },
-      { fieldPath: 'dateApplied', order: 'DESCENDING' }
-    ]
-  }
-]
+      { fieldPath: "company", order: "ASCENDING" },
+      { fieldPath: "dateApplied", order: "DESCENDING" },
+    ],
+  },
+];
 ```
 
 #### B. BigQuery Schema
@@ -513,6 +518,7 @@ CLUSTER BY user_id;
 ```
 
 **Sample Analytical Queries**:
+
 ```sql
 -- Success rate by company
 SELECT
@@ -545,20 +551,22 @@ ORDER BY week DESC;
 #### Gemini API Integration
 
 **Use Cases**:
+
 1. **Resume-Job Fit Analysis** - Score matching (0-100)
 2. **Cover Letter Generation** - Tailored drafts
 3. **Interview Prep** - Question prediction
 4. **Company Research** - Automated summaries
 
 **Rate Limiting Strategy**:
+
 ```typescript
 // Rate limiter for Gemini API calls
-import { RateLimiterMemory } from 'rate-limiter-flexible';
+import { RateLimiterMemory } from "rate-limiter-flexible";
 
 const geminiRateLimiter = new RateLimiterMemory({
   points: 60, // 60 requests
   duration: 60, // per minute
-  blockDuration: 60 // block for 1 minute if exceeded
+  blockDuration: 60, // block for 1 minute if exceeded
 });
 
 async function callGeminiAPI(userId: string, prompt: string) {
@@ -567,10 +575,9 @@ async function callGeminiAPI(userId: string, prompt: string) {
 
     const result = await model.generateContent(prompt);
     return result.response.text();
-
   } catch (error) {
-    if (error instanceof Error && error.message.includes('rate limit')) {
-      throw new Error('Too many AI requests. Please try again in 1 minute.');
+    if (error instanceof Error && error.message.includes("rate limit")) {
+      throw new Error("Too many AI requests. Please try again in 1 minute.");
     }
     throw error;
   }
@@ -578,6 +585,7 @@ async function callGeminiAPI(userId: string, prompt: string) {
 ```
 
 **Cost Optimization**:
+
 - Cache common analysis results (Firestore)
 - Batch similar requests
 - Use streaming for long responses
@@ -592,19 +600,20 @@ async function callGeminiAPI(userId: string, prompt: string) {
 ```javascript
 // Topic configurations
 const topics = {
-  'application-created': {
-    subscribers: ['ai-analysis', 'bigquery-export', 'analytics-update']
+  "application-created": {
+    subscribers: ["ai-analysis", "bigquery-export", "analytics-update"],
   },
-  'application-status-changed': {
-    subscribers: ['notification-trigger', 'bigquery-export']
+  "application-status-changed": {
+    subscribers: ["notification-trigger", "bigquery-export"],
   },
-  'weekly-report-scheduled': {
-    subscribers: ['analytics-aggregation', 'email-sender']
-  }
+  "weekly-report-scheduled": {
+    subscribers: ["analytics-aggregation", "email-sender"],
+  },
 };
 ```
 
 **Example: Status Change Event Flow**:
+
 ```
 User updates status (Frontend)
   → Firestore write
@@ -624,28 +633,29 @@ User updates status (Frontend)
 
 ```typescript
 // Structured logging
-import { logger } from 'firebase-functions';
+import { logger } from "firebase-functions";
 
-logger.info('Application created', {
+logger.info("Application created", {
   userId,
   applicationId,
   company: application.company,
-  severity: 'INFO',
-  labels: { component: 'ai-analysis' }
+  severity: "INFO",
+  labels: { component: "ai-analysis" },
 });
 
-logger.error('Gemini API error', {
+logger.error("Gemini API error", {
   userId,
   errorCode: error.code,
   errorMessage: error.message,
-  severity: 'ERROR',
-  labels: { component: 'ai-analysis', critical: 'true' }
+  severity: "ERROR",
+  labels: { component: "ai-analysis", critical: "true" },
 });
 ```
 
 #### Cloud Monitoring Dashboards
 
 **Key Metrics**:
+
 - Function execution time (p50, p95, p99)
 - Gemini API success rate
 - Firestore read/write operations
@@ -654,6 +664,7 @@ logger.error('Gemini API error', {
 - Application creation rate
 
 **Alerts**:
+
 ```yaml
 # alerting-policy.yaml
 displayName: "High Error Rate"
@@ -748,11 +759,11 @@ Production   → Firebase project: job-tracker-prod
 
 ### Current Architecture Limits
 
-| Resource | Limit | Current Usage | Headroom |
-|----------|-------|---------------|----------|
-| Firestore writes | 10K/sec | ~50/sec | 200x |
-| Cloud Functions | 1000 concurrent | ~10 concurrent | 100x |
-| Gemini API | 60 req/min | ~10 req/min | 6x |
+| Resource         | Limit           | Current Usage  | Headroom |
+| ---------------- | --------------- | -------------- | -------- |
+| Firestore writes | 10K/sec         | ~50/sec        | 200x     |
+| Cloud Functions  | 1000 concurrent | ~10 concurrent | 100x     |
+| Gemini API       | 60 req/min      | ~10 req/min    | 6x       |
 
 ### Growth Strategy
 

@@ -22,6 +22,12 @@ interface Application {
   dateApplied: string
   notes?: string
   resumeUrl?: string
+  latestAnalysis?: {
+    fitScore: number
+    ghostingRisk: number
+    tacticalSignal: string
+    urgencyLevel: number
+  }
 }
 
 interface DashboardStats {
@@ -275,6 +281,44 @@ function Dashboard() {
                   </div>
 
                   <div className="flex items-center gap-6">
+                    {/* AI Signals */}
+                    {application.latestAnalysis && (
+                      <div className="hidden lg:flex items-center gap-4">
+                        <div className="flex flex-col items-center">
+                          <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-tighter">
+                            Match
+                          </span>
+                          <span
+                            className={`text-sm font-black ${
+                              application.latestAnalysis.fitScore >= 70
+                                ? 'text-green-600'
+                                : application.latestAnalysis.fitScore >= 40
+                                  ? 'text-yellow-500'
+                                  : 'text-red-500'
+                            }`}
+                          >
+                            {application.latestAnalysis.fitScore}%
+                          </span>
+                        </div>
+                        <div className="flex flex-col items-center">
+                          <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-tighter">
+                            Risk
+                          </span>
+                          <span
+                            className={`text-sm font-black ${
+                              application.latestAnalysis.ghostingRisk >= 70
+                                ? 'text-red-600'
+                                : application.latestAnalysis.ghostingRisk >= 40
+                                  ? 'text-yellow-500'
+                                  : 'text-green-600'
+                            }`}
+                          >
+                            {application.latestAnalysis.ghostingRisk}%
+                          </span>
+                        </div>
+                      </div>
+                    )}
+
                     <div className="hidden md:block text-right">
                       <p className="text-[10px] font-bold text-zinc-400 uppercase tracking-wider mb-1">
                         Applied
