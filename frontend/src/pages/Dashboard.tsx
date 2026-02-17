@@ -11,8 +11,8 @@ import { handleError } from '../lib/ErrorHandler'
 import UrgentActions from '../components/ui/UrgentActions'
 import { Card } from '../components/ui/Card'
 import { Badge } from '../components/ui/Badge'
-
 import { Button } from '../components/ui/Button'
+import { TacticalBrief } from '../components/TacticalBrief'
 
 interface Application {
   id: string
@@ -178,6 +178,9 @@ function Dashboard() {
           </Link>
         }
       />
+
+      {/* Strategic Intelligence Brief */}
+      <TacticalBrief />
 
       {/* Stats Grid */}
       <section

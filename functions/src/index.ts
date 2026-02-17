@@ -7,16 +7,18 @@ import { assertAuthenticated } from "./middleware/auth";
 
 // Initialize Firebase Admin (if not already initialized)
 if (!admin.apps.length) {
-    admin.initializeApp();
+  admin.initializeApp();
 }
 
 const db = admin.firestore();
 
-export const analyzeResume = onCall({
+export const analyzeResume = onCall(
+  {
     region: "africa-south1", // Consistent with firebase.json
     maxInstances: 10,
     cors: true,
-}, async (request) => {
+  },
+  async (request) => {
     // 1. Authentication Check
     const userId = assertAuthenticated(request);
 
@@ -24,106 +26,143 @@ export const analyzeResume = onCall({
     const { resumeText, jobDescription } = request.data;
 
     if (!resumeText || !jobDescription) {
-        throw new HttpsError("invalid-argument", "Missing resumeText or jobDescription");
+      throw new HttpsError(
+        "invalid-argument",
+        "Missing resumeText or jobDescription",
+      );
     }
 
-    const today = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
+    const today = new Date().toISOString().split("T")[0]; // YYYY-MM-DD
     const counterRef = db.doc(`users/${userId}/counters/dailyAnalysis`);
 
     // 2. Quota Enformcement (Transaction)
     try {
-        await db.runTransaction(async (t) => {
-            const doc = await t.get(counterRef);
-            const data = doc.data() || { count: 0, date: today };
+      await db.runTransaction(async (t) => {
+        const doc = await t.get(counterRef);
+        const data = doc.data() || { count: 0, date: today };
 
-            // Reset if new day
-            if (data.date !== today) {
-                data.count = 0;
-                data.date = today;
-            }
-
-            if (data.count >= 5) {
-                throw new HttpsError("resource-exhausted", "Daily analysis quota exceeded (5/day).");
-            }
-
-            // Increment
-            t.set(counterRef, { count: data.count + 1, date: today }, { merge: true });
-        });
-    } catch (error: any) {
-        if (error.code === 'resource-exhausted') {
-            throw error;
+        // Reset if new day
+        if (data.date !== today) {
+          data.count = 0;
+          data.date = today;
         }
-        logger.error("Quota transaction failed", { userId, error });
-        throw new HttpsError("internal", "Failed to verify quota.");
+
+        if (data.count >= 5) {
+          throw new HttpsError(
+            "resource-exhausted",
+            "Daily analysis quota exceeded (5/day).",
+          );
+        }
+
+        // Increment
+        t.set(
+          counterRef,
+          { count: data.count + 1, date: today },
+          { merge: true },
+        );
+      });
+    } catch (error: any) {
+      if (error.code === "resource-exhausted") {
+        throw error;
+      }
+      logger.error("Quota transaction failed", { userId, error });
+      throw new HttpsError("internal", "Failed to verify quota.");
     }
 
     // 3. AI Analysis
     try {
-        const analysis = await GeminiService.analyzeResume(resumeText, jobDescription);
+      const analysis = await GeminiService.analyzeResume(
+        resumeText,
+        jobDescription,
+      );
 
-        // 4. Save Results
-        const resultRef = db.collection(`users/${userId}/analyses`).doc();
-        await resultRef.set({
-            ...analysis,
-            jobDescriptionSnippet: jobDescription.substring(0, 200),
-            createdAt: admin.firestore.FieldValue.serverTimestamp(),
-            model: "gemini-1.5-flash"
-        });
+      // 4. Save Results
+      const resultRef = db.collection(`users/${userId}/analyses`).doc();
+      await resultRef.set({
+        ...analysis,
+        jobDescriptionSnippet: jobDescription.substring(0, 500), // Increased context
+        createdAt: admin.firestore.FieldValue.serverTimestamp(),
+        model: "gemini-pro",
+        type: "tactical_analysis",
+      });
 
-        return { success: true, analysisId: resultRef.id, data: analysis };
-
+      logger.info("Analysis successfully persisted", {
+        userId,
+        analysisId: resultRef.id,
+        fitScore: analysis.fitScore,
+      });
+      return { success: true, analysisId: resultRef.id, data: analysis };
     } catch (error: any) {
-        logger.error("Analysis Failed", { userId, error });
-        // DEV MODE: Expose actual error to client for debugging
-        throw new HttpsError("internal", error.message || "AI Analysis failed to complete.");
+      logger.error("Analysis Failed", { userId, error });
+      // DEV MODE: Expose actual error to client for debugging
+      throw new HttpsError(
+        "internal",
+        error.message || "AI Analysis failed to complete.",
+      );
     }
-});
+  },
+);
 
-export const searchJobs = onCall({
+export const searchJobs = onCall(
+  {
     region: "africa-south1",
     maxInstances: 10,
     cors: true,
-}, async (request) => {
+  },
+  async (request) => {
     // 1. Auth Check
     const userId = assertAuthenticated(request);
 
     // 2. Rate Limit (Simple Daily Counter)
-    const today = new Date().toISOString().split('T')[0];
+    const today = new Date().toISOString().split("T")[0];
     const counterRef = db.doc(`users/${userId}/counters/dailyJobSearch`);
 
     try {
-        await db.runTransaction(async (t) => {
-            const doc = await t.get(counterRef);
-            const data = doc.data() || { count: 0, date: today };
+      await db.runTransaction(async (t) => {
+        const doc = await t.get(counterRef);
+        const data = doc.data() || { count: 0, date: today };
 
-            if (data.date !== today) { data.count = 0; data.date = today; }
+        if (data.date !== today) {
+          data.count = 0;
+          data.date = today;
+        }
 
-            if (data.count >= 20) {
-                throw new HttpsError("resource-exhausted", "Daily job search quota exceeded (20/day).");
-            }
+        if (data.count >= 5) {
+          throw new HttpsError(
+            "resource-exhausted",
+            "Daily job search quota exceeded (5/day).",
+          );
+        }
 
-            t.set(counterRef, { count: data.count + 1, date: today }, { merge: true });
-        });
+        t.set(
+          counterRef,
+          { count: data.count + 1, date: today },
+          { merge: true },
+        );
+      });
     } catch (error: any) {
-        if (error.code === 'resource-exhausted') throw error;
-        throw new HttpsError("internal", "Quota check failed.");
+      if (error.code === "resource-exhausted") throw error;
+      throw new HttpsError("internal", "Quota check failed.");
     }
 
     // 3. Perform Search
     try {
-        const { query, page, date_posted, remote_jobs_only } = request.data;
-        if (!query) throw new HttpsError("invalid-argument", "Query is required");
+      const { query, page, date_posted, remote_jobs_only } = request.data;
+      if (!query) throw new HttpsError("invalid-argument", "Query is required");
 
-        const results = await JSearchService.search({
-            query,
-            page: page || 1,
-            date_posted,
-            remote_jobs_only
-        });
+      const results = await JSearchService.search({
+        query,
+        page: page || 1,
+        date_posted,
+        remote_jobs_only,
+      });
 
-        return results;
+      return results;
     } catch (error: any) {
-        logger.error("Job Search Failed", { userId, error });
-        throw new HttpsError("internal", "Job Search Reference Failed.");
+      logger.error("Job Search Failed", { userId, error });
+      throw new HttpsError("internal", "Job Search Reference Failed.");
     }
-});
+  },
+);
+
+export { generateDailyTacticalBrief } from "./handlers/intelligence";
