@@ -226,6 +226,41 @@ function ApplicationDetail() {
     )
   }
 
+  // ... existing code ...
+  const [importUrl, setImportUrl] = useState('')
+  const [isImporting, setIsImporting] = useState(false)
+
+  const handleImport = async () => {
+    if (!importUrl) return
+
+    setIsImporting(true)
+    try {
+      const ingestFn = httpsCallable(functions, 'ingestJobUrl')
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const result: any = await ingestFn({ url: importUrl })
+
+      if (result.data.success) {
+        const jobData = result.data.data
+        setValue('company', jobData.company || '', { shouldDirty: true })
+        setValue('role', jobData.role || '', { shouldDirty: true })
+
+        const description = jobData.description
+          ? `${jobData.description}\n\nSource: ${importUrl}`
+          : `Source: ${importUrl}`
+
+        setValue('notes', description, { shouldDirty: true })
+        setValue('dateApplied', getTodayDate(), { shouldDirty: true })
+
+        toast.success(`Imported job from ${jobData.company}`)
+      }
+    } catch (error: unknown) {
+      console.error('Import Error:', error)
+      toast.error('Failed to import job details. Please fill manually.')
+    } finally {
+      setIsImporting(false)
+    }
+  }
+
   return (
     <div className="animate-fade-in pb-20 p-6 max-w-4xl mx-auto space-y-6">
       {/* Premium Header */}
@@ -265,6 +300,46 @@ function ApplicationDetail() {
           </div>
         </div>
       </Card>
+
+      {/* Import Section (New Only) */}
+      {isNewApplication && (
+        <Card className="p-6 bg-linear-to-r from-primary-50 to-white dark:from-primary-900/10 dark:to-zinc-900 border-primary-100 dark:border-primary-900/30">
+          <div className="flex flex-col md:flex-row gap-4 items-end md:items-center">
+            <div className="flex-1 w-full space-y-2">
+              <label
+                htmlFor="importUrl"
+                className="text-xs font-bold uppercase text-primary-700 dark:text-primary-400 flex items-center gap-2"
+              >
+                <Icon name="bolt" size={14} />
+                Auto-Fill from URL
+              </label>
+              <input
+                id="importUrl"
+                type="text"
+                value={importUrl}
+                onChange={(e) => setImportUrl(e.target.value)}
+                placeholder="Paste LinkedIn or Indeed URL..."
+                className="w-full h-10 px-3 rounded-lg border border-primary-200 dark:border-primary-900/50 bg-white dark:bg-zinc-900 focus:ring-2 focus:ring-primary-500/20 outline-none text-sm"
+              />
+            </div>
+            <Button
+              onClick={handleImport}
+              disabled={!importUrl || isImporting}
+              variant="primary"
+              className="w-full md:w-auto"
+            >
+              {isImporting ? (
+                <>
+                  <div className="animate-spin rounded-full h-4 w-4 border-2 border-white/30 border-t-white mr-2"></div>
+                  Importing...
+                </>
+              ) : (
+                'Import Details'
+              )}
+            </Button>
+          </div>
+        </Card>
+      )}
 
       <div className="">
         <form onSubmit={handleSubmit(onFormSubmit)} className="space-y-8">
