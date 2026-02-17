@@ -166,3 +166,4 @@ export const searchJobs = onCall(
 );
 
 export { generateDailyTacticalBrief } from "./handlers/intelligence";
+export { ingestJobUrl } from "./handlers/ingestion";
