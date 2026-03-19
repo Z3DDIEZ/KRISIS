@@ -61,8 +61,8 @@ export const analyzeResume = onCall(
           { merge: true },
         );
       });
-    } catch (error: any) {
-      if (error.code === "resource-exhausted") {
+    } catch (error) {
+      if ((error as { code?: string }).code === "resource-exhausted") {
         throw error;
       }
       logger.error("Quota transaction failed", { userId, error });
@@ -92,12 +92,13 @@ export const analyzeResume = onCall(
         fitScore: analysis.fitScore,
       });
       return { success: true, analysisId: resultRef.id, data: analysis };
-    } catch (error: any) {
+    } catch (error) {
+      const err = error as Error;
       logger.error("Analysis Failed", { userId, error });
       // DEV MODE: Expose actual error to client for debugging
       throw new HttpsError(
         "internal",
-        error.message || "AI Analysis failed to complete.",
+        err.message || "AI Analysis failed to complete.",
       );
     }
   },
@@ -140,8 +141,8 @@ export const searchJobs = onCall(
           { merge: true },
         );
       });
-    } catch (error: any) {
-      if (error.code === "resource-exhausted") throw error;
+    } catch (error) {
+      if ((error as { code?: string }).code === "resource-exhausted") throw error;
       throw new HttpsError("internal", "Quota check failed.");
     }
 
@@ -158,7 +159,7 @@ export const searchJobs = onCall(
       });
 
       return results;
-    } catch (error: any) {
+    } catch (error) {
       logger.error("Job Search Failed", { userId, error });
       throw new HttpsError("internal", "Job Search Reference Failed.");
     }

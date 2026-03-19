@@ -121,14 +121,15 @@ export class GeminiService {
 
       const cleanedJson = this.cleanJsonResponse(responseText);
       return JSON.parse(cleanedJson);
-    } catch (error: any) {
+    } catch (error) {
+      const err = error as Error;
       console.error("Gemini Analysis Execution Error:", {
-        message: error.message,
-        stack: error.stack,
+        message: err.message,
+        stack: err.stack,
         model: MODEL_ID,
-        details: JSON.stringify(error),
+        details: JSON.stringify(err),
       });
-      throw new Error(`Intelligence Protocol Failure: ${error.message}`);
+      throw new Error(`Intelligence Protocol Failure: ${err.message}`);
     }
   }
 

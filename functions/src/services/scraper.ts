@@ -56,7 +56,8 @@ export class JobScraperService {
         posted_at: bestMatch.job_posted_at_datetime_utc,
         inferred_from_url: true,
       };
-    } catch (error: any) {
+    } catch (error) {
+      const err = error as Error;
       // LAST RESORT FALLBACK: If even the search fails (e.g. API limit), return basic URL data
       logger.error("Scraper Ingestion Failed", { url, error });
 
@@ -72,7 +73,7 @@ export class JobScraperService {
         logo: null,
         posted_at: new Date().toISOString(),
         inferred_from_url: true,
-        error: error.message,
+        error: err.message,
       };
     }
   }
@@ -128,7 +129,7 @@ export class JobScraperService {
             }
           }
         }
-      } catch (e) {
+      } catch (_e) {
         // Fetch failed (timeout or block), fall back to URL parsing
         logger.warn("HTML Title fetch failed, falling back to URL parsing", {
           url,
@@ -156,7 +157,7 @@ export class JobScraperService {
       }
 
       return null;
-    } catch (e) {
+    } catch (_e) {
       return null;
     }
   }

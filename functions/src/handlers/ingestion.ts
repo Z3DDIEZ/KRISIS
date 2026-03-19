@@ -32,11 +32,12 @@ export const ingestJobUrl = onCall(
         success: true,
         data: jobData,
       };
-    } catch (error: any) {
+    } catch (error) {
+      const err = error as Error;
       logger.error("Job Ingestion Failed", { userId, url, error });
       throw new HttpsError(
         "internal",
-        error.message || "Failed to ingest job data.",
+        err.message || "Failed to ingest job data.",
       );
     }
   },

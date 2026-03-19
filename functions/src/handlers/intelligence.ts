@@ -11,7 +11,7 @@ interface DetailedApplication {
   role: string;
   status: string;
   dateApplied: string;
-  lastUpdated?: any; // Firestore Timestamp
+  lastUpdated?: admin.firestore.Timestamp;
   fitScore?: number;
   ghostingRisk?: number;
   urgencyLevel?: number;
@@ -137,7 +137,7 @@ export const generateDailyTacticalBrief = onCall(
         items: tacticalItems,
         totalActive: tacticalItems.length,
       };
-    } catch (error: any) {
+    } catch (error) {
       logger.error("Tactical Brief Generation Failed", { userId, error });
       throw new HttpsError("internal", "Failed to generate tactical brief.");
     }
