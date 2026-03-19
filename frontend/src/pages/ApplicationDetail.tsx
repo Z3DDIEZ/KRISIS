@@ -59,6 +59,8 @@ function ApplicationDetail() {
   const [isLoading, setIsLoading] = useState(id && id !== 'new')
   const [resumeText, setResumeText] = useState<string>('')
   const [analyzing, setAnalyzing] = useState(false)
+  const [importUrl, setImportUrl] = useState('')
+  const [isImporting, setIsImporting] = useState(false)
   const analysisResult = watch('latestAnalysis')
 
   const formData = watch()
@@ -233,8 +235,6 @@ function ApplicationDetail() {
   }
 
   // ... existing code ...
-  const [importUrl, setImportUrl] = useState('')
-  const [isImporting, setIsImporting] = useState(false)
 
   const handleImport = async (overrideUrl?: string) => {
     const targetUrl = overrideUrl || importUrl
