@@ -1,6 +1,6 @@
 
 import { render, screen } from '@testing-library/react'
-import { expect } from 'vitest'
+import { describe, it, expect } from 'vitest'
 import LoadingSpinner from './LoadingSpinner'
 
 describe('LoadingSpinner', () => {
@@ -32,6 +32,14 @@ describe('LoadingSpinner', () => {
   it('has animation classes', () => {
     render(<LoadingSpinner data-testid="spinner" />)
     const spinner = screen.getByTestId('spinner')
-    expect(spinner).toHaveClass('animate-spin', 'rounded-full', 'border-2', 'border-gray-300', 'border-t-blue-600')
+    expect(spinner).toHaveClass(
+      'animate-spin',
+      'rounded-full',
+      'border-2',
+      'border-zinc-200',
+      'dark:border-zinc-800',
+      'border-t-primary-600',
+      'dark:border-t-primary-500'
+    )
   })
 })
