@@ -17,7 +17,15 @@ function DarkModeToggle() {
     const savedTheme = localStorage.getItem('theme')
     const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches
     const shouldBeDark = savedTheme === 'dark' || (!savedTheme && prefersDark)
+    
     root.setAttribute('data-theme', shouldBeDark ? 'dark' : 'light')
+    
+    // SYNC: Ensure class matches attribute on mount
+    if (shouldBeDark) {
+      root.classList.add('dark')
+    } else {
+      root.classList.remove('dark')
+    }
   }, [])
 
   const toggleTheme = () => {
@@ -27,6 +35,14 @@ function DarkModeToggle() {
 
     setIsDark(newIsDark)
     root.setAttribute('data-theme', newTheme)
+    
+    // SYNC: Tailwind 'class' strategy requires the 'dark' class
+    if (newTheme === 'dark') {
+      root.classList.add('dark')
+    } else {
+      root.classList.remove('dark')
+    }
+    
     localStorage.setItem('theme', newTheme)
   }
 

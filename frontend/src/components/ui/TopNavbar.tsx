@@ -12,6 +12,11 @@ interface TopNavbarProps {
   onToggleSidebar?: () => void
 }
 
+/**
+ * TopNavbar - Global app header with search, actions, and user menu.
+ * @param props - Optional sidebar toggle handler.
+ * @returns The sticky top navigation bar.
+ */
 function TopNavbar({ onToggleSidebar }: TopNavbarProps) {
   const [user] = useAuthState(auth)
   const { searchQuery, setSearchQuery } = useSearch()
@@ -52,13 +57,13 @@ function TopNavbar({ onToggleSidebar }: TopNavbarProps) {
   }
 
   return (
-    <header className="sticky top-0 z-20 h-16 px-4 sm:px-6 flex items-center justify-between gap-4 transition-all duration-200 backdrop-blur-xl bg-white/80 dark:bg-zinc-950/80 border-b border-white/10 dark:border-zinc-800/50">
+    <header className="sticky top-0 z-20 h-16 px-4 sm:px-6 flex items-center justify-between gap-4 transition-all duration-200 backdrop-blur-xl bg-bg-surface border-b border-border">
       {/* Sidebar Toggle & Mobile Logo */}
       <div className="flex items-center gap-4">
         {/* Mobile Toggle */}
         <button
           onClick={onToggleSidebar}
-          className="lg:hidden p-2 -ml-2 text-zinc-500 hover:text-zinc-900 dark:hover:text-white rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors"
+          className="lg:hidden p-2 -ml-2 text-text-muted hover:text-text-primary rounded-lg hover:bg-bg-subtle transition-colors"
           aria-label="Toggle sidebar"
         >
           <Icon name="list" size={24} />
@@ -67,7 +72,7 @@ function TopNavbar({ onToggleSidebar }: TopNavbarProps) {
         {/* Sidebar Collapse Toggle (Desktop) */}
         <button
           onClick={onToggleSidebar}
-          className="hidden lg:flex p-2 -ml-2 text-zinc-400 hover:text-zinc-900 dark:hover:text-white rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors"
+          className="hidden lg:flex p-2 -ml-2 text-text-muted hover:text-text-primary rounded-lg hover:bg-bg-subtle transition-colors"
           aria-label="Toggle layout"
         >
           <Icon name="sidebar" size={20} />
@@ -78,7 +83,7 @@ function TopNavbar({ onToggleSidebar }: TopNavbarProps) {
           <div className="text-primary-600">
             <Icon name="dashboard" size={24} />
           </div>
-          <span className="font-black text-lg tracking-tighter text-zinc-900 dark:text-white">
+          <span className="font-bold text-lg tracking-tight text-text-primary">
             KRISIS
           </span>
         </Link>
@@ -88,17 +93,16 @@ function TopNavbar({ onToggleSidebar }: TopNavbarProps) {
       <div
         className={`
           flex-1 max-w-xl mx-auto
-          flex items-center gap-3 px-5 py-2.5 
-          bg-zinc-100/30 dark:bg-zinc-900/40 
-          border border-zinc-200/50 dark:border-zinc-800/50 hover:border-primary-500/30 dark:hover:border-primary-500/30
-          rounded-2xl transition-all duration-300
-          ${searchFocused ? 'bg-white dark:bg-zinc-950 shadow-[0_8px_30px_rgb(0,0,0,0.04)] ring-1 ring-primary-500/20' : ''}
+          flex items-center gap-3 px-4 py-2.5 
+          bg-bg-subtle border border-border hover:border-border-strong
+          rounded-xl transition-all duration-200
+          ${searchFocused ? 'bg-bg-surface shadow-sm ring-2 ring-primary-500/20' : ''}
         `}
       >
         <Icon
           name="search"
           size={18}
-          className={`transition-colors duration-300 ${searchFocused ? 'text-primary-500' : 'text-zinc-400'}`}
+          className={`transition-colors duration-300 ${searchFocused ? 'text-primary-500' : 'text-text-muted'}`}
         />
         <input
           ref={searchRef}
@@ -108,22 +112,22 @@ function TopNavbar({ onToggleSidebar }: TopNavbarProps) {
           onKeyDown={handleKeyDown}
           onFocus={() => setSearchFocused(true)}
           onBlur={() => setSearchFocused(false)}
-          placeholder="SEARCH INTELLIGENCE DATABASE... (Cmd+K)"
-          className="w-full bg-transparent border-none focus:ring-0 p-0 text-[10px] font-black uppercase tracking-widest placeholder-zinc-400 text-zinc-900 dark:text-zinc-100 outline-none"
+          placeholder="Search applications, companies, notes... (Cmd+K)"
+          className="w-full bg-transparent border-none focus:ring-0 p-0 text-sm font-medium text-text-primary placeholder:text-text-muted outline-none"
           aria-label="Search"
           data-track-action="global-search"
         />
         {searchQuery ? (
           <button
             onClick={clearSearch}
-            className="text-zinc-400 hover:text-primary-600 transition-colors"
+            className="text-text-muted hover:text-primary-600 transition-colors"
           >
             <Icon name="close" size={16} />
           </button>
         ) : (
           <div className="hidden sm:flex items-center gap-1">
-            <kbd className="hidden sm:inline-block px-1.5 py-0.5 text-[9px] font-black text-zinc-400 bg-zinc-200/50 dark:bg-zinc-800/50 rounded border border-zinc-300 dark:border-zinc-700 uppercase tracking-tighter">
-              ⌘K
+            <kbd className="hidden sm:inline-block px-1.5 py-0.5 text-[10px] font-semibold text-text-muted bg-bg-subtle rounded border border-border uppercase tracking-tight">
+              Cmd+K
             </kbd>
           </div>
         )}
@@ -134,7 +138,7 @@ function TopNavbar({ onToggleSidebar }: TopNavbarProps) {
         {/* Job Search */}
         <Link
           to="/jobs"
-          className="p-2 text-zinc-400 hover:text-primary-600 hover:bg-primary-50 dark:hover:bg-primary-900/10 rounded-lg transition-colors"
+          className="p-2 text-text-muted hover:text-primary-600 hover:bg-primary-50 rounded-lg transition-colors"
           title="Search Job Market"
         >
           <Icon name="search" size={20} />
@@ -162,7 +166,7 @@ function TopNavbar({ onToggleSidebar }: TopNavbarProps) {
           <Icon name="add" size={24} />
         </Link>
 
-        <div className="w-px h-6 bg-zinc-200 dark:bg-zinc-700 hidden sm:block" />
+        <div className="w-px h-6 bg-border hidden sm:block" />
 
         <DarkModeToggle />
 

@@ -17,11 +17,16 @@ interface BadgeProps extends React.HTMLAttributes<HTMLSpanElement> {
   children: React.ReactNode
 }
 
+/**
+ * Badge - Compact status label for categories and metadata.
+ * @param props - Badge text and optional visual variant.
+ * @returns A styled badge element with semantic colours.
+ */
 export function Badge({ children, className, variant = 'neutral', ...props }: BadgeProps) {
   return (
     <span
       className={cn(
-        'inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider border',
+        'inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold tracking-wide border',
 
         // Status Variants (matching index.css)
         variant === 'applied' &&

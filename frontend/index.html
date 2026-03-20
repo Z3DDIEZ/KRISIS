@@ -9,8 +9,22 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Outfit:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     <title>KRISIS - AI Job Application Intelligence</title>
     <base href="/KRISIS/" />
+    <script>
+      (() => {
+        try {
+          const root = document.documentElement
+          const savedTheme = localStorage.getItem('theme')
+          const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches
+          const theme = savedTheme || (prefersDark ? 'dark' : 'light')
+          root.setAttribute('data-theme', theme)
+          root.classList.toggle('dark', theme === 'dark')
+        } catch (error) {
+          console.warn('Theme bootstrap skipped:', error)
+        }
+      })()
+    </script>
   </head>
-  <body class="antialiased text-zinc-900 dark:text-zinc-50 bg-zinc-50 dark:bg-black">
+  <body class="antialiased">
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>

@@ -6,17 +6,24 @@ interface CardProps extends React.HTMLAttributes<HTMLDivElement> {
   hover?: boolean
 }
 
+/**
+ * Card - Surface wrapper for grouped content and panels.
+ * @param props - Standard div attributes, plus `hover` for elevation.
+ * @returns A styled card container for consistent layout.
+ */
 export function Card({ children, className, hover = true, ...props }: CardProps) {
   return (
     <div
       className={cn(
-        'bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl transition-all duration-300 ease-out shadow-[0_1px_2px_rgba(0,0,0,0.03),0_4px_12px_rgba(0,0,0,0.03)]',
+        'surface-card relative text-text-primary transition-all duration-300 ease-out',
         hover &&
-          'hover:border-primary-200 dark:hover:border-primary-900/50 hover:shadow-[0_4px_20px_rgba(249,115,22,0.08),0_0_0_1px_rgba(249,115,22,0.05)] hover:-translate-y-px',
+          'hover:shadow-lg hover:-translate-y-0.5 active:translate-y-0',
         className
       )}
       {...props}
     >
+      {/* Bauhaus Accent Notch */}
+      <div className="absolute top-0 right-0 w-8 h-8 border-r border-t border-primary-500/40 opacity-0 group-hover:opacity-100 transition-opacity" />
       {children}
     </div>
   )

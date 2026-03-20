@@ -18,11 +18,8 @@ function App() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <Router basename={basename} future={{
-        v7_startTransition: true,
-        v7_relativeSplatPath: true,
-      }}>
-        <div className="min-h-screen bg-gray-50">
+      <Router basename={basename}>
+        <div className="min-h-screen transition-colors duration-300">
           <AppRoutes />
           <Toaster position="top-right" />
         </div>

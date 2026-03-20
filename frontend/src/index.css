@@ -6,6 +6,7 @@
     /* Base Token Mapping */
     --bg-app: var(--bg-subtle);
     --text-app: var(--text-primary);
+    color-scheme: light dark;
   }
 
   html {
@@ -17,28 +18,93 @@
     font-feature-settings: "cv11", "ss01";
   }
 
-  /* Body classes moved to index.html to avoid @apply */
+  body {
+    margin: 0;
+    color: var(--text-app);
+    background-color: var(--bg-app);
+    line-height: var(--lh-base);
+    text-rendering: optimizeLegibility;
+  }
+
+  a {
+    color: var(--action-primary);
+    text-decoration-thickness: 0.08em;
+    text-underline-offset: 0.18em;
+  }
+
+  a:hover {
+    color: var(--action-hover);
+  }
+
+  ::selection {
+    background: var(--primary-200);
+    color: var(--text-primary);
+  }
 }
 
 @layer components {
-
   /* =================================
-     Animations
+     Typography helpers
      ================================= */
-  .animate-fade-in {
-    animation: fadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  .page-header {
+    padding: 0;
+    margin-bottom: var(--spacing-4);
   }
 
-  @keyframes fadeIn {
-    from {
-      opacity: 0;
-      transform: translateY(4px);
-    }
+  .font-primary {
+    font-family: var(--font-sans);
+  }
 
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
+  .heading-xl {
+    font-size: clamp(1.75rem, 2.6vw, 2.6rem);
+    line-height: var(--lh-tight);
+    letter-spacing: var(--tracking-tight);
+    font-weight: var(--font-bold);
+  }
+
+  .heading-lg {
+    font-size: clamp(1.25rem, 2vw, 1.9rem);
+    line-height: var(--lh-snug);
+    letter-spacing: var(--tracking-tight);
+    font-weight: var(--font-semibold);
+  }
+
+  .heading-md {
+    font-size: 1.125rem;
+    line-height: var(--lh-snug);
+    letter-spacing: var(--tracking-normal);
+    font-weight: var(--font-semibold);
+  }
+
+  .eyebrow {
+    font-size: 0.75rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    font-weight: var(--font-semibold);
+    color: var(--text-muted);
+  }
+
+  /* =================================
+     Surface helpers
+     ================================= */
+  .surface-card {
+    background-color: var(--bg-surface);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+  }
+
+  .surface-elevated {
+    background-color: var(--bg-elevated);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-md);
+  }
+
+  .surface-inset {
+    background-color: var(--bg-subtle);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-md);
   }
 
   /* =================================

@@ -37,8 +37,8 @@
 
   /* Text Hierarchy (Swiss precision) */
   --text-primary: var(--midnight);
-  --text-secondary: #404040;
-  --text-muted: #737373;
+  --text-secondary: #262626;
+  --text-muted: #404040;
 
   /* Borders - Bauhaus Industrial */
   --border-light: var(--industrial-gray);
@@ -167,32 +167,7 @@ html {
   color: var(--text-primary);
 }
 
-/* Smooth transition when switching themes */
-*,
-*::before,
-*::after {
-  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
-}
-
-/* Specific transitions for key components */
-.card,
-.btn,
-.input-field,
-.badge,
-.stat-card,
-.nav-link,
-.navbar {
-  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
-}
-
-*,
-*::before,
-*::after {
-  transition: background-color 0.3s ease,
-    color 0.3s ease,
-    border-color 0.3s ease,
-    box-shadow 0.3s ease !important;
-}
+/* Transitions removed as they were overriding Tailwind and causing state mismatch issues */
 
 /* Prevent transition on page load */
 html.no-transition *,

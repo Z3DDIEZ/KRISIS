@@ -63,31 +63,31 @@ export function TacticalBrief() {
   if (criticalItems.length === 0) return null
 
   return (
-    <Card className="p-0 overflow-hidden border-orange-200 dark:border-orange-900/30">
-      <div className="p-4 bg-orange-50 dark:bg-orange-900/10 border-b border-orange-100 dark:border-orange-900/30 flex justify-between items-center">
-        <div className="flex items-center gap-2 text-orange-700 dark:text-orange-400">
-          <Icon name="target" size={20} />
-          <h3 className="font-bold text-sm uppercase tracking-wide">Daily Tactical Brief</h3>
+    <Card className="p-0 overflow-hidden border-2 border-brand-midnight shadow-md">
+      <div className="p-4 bg-brand-midnight border-b-2 border-brand-midnight flex justify-between items-center">
+        <div className="flex items-center gap-2 text-brand-signal">
+          <Icon name="target" size={20} className="text-brand-orange" />
+          <h3 className="font-black text-xs uppercase tracking-[0.3em]">Daily Strategic Brief</h3>
         </div>
-        <span className="text-xs font-bold bg-white dark:bg-zinc-900 text-orange-600 px-2 py-1 rounded-full border border-orange-200 dark:border-orange-900/30">
-          {criticalItems.length} Actions Required
+        <span className="text-[10px] font-black bg-brand-orange text-brand-midnight px-2 py-1 rounded-none border border-brand-midnight uppercase tracking-widest">
+          {criticalItems.length} Key Extractions
         </span>
       </div>
 
-      <div className="divide-y divide-zinc-100 dark:divide-zinc-800">
+      <div className="divide-y-2 divide-brand-midnight/10 dark:divide-zinc-800">
         {criticalItems.map((item) => (
           <Link
             key={item.applicationId}
             to={`/applications/${item.applicationId}`}
-            className="block p-4 hover:bg-zinc-50 dark:hover:bg-zinc-900/50 transition-colors group"
+            className="block p-5 hover:bg-brand-orange/5 dark:hover:bg-zinc-900/50 transition-colors group"
           >
-            <div className="flex justify-between items-start mb-1">
+            <div className="flex justify-between items-start mb-2">
               <div>
-                <span className="font-bold text-zinc-900 dark:text-white text-sm group-hover:text-primary-600 transition-colors">
+                <span className="font-black text-brand-midnight dark:text-white text-sm uppercase tracking-tight group-hover:text-brand-orange transition-colors">
                   {item.company}
                 </span>
-                <span className="text-zinc-400 mx-2 text-xs">•</span>
-                <span className="text-zinc-500 text-xs">{item.role}</span>
+                <span className="text-brand-midnight/20 mx-2 text-xs">//</span>
+                <span className="text-brand-midnight/50 text-xs font-black uppercase tracking-tighter">{item.role}</span>
               </div>
               <Badge
                 variant={
@@ -97,7 +97,7 @@ export function TacticalBrief() {
                       ? 'warning'
                       : 'neutral'
                 }
-                className="text-[10px] px-1.5 py-0.5 uppercase"
+                className="text-[9px] px-2 py-0.5 uppercase rounded-none border-2 border-current font-black tracking-widest"
               >
                 {item.riskLevel === 'critical'
                   ? 'Ghosted'
@@ -110,18 +110,18 @@ export function TacticalBrief() {
             <div className="flex items-center gap-3">
               <div
                 className={`
-                w-1.5 h-1.5 rounded-full shrink-0
-                ${item.urgency === 5 ? 'bg-red-500 animate-pulse' : item.urgency === 4 ? 'bg-orange-500' : 'bg-yellow-500'}
+                w-2 h-2 rounded-none shrink-0 border border-brand-midnight
+                ${item.urgency === 5 ? 'bg-error animate-pulse' : item.urgency === 4 ? 'bg-warning' : 'bg-brand-orange'}
               `}
               ></div>
-              <p className="text-sm font-medium text-zinc-700 dark:text-zinc-300 line-clamp-1">
+              <p className="text-xs font-bold text-brand-midnight/80 dark:text-zinc-300 line-clamp-1 italic">
                 {item.action}
               </p>
             </div>
 
-            <div className="mt-2 flex items-center gap-2 text-[10px] text-zinc-400">
+            <div className="mt-3 flex items-center gap-2 text-[10px] font-black text-brand-midnight/30 uppercase tracking-widest">
               <Icon name="clock" size={12} />
-              <span>Last activity {item.daysSinceActivity} days ago</span>
+              <span>Latency: {item.daysSinceActivity} days</span>
             </div>
           </Link>
         ))}

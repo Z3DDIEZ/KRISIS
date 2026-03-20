@@ -18,6 +18,11 @@ interface SidebarProps {
   isCollapsed: boolean
 }
 
+/**
+ * Sidebar - Primary and secondary navigation for the app shell.
+ * @param props - Navigation items, open state, and collapsed behaviour.
+ * @returns A responsive sidebar navigation component.
+ */
 function Sidebar({ primaryItems, secondaryItems, isOpen, onClose, isCollapsed }: SidebarProps) {
   const location = useLocation()
   const [hoveredItem, setHoveredItem] = useState<string | null>(null)
@@ -91,7 +96,7 @@ function Sidebar({ primaryItems, secondaryItems, isOpen, onClose, isCollapsed }:
         <div className="flex items-center gap-3 text-primary-600 dark:text-primary-500">
           <Icon name="work" size={24} className="shrink-0" />
           {!isCollapsed && (
-            <span className="font-black text-xl tracking-tighter text-zinc-900 dark:text-white">
+            <span className="font-bold text-lg tracking-tight text-text-primary">
               KRISIS
             </span>
           )}
@@ -110,8 +115,8 @@ function Sidebar({ primaryItems, secondaryItems, isOpen, onClose, isCollapsed }:
                   group flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-300 transform
                   ${
                     isActive(item.href)
-                      ? 'bg-primary-50 dark:bg-orange-500/5 text-primary-700 dark:text-primary-400 font-black shadow-[0_0_15px_rgba(234,88,12,0.1)] ring-1 ring-primary-200/50 dark:ring-primary-500/20'
-                      : 'text-zinc-500 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800 hover:text-zinc-900 dark:hover:text-zinc-200 hover:translate-x-1'
+                      ? 'bg-primary-50/80 dark:bg-primary-500/10 text-primary-700 dark:text-primary-300 font-semibold shadow-[0_0_12px_rgba(234,88,12,0.12)] ring-1 ring-primary-200/50 dark:ring-primary-500/30'
+                      : 'text-text-secondary hover:bg-bg-subtle hover:text-text-primary hover:translate-x-1'
                   }
                   ${isCollapsed ? 'justify-center px-2 hover:translate-x-0' : ''}
                 `}
@@ -121,12 +126,12 @@ function Sidebar({ primaryItems, secondaryItems, isOpen, onClose, isCollapsed }:
                 title={isCollapsed ? item.name : undefined}
               >
                 <div
-                  className={`shrink-0 ${isActive(item.href) ? 'text-primary-600 dark:text-primary-400' : 'text-zinc-400 group-hover:text-zinc-600 dark:group-hover:text-zinc-300'}`}
+                  className={`shrink-0 ${isActive(item.href) ? 'text-primary-600 dark:text-primary-400' : 'text-zinc-400 group-hover:text-text-primary'}`}
                 >
                   <Icon name={item.iconName} size={20} />
                 </div>
                 {!isCollapsed && (
-                  <span className="truncate font-black text-[11px] uppercase tracking-wider">
+                  <span className="truncate text-sm font-medium">
                     {item.name}
                   </span>
                 )}
@@ -142,11 +147,11 @@ function Sidebar({ primaryItems, secondaryItems, isOpen, onClose, isCollapsed }:
       {/* Secondary Navigation */}
       <div className="px-3 mt-auto">
         <div
-          className={`text-[10px] font-black text-zinc-400 uppercase tracking-[0.2em] mb-4 px-3 ${isCollapsed ? 'hidden' : 'block'}`}
+          className={`eyebrow mb-4 px-3 ${isCollapsed ? 'hidden' : 'block'}`}
         >
           Workspace
         </div>
-        <ul className="space-y-1 border-t border-zinc-100 dark:border-zinc-800 pt-4">
+        <ul className="space-y-1 border-t border-border pt-4">
           {secondaryItems.map((item) => (
             <li key={item.href}>
               <Link
@@ -156,8 +161,8 @@ function Sidebar({ primaryItems, secondaryItems, isOpen, onClose, isCollapsed }:
                   group flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-300 transform
                   ${
                     isActive(item.href)
-                      ? 'bg-zinc-100 dark:bg-zinc-800 text-zinc-900 dark:text-white font-bold shadow-sm'
-                      : 'text-zinc-500 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800 hover:text-zinc-900 dark:hover:text-zinc-200 hover:translate-x-1'
+                      ? 'bg-bg-subtle text-text-primary font-semibold shadow-sm'
+                      : 'text-text-secondary hover:bg-bg-subtle hover:text-text-primary hover:translate-x-1'
                   }
                   ${isCollapsed ? 'justify-center px-2 hover:translate-x-0' : ''}
                 `}
@@ -167,11 +172,11 @@ function Sidebar({ primaryItems, secondaryItems, isOpen, onClose, isCollapsed }:
                 title={isCollapsed ? item.name : undefined}
               >
                 <div
-                  className={`shrink-0 ${isActive(item.href) ? 'text-zinc-900 dark:text-white' : 'text-zinc-400 group-hover:text-zinc-600 dark:group-hover:text-zinc-300'}`}
+                  className={`shrink-0 ${isActive(item.href) ? 'text-text-primary' : 'text-zinc-400 group-hover:text-text-primary'}`}
                 >
                   <Icon name={item.iconName} size={20} />
                 </div>
-                {!isCollapsed && <span className="truncate">{item.name}</span>}
+                {!isCollapsed && <span className="truncate text-sm font-medium">{item.name}</span>}
               </Link>
             </li>
           ))}
@@ -204,14 +209,14 @@ function Sidebar({ primaryItems, secondaryItems, isOpen, onClose, isCollapsed }:
           <div className="shrink-0 text-red-500">
             <Icon name="logout" size={20} />
           </div>
-          {!isCollapsed && <span className="font-bold truncate">Sign Out</span>}
+          {!isCollapsed && <span className="font-semibold text-sm truncate">Sign Out</span>}
         </button>
       </div>
 
       {/* Tooltip for collapsed state */}
       {isCollapsed && hoveredItem && (
         <div
-          className="fixed z-50 px-3 py-1.5 bg-zinc-900 text-white text-xs font-bold rounded shadow-lg pointer-events-none whitespace-nowrap"
+          className="fixed z-50 px-3 py-1.5 bg-bg-elevated text-text-primary text-xs font-semibold rounded shadow-lg border border-border pointer-events-none whitespace-nowrap"
           style={{
             left: `${tooltipPosition.x}px`,
             top: `${tooltipPosition.y}px`,
@@ -220,7 +225,10 @@ function Sidebar({ primaryItems, secondaryItems, isOpen, onClose, isCollapsed }:
         >
           {hoveredItem}
           {/* Arrow */}
-          <div className="absolute left-0 top-1/2 -translate-x-[4px] -translate-y-1/2 border-y-4 border-y-transparent border-r-4 border-r-zinc-900" />
+          <div
+            className="absolute left-0 top-1/2 -translate-x-[4px] -translate-y-1/2 border-y-4 border-y-transparent border-r-4"
+            style={{ borderRightColor: 'var(--bg-elevated)' }}
+          />
         </div>
       )}
     </nav>

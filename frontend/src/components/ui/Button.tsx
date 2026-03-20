@@ -6,6 +6,11 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   size?: 'sm' | 'md' | 'lg' | 'icon'
 }
 
+/**
+ * Button - Primary and secondary action control.
+ * @param props - Button attributes, plus optional size and variant.
+ * @returns A styled button element with consistent interaction states.
+ */
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
   ({ className, variant = 'primary', size = 'md', ...props }, ref) => {
     return (
@@ -13,17 +18,17 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         ref={ref}
         className={cn(
           // Base styles
-          'inline-flex items-center justify-center rounded-lg font-bold transition-all duration-200 active:scale-[0.98] disabled:opacity-50 disabled:pointer-events-none',
+          'inline-flex items-center justify-center gap-2 rounded-lg font-semibold transition-all duration-200 active:scale-[0.98] disabled:opacity-50 disabled:pointer-events-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/30 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-offset-zinc-950',
 
           // Variants
           variant === 'primary' &&
-            'bg-primary-600 text-white shadow-lg shadow-primary-500/20 hover:bg-primary-500 hover:shadow-primary-500/30',
+            'bg-primary-600 text-white shadow-sm hover:bg-primary-500 hover:shadow-md',
           variant === 'secondary' &&
-            'bg-white dark:bg-zinc-900 text-zinc-700 dark:text-zinc-300 border border-zinc-200 dark:border-zinc-800 hover:border-zinc-300 dark:hover:border-zinc-700 hover:bg-zinc-50 dark:hover:bg-zinc-800/50',
+            'bg-bg-surface text-text-primary border border-border hover:border-border-strong hover:bg-bg-subtle',
           variant === 'ghost' &&
-            'bg-transparent text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 hover:bg-zinc-100 dark:hover:bg-zinc-800',
+            'bg-transparent text-text-secondary hover:text-text-primary hover:bg-bg-subtle',
           variant === 'danger' &&
-            'bg-red-50 text-red-600 hover:bg-red-100 hover:text-red-700 dark:bg-red-900/20 dark:text-red-400 dark:hover:bg-red-900/40',
+            'bg-red-50 text-red-700 hover:bg-red-100 dark:bg-red-900/30 dark:text-red-200 dark:hover:bg-red-900/50',
 
           // Sizes
           size === 'sm' && 'px-3 py-1.5 text-xs',

@@ -13,7 +13,14 @@ export default {
         mono: ['"JetBrains Mono"', '"Fira Code"', 'monospace'],
       },
       colors: {
-        // Semantic Tokens (Theming)
+        // Brand Identity (Bauhaus Industrial)
+        brand: {
+          midnight: '#0A0A0A',
+          signal: '#FAFAFA',
+          orange: '#E67E22',
+          gray: '#E5E5E5',
+        },
+        // Semantic Tokens
         bg: {
           surface: 'var(--bg-surface)',
           subtle: 'var(--bg-subtle)',
@@ -28,19 +35,20 @@ export default {
         border: {
           DEFAULT: 'var(--border-subtle)',
           strong: 'var(--border-strong)',
+          industrial: '#0A0A0A',
         },
-        // Brand Colors
+        // Secondary/Status
         primary: {
           50: '#fff7ed',
           100: '#ffedd5',
           200: '#fed7aa',
           300: '#fdba74',
           400: '#fb923c',
-          500: '#f97316', // Orange-500
-          600: '#ea580c',
-          700: '#c2410c',
-          800: '#9a3412',
-          900: '#7c2d12',
+          500: '#E67E22', // Brand Orange
+          600: '#D35400',
+          700: '#B03A2E',
+          800: '#7B241C',
+          900: '#641E16',
         },
         zinc: {
           50: '#fafafa',
@@ -55,31 +63,27 @@ export default {
           900: '#18181b',
           950: '#09090b',
         },
-        success: '#10b981',
-        warning: '#f59e0b',
-        error: '#ef4444',
-      },
-      // Removed custom spacing to use default Tailwind scale (0.5 = 2px, 1 = 4px, etc.)
-      fontFamily: {
-        sans: ['Inter', 'system-ui', 'sans-serif'],
-        mono: ['JetBrains Mono', 'monospace'],
+        success: '#059669',
+        warning: '#D97706',
+        error: '#DC2626',
       },
       borderRadius: {
         'none': '0',
-        'sm': '0.125rem',
-        DEFAULT: '0.25rem',
-        'md': '0.375rem',
-        'lg': '0.5rem',
+        'xs': '1px',
+        'sm': '2px', // Industrial sharp
+        DEFAULT: '0',
+        'md': '4px',
+        'lg': '8px',
         'full': '9999px',
       },
     },
     boxShadow: {
-      'sm': '0 1px 2px 0 rgba(0, 0, 0, 0.05)',
-      'md': '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
-      'lg': '0 10px 15px -3px rgba(0, 0, 0, 0.1)',
-      'xl': '0 20px 25px -5px rgba(0, 0, 0, 0.1)',
-      '2xl': '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
-      'orange': '0 0 0 3px rgba(230, 126, 34, 0.2)',
+      'sm': '1px 1px 0px rgba(0, 0, 0, 0.05)',
+      'md': '4px 4px 0px rgba(0, 0, 0, 0.08)', // Bauhaus offset
+      'lg': '8px 8px 0px rgba(0, 0, 0, 0.08)', // Bauhaus deep
+      'xl': '12px 12px 0px rgba(0, 0, 0, 0.08)',
+      'orange': '0 0 0 3px rgba(230, 126, 34, 0.1)',
+      'none': 'none',
     },
     transitionTimingFunction: {
       'standard': 'cubic-bezier(0.4, 0.0, 0.2, 1)',

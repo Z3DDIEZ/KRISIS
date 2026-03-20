@@ -199,12 +199,12 @@ function DataManagement({ onDataChange }: DataManagementProps) {
 
       {/* Stats Overview */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-        <Card className="p-8 flex items-center justify-between group hover:shadow-xl transition-all duration-300 border-zinc-200/50 dark:border-zinc-800/50">
+        <Card className="p-8 flex items-center justify-between group hover:shadow-xl transition-all duration-300 border-2 border-brand-midnight">
           <div>
-            <div className="text-4xl font-black text-zinc-900 dark:text-white tracking-tighter">
+            <div className="text-4xl font-black text-brand-midnight dark:text-white tracking-tighter">
               {applications.length}
             </div>
-            <div className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-400 mt-2">
+            <div className="text-[11px] font-black uppercase tracking-[0.2em] text-brand-midnight/70 mt-2">
               Total Intelligence
             </div>
           </div>
@@ -213,12 +213,12 @@ function DataManagement({ onDataChange }: DataManagementProps) {
           </div>
         </Card>
 
-        <Card className="p-8 flex items-center justify-between group hover:shadow-xl transition-all duration-300 border-zinc-200/50 dark:border-zinc-800/50">
+        <Card className="p-8 flex items-center justify-between group hover:shadow-xl transition-all duration-300 border-2 border-brand-midnight">
           <div>
-            <div className="text-4xl font-black text-zinc-900 dark:text-white tracking-tighter">
+            <div className="text-4xl font-black text-brand-midnight dark:text-white tracking-tighter">
               {applications.filter((app) => app.status === 'Offer').length}
             </div>
-            <div className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-400 mt-2">
+            <div className="text-[11px] font-black uppercase tracking-[0.2em] text-brand-midnight/70 mt-2">
               Offer Conversion
             </div>
           </div>
@@ -227,9 +227,9 @@ function DataManagement({ onDataChange }: DataManagementProps) {
           </div>
         </Card>
 
-        <Card className="p-8 flex items-center justify-between group hover:shadow-xl transition-all duration-300 border-zinc-200/50 dark:border-zinc-800/50">
+        <Card className="p-8 flex items-center justify-between group hover:shadow-xl transition-all duration-300 border-2 border-brand-midnight">
           <div>
-            <div className="text-4xl font-black text-zinc-900 dark:text-white tracking-tighter">
+            <div className="text-4xl font-black text-brand-midnight dark:text-white tracking-tighter">
               {applications.length > 0
                 ? Math.round(
                     (applications.filter((app) => app.status === 'Offer').length /
@@ -239,7 +239,7 @@ function DataManagement({ onDataChange }: DataManagementProps) {
                 : 0}
               %
             </div>
-            <div className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-400 mt-2">
+            <div className="text-[11px] font-black uppercase tracking-[0.2em] text-brand-midnight/70 mt-2">
               Success Ratio
             </div>
           </div>
@@ -252,16 +252,16 @@ function DataManagement({ onDataChange }: DataManagementProps) {
       {/* Action Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
         {/* Export Card */}
-        <Card className="p-10 flex flex-col border-zinc-200/50 dark:border-zinc-800/50 hover:border-primary-500/20 transition-colors">
-          <div className="flex items-center gap-4 mb-8 pb-6 border-b border-zinc-100 dark:border-zinc-800/60">
-            <div className="p-3 bg-primary-50 dark:bg-primary-900/20 text-primary-600 rounded-2xl shadow-sm">
+        <Card className="p-10 flex flex-col border-2 border-brand-midnight shadow-md">
+          <div className="flex items-center gap-4 mb-8 pb-6 border-b-2 border-brand-midnight/10">
+            <div className="p-3 bg-brand-orange/10 text-brand-orange rounded-none border-2 border-brand-orange">
               <Icon name="download" size={24} />
             </div>
             <div>
-              <h3 className="text-xl font-black text-zinc-900 dark:text-white tracking-tight">
+              <h3 className="text-xl font-black text-brand-midnight dark:text-white tracking-tight uppercase">
                 Export Corpus
               </h3>
-              <p className="text-xs font-medium text-zinc-500 dark:text-zinc-400 mt-1">
+              <p className="text-xs font-bold text-brand-midnight/60 dark:text-zinc-400 mt-1 uppercase">
                 Archive your application intelligence
               </p>
             </div>
@@ -270,37 +270,37 @@ function DataManagement({ onDataChange }: DataManagementProps) {
           <div className="space-y-8 flex-1 flex flex-col">
             {/* Export Stats */}
             <div className="grid grid-cols-2 gap-6">
-              <div className="bg-zinc-50 dark:bg-zinc-900/40 p-6 rounded-2xl border border-zinc-100 dark:border-zinc-800/50 shadow-inner">
-                <div className="text-3xl font-black text-zinc-900 dark:text-white tracking-tighter">
+              <div className="bg-brand-gray/20 p-6 rounded-none border-2 border-brand-midnight shadow-inner">
+                <div className="text-3xl font-black text-brand-midnight dark:text-white tracking-tighter">
                   {applications.length}
                 </div>
-                <div className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-400 mt-2">
+                <div className="text-[11px] font-black uppercase tracking-[0.2em] text-brand-midnight/70 mt-2">
                   Records
                 </div>
               </div>
-              <div className="bg-zinc-50 dark:bg-zinc-900/40 p-6 rounded-2xl border border-zinc-100 dark:border-zinc-800/50 shadow-inner">
-                <div className="text-lg font-black text-zinc-900 dark:text-white uppercase tracking-tight">
+              <div className="bg-brand-gray/20 p-6 rounded-none border-2 border-brand-midnight shadow-inner">
+                <div className="text-lg font-black text-brand-midnight dark:text-white uppercase tracking-tight">
                   {new Date().toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}
                 </div>
-                <div className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-400 mt-2">
+                <div className="text-[11px] font-black uppercase tracking-[0.2em] text-brand-midnight/70 mt-2">
                   Snap
                 </div>
               </div>
             </div>
 
             {/* Export Details */}
-            <div className="text-xs text-zinc-600 dark:text-zinc-400 space-y-3 bg-zinc-50 dark:bg-zinc-900/20 p-5 rounded-2xl border border-zinc-100/50 dark:border-zinc-800/30">
+            <div className="text-xs text-brand-midnight dark:text-zinc-200 space-y-3 bg-brand-gray/10 p-5 rounded-none border-2 border-brand-midnight/20">
               <div className="flex justify-between items-center">
-                <span className="font-bold text-zinc-400 uppercase tracking-widest text-[9px]">
+                <span className="font-black text-brand-midnight/60 uppercase tracking-widest text-[10px]">
                   Format
                 </span>
-                <span className="font-black text-zinc-900 dark:text-zinc-200">CSV (UTF-8)</span>
+                <span className="font-black text-brand-midnight dark:text-zinc-200">CSV (UTF-8)</span>
               </div>
               <div className="flex justify-between items-center">
-                <span className="font-bold text-zinc-400 uppercase tracking-widest text-[9px]">
+                <span className="font-black text-brand-midnight/60 uppercase tracking-widest text-[10px]">
                   Scope
                 </span>
-                <span className="font-black text-zinc-900 dark:text-zinc-200 truncate ml-4">
+                <span className="font-black text-brand-midnight dark:text-zinc-200 truncate ml-4">
                   Full Intelligence Database
                 </span>
               </div>
@@ -327,16 +327,16 @@ function DataManagement({ onDataChange }: DataManagementProps) {
         </Card>
 
         {/* Import Card */}
-        <Card className="p-10 flex flex-col border-zinc-200/50 dark:border-zinc-800/50 hover:border-primary-500/20 transition-colors">
-          <div className="flex items-center gap-4 mb-8 pb-6 border-b border-zinc-100 dark:border-zinc-800/60">
-            <div className="p-3 bg-primary-50 dark:bg-primary-900/20 text-primary-600 rounded-2xl shadow-sm">
+        <Card className="p-10 flex flex-col border-2 border-brand-midnight shadow-md">
+          <div className="flex items-center gap-4 mb-8 pb-6 border-b-2 border-brand-midnight/10">
+            <div className="p-3 bg-brand-orange/10 text-brand-orange rounded-none border-2 border-brand-orange">
               <Icon name="add" size={24} />
             </div>
             <div>
-              <h3 className="text-xl font-black text-zinc-900 dark:text-white tracking-tight">
+              <h3 className="text-xl font-black text-brand-midnight dark:text-white tracking-tight uppercase">
                 Bulk Ingestion
               </h3>
-              <p className="text-xs font-medium text-zinc-500 dark:text-zinc-400 mt-1">
+              <p className="text-xs font-bold text-brand-midnight/60 dark:text-zinc-400 mt-1 uppercase">
                 Ingest external application data
               </p>
             </div>
@@ -345,27 +345,26 @@ function DataManagement({ onDataChange }: DataManagementProps) {
           <div className="space-y-8 flex-1 flex flex-col">
             {/* Import Constraints */}
             <div className="grid grid-cols-3 gap-4">
-              <div className="bg-zinc-50 dark:bg-zinc-900/40 p-5 rounded-2xl border border-zinc-100 dark:border-zinc-800/50 text-center shadow-inner">
-                <div className="font-black text-zinc-900 dark:text-white text-sm">CSV</div>
-                <div className="text-[9px] font-black uppercase tracking-widest text-zinc-400 mt-1">
+              <div className="bg-brand-gray/20 p-5 rounded-none border-2 border-brand-midnight text-center shadow-inner">
+                <div className="font-black text-brand-midnight dark:text-white text-sm">CSV</div>
+                <div className="text-[10px] font-black uppercase tracking-widest text-brand-midnight/70 mt-1">
                   Format
                 </div>
               </div>
-              <div className="bg-zinc-50 dark:bg-zinc-900/40 p-5 rounded-2xl border border-zinc-100 dark:border-zinc-800/50 text-center shadow-inner">
-                <div className="font-black text-zinc-900 dark:text-white text-sm">5MB</div>
-                <div className="text-[9px] font-black uppercase tracking-widest text-zinc-400 mt-1">
+              <div className="bg-brand-gray/20 p-5 rounded-none border-2 border-brand-midnight text-center shadow-inner">
+                <div className="font-black text-brand-midnight dark:text-white text-sm">5MB</div>
+                <div className="text-[10px] font-black uppercase tracking-widest text-brand-midnight/70 mt-1">
                   Quota
                 </div>
               </div>
-              <div className="bg-zinc-50 dark:bg-zinc-900/40 p-5 rounded-2xl border border-zinc-100 dark:border-zinc-800/50 text-center shadow-inner">
-                <div className="font-black text-zinc-900 dark:text-white text-sm">Batch</div>
-                <div className="text-[9px] font-black uppercase tracking-widest text-zinc-400 mt-1">
+              <div className="bg-brand-gray/20 p-5 rounded-none border-2 border-brand-midnight text-center shadow-inner">
+                <div className="font-black text-brand-midnight dark:text-white text-sm">Batch</div>
+                <div className="text-[10px] font-black uppercase tracking-widest text-brand-midnight/70 mt-1">
                   Mode
                 </div>
               </div>
             </div>
 
-            {/* Import Features */}
             <div className="space-y-3 px-1">
               {[
                 'Neural pattern matching for dates',
@@ -374,9 +373,9 @@ function DataManagement({ onDataChange }: DataManagementProps) {
               ].map((text, i) => (
                 <div
                   key={i}
-                  className="flex items-center gap-3 text-xs text-zinc-500 dark:text-zinc-400 font-medium"
+                  className="flex items-center gap-3 text-[11px] text-brand-midnight/80 dark:text-zinc-300 font-black uppercase tracking-tight"
                 >
-                  <div className="w-1.5 h-1.5 rounded-full bg-primary-500 shadow-[0_0_8px_rgba(249,115,22,0.4)]" />
+                  <div className="w-2 h-2 rounded-none bg-brand-orange shadow-[2px_2px_0px_rgba(0,0,0,1)]" />
                   <span>{text}</span>
                 </div>
               ))}
@@ -410,12 +409,12 @@ function DataManagement({ onDataChange }: DataManagementProps) {
             </Button>
 
             {importProgress && (
-              <div className="mt-4 p-5 bg-zinc-50 dark:bg-zinc-900/60 rounded-2xl border border-zinc-100 dark:border-zinc-800/50 space-y-4 animate-fade-in shadow-xl">
+              <div className="mt-4 p-5 bg-brand-gray/20 rounded-none border-2 border-brand-midnight space-y-4 animate-fade-in shadow-xl">
                 <div className="flex items-center justify-between">
-                  <span className="text-[10px] font-black uppercase tracking-widest text-zinc-400">
+                  <span className="text-[11px] font-black uppercase tracking-widest text-brand-midnight/70">
                     Ingestion Progress
                   </span>
-                  <span className="text-sm font-black text-primary-600">
+                  <span className="text-sm font-black text-brand-orange">
                     {Math.round((importProgress.loaded / importProgress.total) * 100)}%
                   </span>
                 </div>
@@ -454,17 +453,17 @@ function DataManagement({ onDataChange }: DataManagementProps) {
       </div>
 
       {/* Demo Data Card */}
-      <Card className="p-10 relative overflow-hidden group border-zinc-200/50 dark:border-zinc-800/50">
-        <div className="absolute top-0 right-0 p-8 opacity-5 group-hover:opacity-10 transition-opacity duration-700">
-          <Icon name="settings" size={120} className="text-primary-500" />
+      <Card className="p-10 relative overflow-hidden group border-2 border-brand-midnight">
+        <div className="absolute top-0 right-0 p-8 opacity-10 group-hover:opacity-20 transition-opacity duration-700">
+          <Icon name="settings" size={120} className="text-brand-orange" />
         </div>
 
         <div className="relative z-10">
           <div className="flex items-center gap-4 mb-6">
-            <div className="p-3 bg-primary-50 dark:bg-primary-900/20 text-primary-600 rounded-2xl shadow-sm">
+            <div className="p-3 bg-brand-orange/10 text-brand-orange rounded-none border-2 border-brand-orange">
               <Icon name="bolt" size={24} />
             </div>
-            <h3 className="text-xl font-black text-zinc-900 dark:text-white tracking-tight">
+            <h3 className="text-xl font-black text-brand-midnight dark:text-white tracking-tight uppercase">
               Intelligence Factory
             </h3>
           </div>
@@ -483,8 +482,8 @@ function DataManagement({ onDataChange }: DataManagementProps) {
       </Card>
 
       {/* File Format Help */}
-      <Card className="p-10 border-zinc-200/50 dark:border-zinc-800/50">
-        <h3 className="text-[10px] font-black uppercase tracking-[0.3em] text-zinc-400 mb-8">
+      <Card className="p-10 border-2 border-brand-midnight">
+        <h3 className="text-[11px] font-black uppercase tracking-[0.3em] text-brand-midnight/70 mb-8">
           Intelligence Schema Protocol
         </h3>
         <div className="bg-zinc-100/50 dark:bg-zinc-900/80 p-6 rounded-2xl border border-zinc-200/50 dark:border-zinc-800 font-mono text-xs text-zinc-600 dark:text-zinc-400 overflow-x-auto shadow-inner">

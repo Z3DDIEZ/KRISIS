@@ -12,6 +12,7 @@ export const applicationSchema = z.object({
     latestAnalysis: z.object({
         fitScore: z.number(),
         matchAnalysis: z.string(),
+        keyMatches: z.array(z.string()).optional(),
         missingKeywords: z.array(z.string()),
         suggestedImprovements: z.array(z.string()),
         analyzedAt: z.string().optional()
