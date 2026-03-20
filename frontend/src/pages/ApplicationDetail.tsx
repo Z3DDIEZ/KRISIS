@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 import { useParams, useNavigate, Link } from 'react-router-dom'
 import { useAuthState } from 'react-firebase-hooks/auth'
 import { doc, getDoc, addDoc, updateDoc, collection, serverTimestamp } from 'firebase/firestore'
@@ -13,12 +13,27 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { applicationSchema, type ApplicationValues } from '../lib/schemas'
 import { useTranslation } from 'react-i18next'
 import { useUIStore } from '../lib/store'
-import { motion } from 'framer-motion'
+import { motion, type Transition } from 'framer-motion'
 import DecryptedText from '../components/effects/DecryptedText'
 import SplitText from '../components/effects/SplitText'
 import { Card } from '../components/ui/Card'
 import { Button } from '../components/ui/Button'
 import { Badge } from '../components/ui/Badge'
+
+interface AnalysisData {
+  fitScore: number
+  matchAnalysis: string
+  keyMatches: string[]
+  missingKeywords: string[]
+  suggestedImprovements: string[]
+  analyzedAt?: string
+}
+
+interface IngestData {
+  company?: string
+  role?: string
+  description?: string
+}
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -36,7 +51,7 @@ const itemVariants = {
   visible: {
     y: 0,
     opacity: 1,
-    transition: { type: "spring", stiffness: 300, damping: 24 } as any
+    transition: { type: "spring", stiffness: 300, damping: 24 } as Transition
   }
 }
 
@@ -121,12 +136,12 @@ function ApplicationDetail() {
 
     setAnalyzing(true)
     try {
-      const analyzeFn = httpsCallable(functions, 'analyzeResume')
-      const result: any = await analyzeFn({ resumeText, jobDescription })
+      const analyzeFn = httpsCallable<{ resumeText: string; jobDescription: string }, { success: boolean; data: AnalysisData }>(functions, 'analyzeResume')
+      const result = await analyzeFn({ resumeText, jobDescription })
 
       if (result.data.success) {
         const analysisData = {
-          ...result.data.data,
+          ...(result.data.data as AnalysisData),
           analyzedAt: new Date().toISOString(),
         }
         setValue('latestAnalysis', analysisData, { shouldDirty: true, shouldValidate: true })
@@ -143,7 +158,7 @@ function ApplicationDetail() {
     }
   }
 
-  const loadApplication = async () => {
+  const loadApplication = useCallback(async () => {
     if (!user || !id) return
 
     try {
@@ -174,21 +189,9 @@ function ApplicationDetail() {
     } finally {
       setIsLoading(false)
     }
-  }
+  }, [user, id, reset, navigate, dispatchNotification, t])
 
-  useEffect(() => {
-    const params = new URLSearchParams(window.location.search)
-    const urlFromParams = params.get('importUrl')
 
-    if (id === 'new' && urlFromParams) {
-      setImportUrl(urlFromParams)
-      handleImport(urlFromParams)
-    } else if (id && id !== 'new' && user) {
-      loadApplication()
-    } else if (id === 'new' || !id) {
-      setIsLoading(false)
-    }
-  }, [user, id])
 
   const onFormSubmit = async (data: ApplicationValues) => {
     if (!user) return
@@ -218,17 +221,17 @@ function ApplicationDetail() {
     }
   }
 
-  const handleImport = async (overrideUrl?: string) => {
+  const handleImport = useCallback(async (overrideUrl?: string) => {
     const targetUrl = overrideUrl || importUrl
     if (!targetUrl) return
 
     setIsImporting(true)
     try {
-      const ingestFn = httpsCallable(functions, 'ingestJobUrl')
-      const result: any = await ingestFn({ url: targetUrl })
+      const ingestFn = httpsCallable<{ url: string }, { success: boolean; data: IngestData }>(functions, 'ingestJobUrl')
+      const result = await ingestFn({ url: targetUrl })
 
       if (result.data.success) {
-        const jobData = result.data.data
+        const jobData = result.data.data as IngestData
         setValue('company', jobData.company || '', { shouldDirty: true })
         setValue('role', jobData.role || '', { shouldDirty: true })
 
@@ -246,7 +249,21 @@ function ApplicationDetail() {
     } finally {
       setIsImporting(false)
     }
-  }
+  }, [importUrl, setValue])
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search)
+    const urlFromParams = params.get('importUrl')
+
+    if (id === 'new' && urlFromParams) {
+      setImportUrl(urlFromParams)
+      handleImport(urlFromParams)
+    } else if (id && id !== 'new' && user) {
+      loadApplication()
+    } else if (id === 'new' || !id) {
+      setIsLoading(false)
+    }
+  }, [user, id, handleImport, loadApplication])
 
   if (id && id !== 'new' && (authLoading || isLoading)) {
     return (

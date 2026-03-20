@@ -447,18 +447,18 @@ function Applications() {
           {filteredApplications.map((application) => (
             <Card
               key={application.id}
-              className={`p-6 flex flex-col group ${selectedApplications.has(application.id) ? 'ring-2 ring-primary-500' : ''}`}
+              className={`p-6 flex flex-col group ${selectedApplications.has(application.id) ? 'ring-2 ring-primary-500/30' : ''}`}
             >
               <div className="flex items-start justify-between mb-4">
                 <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 bg-zinc-900 text-white rounded flex items-center justify-center font-black text-xl">
+                  <div className="w-12 h-12 bg-bg-subtle border border-border rounded-lg flex items-center justify-center font-semibold text-text-primary text-lg">
                     {application.company.charAt(0)}
                   </div>
                   <div>
-                    <h4 className="font-bold text-zinc-900 dark:text-white group-hover:text-primary-600 transition-colors uppercase text-sm">
+                    <h4 className="font-semibold text-text-primary group-hover:text-primary-600 transition-colors">
                       {application.company}
                     </h4>
-                    <p className="text-xs text-zinc-500 dark:text-zinc-400 font-medium">
+                    <p className="text-sm text-text-secondary">
                       {application.role}
                     </p>
                   </div>
@@ -480,20 +480,20 @@ function Applications() {
                 )}
               </div>
 
-              <div className="mt-auto pt-4 border-t border-zinc-100 dark:border-zinc-800 flex items-center justify-between">
-                <span className="text-[10px] font-black text-zinc-400 uppercase tracking-widest">
+              <div className="mt-auto pt-4 border-t border-border flex items-center justify-between">
+                <span className="text-xs text-text-muted">
                   Applied {formatDateForDisplay(application.dateApplied)}
                 </span>
                 <div className="flex gap-2">
                   <Link
                     to={`/applications/${application.id}`}
-                    className="p-2 text-zinc-400 hover:text-primary-600 transition-colors"
+                    className="p-2 text-text-muted hover:text-primary-600 transition-colors"
                   >
                     <Icon name="visibility" size={16} />
                   </Link>
                   <button
                     onClick={() => handleDelete(application.id, application.company)}
-                    className="p-2 text-zinc-400 hover:text-red-500 transition-colors"
+                    className="p-2 text-text-muted hover:text-error transition-colors"
                   >
                     <Icon name="delete" size={16} />
                   </button>
@@ -506,7 +506,7 @@ function Applications() {
         <Card className="overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full text-left">
-              <thead className="bg-zinc-50 dark:bg-zinc-900/50 text-xs text-zinc-500 uppercase tracking-wider border-b border-zinc-200 dark:border-zinc-800">
+              <thead className="bg-bg-subtle text-xs text-text-muted font-semibold border-b border-border">
                 <tr>
                   <th className="px-6 py-3 w-10">
                     <input
@@ -530,13 +530,13 @@ function Applications() {
                   <th className="px-6 py-3 text-right">Actions</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-zinc-100 dark:divide-zinc-800">
+              <tbody className="divide-y divide-border">
                 {filteredApplications.map((application) => (
                   <tr
                     key={application.id}
-                    className={`hover:bg-zinc-50 dark:hover:bg-zinc-800/50 transition-colors ${
+                    className={`hover:bg-bg-subtle transition-colors ${
                       selectedApplications.has(application.id)
-                        ? 'bg-primary-50 dark:bg-primary-900/10'
+                        ? 'bg-primary-50/60'
                         : ''
                     }`}
                   >
@@ -550,15 +550,15 @@ function Applications() {
                     </td>
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 rounded bg-zinc-900 text-white flex items-center justify-center font-bold text-xs">
+                        <div className="w-8 h-8 rounded bg-bg-subtle border border-border text-text-primary flex items-center justify-center font-semibold text-xs">
                           {application.company.charAt(0).toUpperCase()}
                         </div>
-                        <span className="font-bold text-zinc-900 dark:text-white text-sm">
+                        <span className="font-semibold text-text-primary text-sm">
                           {application.company}
                         </span>
                       </div>
                     </td>
-                    <td className="px-6 py-4 text-sm text-zinc-600 dark:text-zinc-300">
+                    <td className="px-6 py-4 text-sm text-text-secondary">
                       {application.role}
                     </td>
                     <td className="px-6 py-4">
@@ -566,20 +566,20 @@ function Applications() {
                         {application.status}
                       </Badge>
                     </td>
-                    <td className="px-6 py-4 text-sm text-zinc-500">
+                    <td className="px-6 py-4 text-sm text-text-muted">
                       {formatDateForDisplay(application.dateApplied)}
                     </td>
                     <td className="px-6 py-4 text-right">
                       <div className="flex justify-end gap-2">
                         <Link
                           to={`/applications/${application.id}`}
-                          className="p-2 text-zinc-400 hover:text-primary-600 transition-colors"
+                          className="p-2 text-text-muted hover:text-primary-600 transition-colors"
                         >
                           <Icon name="visibility" size={16} />
                         </Link>
                         <button
                           onClick={() => handleDelete(application.id, application.company)}
-                          className="p-2 text-zinc-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/10 rounded transition-colors"
+                          className="p-2 text-text-muted hover:text-error hover:bg-error/10 rounded transition-colors"
                         >
                           <Icon name="delete" size={16} />
                         </button>
@@ -596,7 +596,7 @@ function Applications() {
           {filteredApplications.map((application) => (
             <Card
               key={application.id}
-              className={`p-4 flex items-center gap-4 hover:shadow-md transition-all ${selectedApplications.has(application.id) ? 'border-primary-500 ring-1 ring-primary-500' : ''}`}
+              className={`p-4 flex items-center gap-4 hover:shadow-md transition-all ${selectedApplications.has(application.id) ? 'border-primary-500 ring-1 ring-primary-500/30' : ''}`}
             >
               <input
                 type="checkbox"
@@ -604,14 +604,14 @@ function Applications() {
                 onChange={() => toggleApplicationSelection(application.id)}
                 className="checkbox"
               />
-              <div className="w-10 h-10 rounded bg-zinc-900 text-white flex items-center justify-center font-black">
+              <div className="w-10 h-10 rounded bg-bg-subtle border border-border text-text-primary flex items-center justify-center font-semibold">
                 {application.company.charAt(0)}
               </div>
               <div className="flex-1 min-w-0">
-                <h4 className="font-bold text-zinc-900 dark:text-white truncate uppercase text-sm group-hover:text-primary-600 transition-colors">
+                <h4 className="font-semibold text-text-primary truncate text-sm group-hover:text-primary-600 transition-colors">
                   {application.company}
                 </h4>
-                <p className="text-xs text-zinc-500 dark:text-zinc-400 truncate">
+                <p className="text-sm text-text-secondary truncate">
                   {application.role}
                 </p>
               </div>
@@ -619,20 +619,20 @@ function Applications() {
                 <Badge variant={getBadgeVariant(application.status)}>{application.status}</Badge>
               </div>
               <div className="text-right ml-auto hidden sm:block">
-                <p className="text-[10px] font-black text-zinc-400 uppercase tracking-widest">
+                <p className="text-xs text-text-muted">
                   {formatDateForDisplay(application.dateApplied)}
                 </p>
               </div>
               <div className="flex gap-1 ml-4">
                 <Link
                   to={`/applications/${application.id}`}
-                  className="p-2 text-zinc-400 hover:text-primary-600 transition-colors"
+                  className="p-2 text-text-muted hover:text-primary-600 transition-colors"
                 >
                   <Icon name="visibility" size={16} />
                 </Link>
                 <button
                   onClick={() => handleDelete(application.id, application.company)}
-                  className="p-2 text-zinc-400 hover:text-red-500 transition-colors"
+                  className="p-2 text-text-muted hover:text-error transition-colors"
                 >
                   <Icon name="delete" size={16} />
                 </button>

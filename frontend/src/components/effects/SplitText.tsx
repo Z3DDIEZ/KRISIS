@@ -5,7 +5,7 @@ interface SplitTextProps {
   text: string
   className?: string
   delay?: number
-  animationConfig?: any
+  animationConfig?: object
   textAlign?: 'left' | 'right' | 'center'
   onAnimationComplete?: () => void
 }
@@ -62,7 +62,7 @@ export default function SplitText({
       className={`flex flex-wrap ${className}`}
       style={{ textAlign, justifyContent: textAlign === 'center' ? 'center' : 'flex-start' }}
     >
-      {springs.map((props: any, i: number) => (
+      {springs.map((props, i: number) => (
         <animated.span key={i} style={props} className="inline-block mr-[0.2em] last:mr-0">
           {words[i]}
         </animated.span>

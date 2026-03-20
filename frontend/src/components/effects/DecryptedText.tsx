@@ -4,23 +4,17 @@ interface DecryptedTextProps {
   text: string
   speed?: number
   maxIterations?: number
-  sequential?: boolean
-  revealDirection?: 'start' | 'end' | 'center'
-  useColore?: boolean
   className?: string
   parentClassName?: string
   encryptedClassName?: string
   animateOn?: 'view' | 'hover'
-  [key: string]: any
+  [key: string]: unknown
 }
 
 export default function DecryptedText({
   text,
   speed = 50,
   maxIterations = 10,
-  sequential = false,
-  revealDirection = 'start',
-  useColore = false,
   className = '',
   parentClassName = '',
   encryptedClassName = '',
@@ -36,7 +30,7 @@ export default function DecryptedText({
   const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_+'
 
   useEffect(() => {
-    let interval: any
+    let interval: ReturnType<typeof setInterval> | undefined
     let currentIteration = 0
 
     const startAnimation = () => {
