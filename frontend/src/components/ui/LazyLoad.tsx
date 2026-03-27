@@ -16,8 +16,9 @@ interface LazyLoadProps {
 }
 
 /**
- * LazyLoad component using IntersectionObserver
- * Only renders children when the element enters the viewport
+ * LazyLoad - Renders children only when they enter the viewport.
+ * @param props - Lazy load configuration and optional placeholder content.
+ * @returns The lazy load wrapper.
  */
 function LazyLoad({
   children,
@@ -67,12 +68,10 @@ function LazyLoad({
         <div className="animate-fade-in">{children}</div>
       ) : (
         placeholder || (
-          <div className="animate-pulse bg-zinc-100 dark:bg-zinc-800/50 rounded-3xl border border-zinc-200 dark:border-zinc-700/50 flex items-center justify-center p-12 min-h-[200px]">
+          <div className="animate-pulse bg-bg-subtle rounded-3xl border border-border flex items-center justify-center p-12 min-h-[200px]">
             <div className="flex flex-col items-center gap-3">
               <div className="w-8 h-8 rounded-full border-2 border-primary-500/30 border-t-primary-500 animate-spin" />
-              <span className="text-[10px] font-black text-zinc-400 dark:text-zinc-500 uppercase tracking-widest">
-                Ingesting Data...
-              </span>
+              <span className="text-xs font-semibold text-text-muted">Ingesting data...</span>
             </div>
           </div>
         )

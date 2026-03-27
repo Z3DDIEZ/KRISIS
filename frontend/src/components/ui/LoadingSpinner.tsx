@@ -4,6 +4,11 @@ interface LoadingSpinnerProps {
   [key: string]: unknown
 }
 
+/**
+ * LoadingSpinner - Animated spinner for loading states.
+ * @param props - Size and optional className overrides.
+ * @returns The spinner element.
+ */
 function LoadingSpinner({ size = 'md', className = '', ...props }: LoadingSpinnerProps) {
   const sizeClasses = {
     sm: 'w-4 h-4',
@@ -13,7 +18,7 @@ function LoadingSpinner({ size = 'md', className = '', ...props }: LoadingSpinne
 
   return (
     <div
-      className={`animate-spin rounded-full border-2 border-zinc-200 dark:border-zinc-800 border-t-primary-600 dark:border-t-primary-500 ${sizeClasses[size]} ${className}`}
+      className={`animate-spin rounded-full border-2 border-border border-t-primary-600 ${sizeClasses[size]} ${className}`}
       {...props}
     />
   )

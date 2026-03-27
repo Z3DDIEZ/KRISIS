@@ -2,6 +2,10 @@ import { useState, useEffect } from 'react'
 import { cn } from '../../lib/utils'
 import Icon from './Icon'
 
+/**
+ * DarkModeToggle - Switch between light and dark themes.
+ * @returns The theme toggle button.
+ */
 function DarkModeToggle() {
   const [isDark, setIsDark] = useState(() => {
     if (typeof window !== 'undefined') {
@@ -17,9 +21,9 @@ function DarkModeToggle() {
     const savedTheme = localStorage.getItem('theme')
     const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches
     const shouldBeDark = savedTheme === 'dark' || (!savedTheme && prefersDark)
-    
+
     root.setAttribute('data-theme', shouldBeDark ? 'dark' : 'light')
-    
+
     // SYNC: Ensure class matches attribute on mount
     if (shouldBeDark) {
       root.classList.add('dark')
@@ -35,14 +39,14 @@ function DarkModeToggle() {
 
     setIsDark(newIsDark)
     root.setAttribute('data-theme', newTheme)
-    
+
     // SYNC: Tailwind 'class' strategy requires the 'dark' class
     if (newTheme === 'dark') {
       root.classList.add('dark')
     } else {
       root.classList.remove('dark')
     }
-    
+
     localStorage.setItem('theme', newTheme)
   }
 
@@ -51,8 +55,8 @@ function DarkModeToggle() {
       onClick={toggleTheme}
       className={cn(
         'relative p-2.5 rounded-xl transition-all duration-300 group overflow-hidden',
-        'bg-zinc-100 dark:bg-zinc-800/80 hover:bg-zinc-200 dark:hover:bg-zinc-700/80',
-        'border border-zinc-200 dark:border-zinc-700/50',
+        'bg-bg-subtle hover:bg-bg-surface',
+        'border border-border',
         'shadow-sm hover:shadow-md active:scale-95'
       )}
       aria-label={isDark ? 'Toggle light mode' : 'Toggle dark mode'}

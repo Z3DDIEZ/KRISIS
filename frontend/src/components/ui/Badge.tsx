@@ -39,12 +39,10 @@ export function Badge({ children, className, variant = 'neutral', ...props }: Ba
           'bg-orange-50 text-orange-700 border-orange-200 dark:bg-orange-900/20 dark:text-orange-300 dark:border-orange-800',
         variant === 'offer' &&
           'bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-900/20 dark:text-emerald-300 dark:border-emerald-800',
-        variant === 'rejected' &&
-          'bg-zinc-100 text-zinc-500 border-zinc-200 dark:bg-zinc-800/50 dark:text-zinc-500 dark:border-zinc-700',
+        variant === 'rejected' && 'bg-bg-subtle text-text-muted border-border',
 
         // Generic Variants
-        variant === 'neutral' &&
-          'bg-zinc-100 text-zinc-600 border-zinc-200 dark:bg-zinc-800 dark:text-zinc-400 dark:border-zinc-700',
+        variant === 'neutral' && 'bg-bg-subtle text-text-muted border-border',
         variant === 'information' &&
           'bg-sky-50 text-sky-700 border-sky-200 dark:bg-sky-900/20 dark:text-sky-300 dark:border-sky-800',
         variant === 'success' &&

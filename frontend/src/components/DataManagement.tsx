@@ -18,6 +18,11 @@ interface DataManagementProps {
   onDataChange?: () => void
 }
 
+/**
+ * DataManagement - Import/export and demo data tooling for application records.
+ * @param props - Optional change handler for data updates.
+ * @returns Data management page content.
+ */
 function DataManagement({ onDataChange }: DataManagementProps) {
   const [user, loading] = useAuthState(auth)
   const [applications, setApplications] = useState<DataRecord[]>([])
@@ -183,7 +188,7 @@ function DataManagement({ onDataChange }: DataManagementProps) {
   if (!user) {
     return (
       <div className="text-center py-12">
-        <p className="text-zinc-500 dark:text-zinc-400">Please sign in to manage your data.</p>
+        <p className="text-text-muted dark:text-text-muted">Please sign in to manage your data.</p>
       </div>
     )
   }
@@ -199,12 +204,12 @@ function DataManagement({ onDataChange }: DataManagementProps) {
 
       {/* Stats Overview */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-        <Card className="p-8 flex items-center justify-between group hover:shadow-xl transition-all duration-300 border-2 border-brand-midnight">
+        <Card className="p-8 flex items-center justify-between group hover:shadow-xl transition-all duration-300 border border-border">
           <div>
-            <div className="text-4xl font-black text-brand-midnight dark:text-white tracking-tighter">
+            <div className="text-3xl sm:text-4xl font-bold text-text-primary tracking-tight">
               {applications.length}
             </div>
-            <div className="text-[11px] font-black uppercase tracking-[0.2em] text-brand-midnight/70 mt-2">
+            <div className="text-xs font-semibold tracking-wide text-text-muted mt-2">
               Total Intelligence
             </div>
           </div>
@@ -213,12 +218,12 @@ function DataManagement({ onDataChange }: DataManagementProps) {
           </div>
         </Card>
 
-        <Card className="p-8 flex items-center justify-between group hover:shadow-xl transition-all duration-300 border-2 border-brand-midnight">
+        <Card className="p-8 flex items-center justify-between group hover:shadow-xl transition-all duration-300 border border-border">
           <div>
-            <div className="text-4xl font-black text-brand-midnight dark:text-white tracking-tighter">
+            <div className="text-3xl sm:text-4xl font-bold text-text-primary tracking-tight">
               {applications.filter((app) => app.status === 'Offer').length}
             </div>
-            <div className="text-[11px] font-black uppercase tracking-[0.2em] text-brand-midnight/70 mt-2">
+            <div className="text-xs font-semibold tracking-wide text-text-muted mt-2">
               Offer Conversion
             </div>
           </div>
@@ -227,9 +232,9 @@ function DataManagement({ onDataChange }: DataManagementProps) {
           </div>
         </Card>
 
-        <Card className="p-8 flex items-center justify-between group hover:shadow-xl transition-all duration-300 border-2 border-brand-midnight">
+        <Card className="p-8 flex items-center justify-between group hover:shadow-xl transition-all duration-300 border border-border">
           <div>
-            <div className="text-4xl font-black text-brand-midnight dark:text-white tracking-tighter">
+            <div className="text-3xl sm:text-4xl font-bold text-text-primary tracking-tight">
               {applications.length > 0
                 ? Math.round(
                     (applications.filter((app) => app.status === 'Offer').length /
@@ -239,7 +244,7 @@ function DataManagement({ onDataChange }: DataManagementProps) {
                 : 0}
               %
             </div>
-            <div className="text-[11px] font-black uppercase tracking-[0.2em] text-brand-midnight/70 mt-2">
+            <div className="text-xs font-semibold tracking-wide text-text-muted mt-2">
               Success Ratio
             </div>
           </div>
@@ -252,62 +257,52 @@ function DataManagement({ onDataChange }: DataManagementProps) {
       {/* Action Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
         {/* Export Card */}
-        <Card className="p-10 flex flex-col border-2 border-brand-midnight shadow-md">
-          <div className="flex items-center gap-4 mb-8 pb-6 border-b-2 border-brand-midnight/10">
-            <div className="p-3 bg-brand-orange/10 text-brand-orange rounded-none border-2 border-brand-orange">
+        <Card className="p-10 flex flex-col border border-border shadow-md">
+          <div className="flex items-center gap-4 mb-8 pb-6 border-b border-border">
+            <div className="p-3 bg-primary-50 text-primary-600 rounded-lg border border-primary-200">
               <Icon name="download" size={24} />
             </div>
             <div>
-              <h3 className="text-xl font-black text-brand-midnight dark:text-white tracking-tight uppercase">
+              <h3 className="text-lg font-semibold text-text-primary tracking-tight">
                 Export Corpus
               </h3>
-              <p className="text-xs font-bold text-brand-midnight/60 dark:text-zinc-400 mt-1 uppercase">
-                Archive your application intelligence
-              </p>
+              <p className="text-sm text-text-muted mt-1">Archive your application intelligence</p>
             </div>
           </div>
 
           <div className="space-y-8 flex-1 flex flex-col">
             {/* Export Stats */}
             <div className="grid grid-cols-2 gap-6">
-              <div className="bg-brand-gray/20 p-6 rounded-none border-2 border-brand-midnight shadow-inner">
-                <div className="text-3xl font-black text-brand-midnight dark:text-white tracking-tighter">
+              <div className="bg-bg-subtle p-6 rounded-lg border border-border shadow-inner">
+                <div className="text-2xl font-bold text-text-primary tracking-tight">
                   {applications.length}
                 </div>
-                <div className="text-[11px] font-black uppercase tracking-[0.2em] text-brand-midnight/70 mt-2">
+                <div className="text-xs font-semibold tracking-wide text-text-muted mt-2">
                   Records
                 </div>
               </div>
-              <div className="bg-brand-gray/20 p-6 rounded-none border-2 border-brand-midnight shadow-inner">
-                <div className="text-lg font-black text-brand-midnight dark:text-white uppercase tracking-tight">
+              <div className="bg-bg-subtle p-6 rounded-lg border border-border shadow-inner">
+                <div className="text-base font-semibold text-text-primary tracking-tight">
                   {new Date().toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}
                 </div>
-                <div className="text-[11px] font-black uppercase tracking-[0.2em] text-brand-midnight/70 mt-2">
-                  Snap
-                </div>
+                <div className="text-xs font-semibold tracking-wide text-text-muted mt-2">Snap</div>
               </div>
             </div>
 
             {/* Export Details */}
-            <div className="text-xs text-brand-midnight dark:text-zinc-200 space-y-3 bg-brand-gray/10 p-5 rounded-none border-2 border-brand-midnight/20">
+            <div className="text-xs text-text-primary space-y-3 bg-bg-subtle p-5 rounded-lg border border-border/20">
               <div className="flex justify-between items-center">
-                <span className="font-black text-brand-midnight/60 uppercase tracking-widest text-[10px]">
-                  Format
-                </span>
-                <span className="font-black text-brand-midnight dark:text-zinc-200">CSV (UTF-8)</span>
+                <span className="text-xs font-semibold text-text-muted tracking-wide">Format</span>
+                <span className="font-semibold text-text-primary">CSV (UTF-8)</span>
               </div>
               <div className="flex justify-between items-center">
-                <span className="font-black text-brand-midnight/60 uppercase tracking-widest text-[10px]">
-                  Scope
-                </span>
-                <span className="font-black text-brand-midnight dark:text-zinc-200 truncate ml-4">
+                <span className="text-xs font-semibold text-text-muted tracking-wide">Scope</span>
+                <span className="font-semibold text-text-primary truncate ml-4">
                   Full Intelligence Database
                 </span>
               </div>
               <div className="flex justify-between items-center">
-                <span className="font-bold text-zinc-400 uppercase tracking-widest text-[9px]">
-                  Status
-                </span>
+                <span className="text-xs font-medium text-text-muted tracking-wide">Status</span>
                 <Badge variant={applications.length > 0 ? 'success' : 'neutral'}>
                   {applications.length > 0 ? 'Ready' : 'No Data'}
                 </Badge>
@@ -327,41 +322,33 @@ function DataManagement({ onDataChange }: DataManagementProps) {
         </Card>
 
         {/* Import Card */}
-        <Card className="p-10 flex flex-col border-2 border-brand-midnight shadow-md">
-          <div className="flex items-center gap-4 mb-8 pb-6 border-b-2 border-brand-midnight/10">
-            <div className="p-3 bg-brand-orange/10 text-brand-orange rounded-none border-2 border-brand-orange">
+        <Card className="p-10 flex flex-col border border-border shadow-md">
+          <div className="flex items-center gap-4 mb-8 pb-6 border-b border-border">
+            <div className="p-3 bg-primary-50 text-primary-600 rounded-lg border border-primary-200">
               <Icon name="add" size={24} />
             </div>
             <div>
-              <h3 className="text-xl font-black text-brand-midnight dark:text-white tracking-tight uppercase">
+              <h3 className="text-lg font-semibold text-text-primary tracking-tight">
                 Bulk Ingestion
               </h3>
-              <p className="text-xs font-bold text-brand-midnight/60 dark:text-zinc-400 mt-1 uppercase">
-                Ingest external application data
-              </p>
+              <p className="text-sm text-text-muted mt-1">Ingest external application data</p>
             </div>
           </div>
 
           <div className="space-y-8 flex-1 flex flex-col">
             {/* Import Constraints */}
             <div className="grid grid-cols-3 gap-4">
-              <div className="bg-brand-gray/20 p-5 rounded-none border-2 border-brand-midnight text-center shadow-inner">
-                <div className="font-black text-brand-midnight dark:text-white text-sm">CSV</div>
-                <div className="text-[10px] font-black uppercase tracking-widest text-brand-midnight/70 mt-1">
-                  Format
-                </div>
+              <div className="bg-bg-subtle p-5 rounded-lg border border-border text-center shadow-inner">
+                <div className="font-semibold text-text-primary text-sm">CSV</div>
+                <div className="text-xs font-medium text-text-muted mt-1">Format</div>
               </div>
-              <div className="bg-brand-gray/20 p-5 rounded-none border-2 border-brand-midnight text-center shadow-inner">
-                <div className="font-black text-brand-midnight dark:text-white text-sm">5MB</div>
-                <div className="text-[10px] font-black uppercase tracking-widest text-brand-midnight/70 mt-1">
-                  Quota
-                </div>
+              <div className="bg-bg-subtle p-5 rounded-lg border border-border text-center shadow-inner">
+                <div className="font-semibold text-text-primary text-sm">5MB</div>
+                <div className="text-xs font-medium text-text-muted mt-1">Quota</div>
               </div>
-              <div className="bg-brand-gray/20 p-5 rounded-none border-2 border-brand-midnight text-center shadow-inner">
-                <div className="font-black text-brand-midnight dark:text-white text-sm">Batch</div>
-                <div className="text-[10px] font-black uppercase tracking-widest text-brand-midnight/70 mt-1">
-                  Mode
-                </div>
+              <div className="bg-bg-subtle p-5 rounded-lg border border-border text-center shadow-inner">
+                <div className="font-semibold text-text-primary text-sm">Batch</div>
+                <div className="text-xs font-medium text-text-muted mt-1">Mode</div>
               </div>
             </div>
 
@@ -373,9 +360,9 @@ function DataManagement({ onDataChange }: DataManagementProps) {
               ].map((text, i) => (
                 <div
                   key={i}
-                  className="flex items-center gap-3 text-[11px] text-brand-midnight/80 dark:text-zinc-300 font-black uppercase tracking-tight"
+                  className="flex items-center gap-3 text-sm text-text-secondary font-medium"
                 >
-                  <div className="w-2 h-2 rounded-none bg-brand-orange shadow-[2px_2px_0px_rgba(0,0,0,1)]" />
+                  <div className="w-2 h-2 rounded-lg bg-primary-500 shadow-[2px_2px_0px_rgba(0,0,0,1)]" />
                   <span>{text}</span>
                 </div>
               ))}
@@ -393,7 +380,7 @@ function DataManagement({ onDataChange }: DataManagementProps) {
               onClick={handleFileSelect}
               disabled={isImporting}
               variant="secondary"
-              className="w-full py-4 mt-auto border-zinc-200 dark:border-zinc-800"
+              className="w-full py-4 mt-auto"
             >
               {isImporting ? (
                 <>
@@ -409,17 +396,17 @@ function DataManagement({ onDataChange }: DataManagementProps) {
             </Button>
 
             {importProgress && (
-              <div className="mt-4 p-5 bg-brand-gray/20 rounded-none border-2 border-brand-midnight space-y-4 animate-fade-in shadow-xl">
+              <div className="mt-4 p-5 bg-bg-subtle rounded-lg border border-border space-y-4 animate-fade-in shadow-xl">
                 <div className="flex items-center justify-between">
-                  <span className="text-[11px] font-black uppercase tracking-widest text-brand-midnight/70">
+                  <span className="text-xs font-semibold text-text-muted tracking-wide">
                     Ingestion Progress
                   </span>
-                  <span className="text-sm font-black text-brand-orange">
+                  <span className="text-sm font-semibold text-primary-600">
                     {Math.round((importProgress.loaded / importProgress.total) * 100)}%
                   </span>
                 </div>
 
-                <div className="w-full bg-zinc-200 dark:bg-zinc-800 rounded-full h-1.5 overflow-hidden shadow-inner">
+                <div className="w-full bg-border rounded-full h-1.5 overflow-hidden shadow-inner">
                   <div
                     className="bg-primary-500 h-full rounded-full transition-all duration-500 ease-out shadow-[0_0_10px_rgba(249,115,22,0.3)]"
                     style={{ width: `${(importProgress.loaded / importProgress.total) * 100}%` }}
@@ -428,22 +415,18 @@ function DataManagement({ onDataChange }: DataManagementProps) {
 
                 <div className="grid grid-cols-2 gap-4 pt-2">
                   <div className="text-center">
-                    <div className="text-lg font-black text-zinc-900 dark:text-white">
+                    <div className="text-lg font-bold text-text-primary">
                       {importProgress.rowsProcessed}
                     </div>
-                    <div className="text-[9px] font-black uppercase tracking-widest text-zinc-400">
-                      Success
-                    </div>
+                    <div className="text-xs font-medium text-text-muted">Success</div>
                   </div>
                   <div className="text-center">
                     <div
-                      className={`text-lg font-black ${importProgress.errors > 0 ? 'text-red-500' : 'text-zinc-500'}`}
+                      className={`text-lg font-bold ${importProgress.errors > 0 ? 'text-red-500' : 'text-text-muted'}`}
                     >
                       {importProgress.errors}
                     </div>
-                    <div className="text-[9px] font-black uppercase tracking-widest text-zinc-400">
-                      Anomalies
-                    </div>
+                    <div className="text-xs font-medium text-text-muted">Anomalies</div>
                   </div>
                 </div>
               </div>
@@ -453,21 +436,21 @@ function DataManagement({ onDataChange }: DataManagementProps) {
       </div>
 
       {/* Demo Data Card */}
-      <Card className="p-10 relative overflow-hidden group border-2 border-brand-midnight">
+      <Card className="p-10 relative overflow-hidden group border border-border">
         <div className="absolute top-0 right-0 p-8 opacity-10 group-hover:opacity-20 transition-opacity duration-700">
-          <Icon name="settings" size={120} className="text-brand-orange" />
+          <Icon name="settings" size={120} className="text-primary-600" />
         </div>
 
         <div className="relative z-10">
           <div className="flex items-center gap-4 mb-6">
-            <div className="p-3 bg-brand-orange/10 text-brand-orange rounded-none border-2 border-brand-orange">
+            <div className="p-3 bg-primary-50 text-primary-600 rounded-lg border border-primary-200">
               <Icon name="bolt" size={24} />
             </div>
-            <h3 className="text-xl font-black text-brand-midnight dark:text-white tracking-tight uppercase">
+            <h3 className="text-lg font-semibold text-text-primary tracking-tight">
               Intelligence Factory
             </h3>
           </div>
-          <p className="text-sm text-zinc-500 dark:text-zinc-400 mb-8 max-w-2xl font-medium leading-relaxed">
+          <p className="text-sm text-text-muted dark:text-text-muted mb-8 max-w-2xl font-medium leading-relaxed">
             Populate your database with 50+ realistic application vectors to stress-test your visual
             intelligence metrics and predictive analytics.
           </p>
@@ -482,21 +465,17 @@ function DataManagement({ onDataChange }: DataManagementProps) {
       </Card>
 
       {/* File Format Help */}
-      <Card className="p-10 border-2 border-brand-midnight">
-        <h3 className="text-[11px] font-black uppercase tracking-[0.3em] text-brand-midnight/70 mb-8">
-          Intelligence Schema Protocol
-        </h3>
-        <div className="bg-zinc-100/50 dark:bg-zinc-900/80 p-6 rounded-2xl border border-zinc-200/50 dark:border-zinc-800 font-mono text-xs text-zinc-600 dark:text-zinc-400 overflow-x-auto shadow-inner">
-          <div className="mb-4 text-zinc-900 dark:text-zinc-200 font-black tracking-tight">
-            System Headers:
-          </div>
-          <div className="text-blue-600 dark:text-blue-400 font-bold tracking-tight">
+      <Card className="p-10 border border-border">
+        <h3 className="eyebrow mb-6">Intelligence Schema Protocol</h3>
+        <div className="bg-bg-subtle  p-6 rounded-2xl border border-border  font-mono text-xs text-text-secondary dark:text-text-muted overflow-x-auto shadow-inner">
+          <div className="mb-4 text-text-primary font-semibold tracking-tight">System Headers:</div>
+          <div className="text-blue-600 font-bold tracking-tight">
             company, role, dateApplied, status, visaSponsorship, notes
           </div>
-          <div className="mt-8 mb-4 text-zinc-900 dark:text-zinc-200 font-black tracking-tight">
+          <div className="mt-8 mb-4 text-text-primary font-semibold tracking-tight">
             Vector Sample:
           </div>
-          <div className="text-zinc-400 dark:text-zinc-500 leading-relaxed italic">
+          <div className="text-text-muted dark:text-text-muted leading-relaxed italic">
             "SpaceX, Mission Operations, 2026-02-15, Interview, true, \"Strategic referral vector\""
           </div>
         </div>

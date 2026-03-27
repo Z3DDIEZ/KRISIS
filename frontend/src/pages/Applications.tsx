@@ -233,9 +233,7 @@ function Applications() {
   if (!user) {
     return (
       <div className="text-center py-20">
-        <p className="text-zinc-500 dark:text-zinc-400">
-          Please sign in to view your applications.
-        </p>
+        <p className="text-text-muted">Please sign in to view your applications.</p>
       </div>
     )
   }
@@ -403,7 +401,7 @@ function Applications() {
               filteredApplications.length > 0
             }
             onChange={handleSelectAll}
-            className="w-4 h-4 rounded border-zinc-300 text-primary-600 focus:ring-primary-500"
+            className="w-4 h-4 rounded border-border text-primary-600 focus:ring-primary-500"
           />
           Select All Applications
         </label>
@@ -431,14 +429,8 @@ function Applications() {
             <Icon name="search" size={32} className="text-text-muted" />
           </div>
           <h3 className="text-lg font-semibold text-text-primary mb-1">No matches found</h3>
-          <p className="text-text-secondary mb-6">
-            Try adjusting your filters or search term.
-          </p>
-          <Button
-            variant="ghost"
-            onClick={clearFilters}
-            className="text-sm"
-          >
+          <p className="text-text-secondary mb-6">Try adjusting your filters or search term.</p>
+          <Button variant="ghost" onClick={clearFilters} className="text-sm">
             Reset Filters
           </Button>
         </Card>
@@ -458,9 +450,7 @@ function Applications() {
                     <h4 className="font-semibold text-text-primary group-hover:text-primary-600 transition-colors">
                       {application.company}
                     </h4>
-                    <p className="text-sm text-text-secondary">
-                      {application.role}
-                    </p>
+                    <p className="text-sm text-text-secondary">{application.role}</p>
                   </div>
                 </div>
                 <input
@@ -535,9 +525,7 @@ function Applications() {
                   <tr
                     key={application.id}
                     className={`hover:bg-bg-subtle transition-colors ${
-                      selectedApplications.has(application.id)
-                        ? 'bg-primary-50/60'
-                        : ''
+                      selectedApplications.has(application.id) ? 'bg-primary-50/60' : ''
                     }`}
                   >
                     <td className="px-6 py-4">
@@ -558,9 +546,7 @@ function Applications() {
                         </span>
                       </div>
                     </td>
-                    <td className="px-6 py-4 text-sm text-text-secondary">
-                      {application.role}
-                    </td>
+                    <td className="px-6 py-4 text-sm text-text-secondary">{application.role}</td>
                     <td className="px-6 py-4">
                       <Badge variant={getBadgeVariant(application.status)}>
                         {application.status}
@@ -611,9 +597,7 @@ function Applications() {
                 <h4 className="font-semibold text-text-primary truncate text-sm group-hover:text-primary-600 transition-colors">
                   {application.company}
                 </h4>
-                <p className="text-sm text-text-secondary truncate">
-                  {application.role}
-                </p>
+                <p className="text-sm text-text-secondary truncate">{application.role}</p>
               </div>
               <div className="hidden md:flex items-center gap-2">
                 <Badge variant={getBadgeVariant(application.status)}>{application.status}</Badge>

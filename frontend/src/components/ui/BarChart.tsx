@@ -25,6 +25,11 @@ interface TooltipData {
   visible: boolean
 }
 
+/**
+ * BarChart - Compact, interactive bar chart with optional tooltips.
+ * @param props - Chart data and display settings.
+ * @returns The rendered bar chart.
+ */
 function BarChart({
   data,
   height = 300,
@@ -141,7 +146,7 @@ function BarChart({
       {/* Chart Area */}
       <div className="relative flex-1 flex" style={{ padding: `10px 0 30px ${padding}px` }}>
         {/* Y-axis labels */}
-        <div className="absolute left-0 top-0 bottom-[30px] flex flex-col justify-between text-[10px] font-black text-zinc-400 dark:text-zinc-500 pr-3 text-right w-[40px] pointer-events-none uppercase tracking-wider">
+        <div className="absolute left-0 top-0 bottom-[30px] flex flex-col justify-between text-xs font-semibold text-text-muted pr-3 text-right w-[40px] pointer-events-none">
           {yAxisTicks.map((tick, index) => (
             <span key={index} className="leading-none">
               {formatValue(tick)}
@@ -159,7 +164,7 @@ function BarChart({
                 return (
                   <div
                     key={index}
-                    className="absolute w-full border-t border-zinc-100 dark:border-zinc-800/50"
+                    className="absolute w-full border-t border-border"
                     style={{
                       bottom: `${ratio * 100}%`,
                       left: 0,
@@ -197,13 +202,13 @@ function BarChart({
                     onMouseLeave={handleBarLeave}
                   >
                     {/* Hover value indicator (Desktop) */}
-                    <div className="absolute -top-8 left-1/2 -translate-x-1/2 bg-zinc-900 dark:bg-zinc-800 text-white text-[10px] font-black px-2 py-1 rounded-md opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none shadow-xl border border-white/10">
+                    <div className="absolute -top-8 left-1/2 -translate-x-1/2 bg-bg-surface text-text-primary text-xs font-semibold px-2 py-1 rounded-md opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none shadow-xl border border-border">
                       {formatValue(point.value)}
                     </div>
                   </div>
 
                   {/* X-axis label */}
-                  <div className="absolute -bottom-6 left-0 right-0 text-[10px] font-black text-zinc-400 dark:text-zinc-500 text-center truncate pt-1 uppercase tracking-tight">
+                  <div className="absolute -bottom-6 left-0 right-0 text-xs font-semibold text-text-muted text-center truncate pt-1">
                     {point.label}
                   </div>
                 </div>
@@ -223,12 +228,10 @@ function BarChart({
             transform: 'translate(-50%, -100%)',
           }}
         >
-          <div className="bg-white/90 dark:bg-zinc-900/90 backdrop-blur-xl border border-zinc-200 dark:border-zinc-800 rounded-xl shadow-2xl px-4 py-3 min-w-[120px]">
-            <div className="text-[10px] font-black text-zinc-400 dark:text-zinc-500 uppercase tracking-widest mb-1">
-              {tooltip.label}
-            </div>
+          <div className="bg-bg-surface/95 backdrop-blur-xl border border-border rounded-xl shadow-2xl px-4 py-3 min-w-[120px]">
+            <div className="text-xs font-semibold text-text-muted mb-1">{tooltip.label}</div>
             <div className="flex items-center justify-between">
-              <span className="text-sm font-black text-zinc-900 dark:text-white">
+              <span className="text-sm font-semibold text-text-primary">
                 {formatValue(tooltip.value)}
               </span>
               <div className="w-2 h-2 rounded-full bg-primary-500 animate-pulse ml-3" />
@@ -239,17 +242,17 @@ function BarChart({
 
       {/* Chart Legend (Optional - only if many colors) */}
       {data.length > 5 && (
-        <div className="flex flex-wrap justify-center gap-x-4 gap-y-1 mt-8 text-[10px] font-medium border-t border-border-light/30 pt-3">
+        <div className="flex flex-wrap justify-center gap-x-4 gap-y-1 mt-8 text-xs font-medium border-t border-border/40 pt-3">
           {data.slice(0, 8).map((point, index) => (
             <div key={index} className="flex items-center gap-1.5">
               <div
                 className="w-2 h-2 rounded-full"
                 style={{ background: getBarColor(index, point.color) }}
               />
-              <span className="text-secondary">{point.label}</span>
+              <span className="text-text-secondary">{point.label}</span>
             </div>
           ))}
-          {data.length > 8 && <span className="text-muted">+{data.length - 8} more</span>}
+          {data.length > 8 && <span className="text-text-muted">+{data.length - 8} more</span>}
         </div>
       )}
 
@@ -257,10 +260,10 @@ function BarChart({
       {data.length === 0 && (
         <div className="absolute inset-0 flex items-center justify-center">
           <div className="text-center">
-            <div className="text-secondary mb-4">
+            <div className="text-text-muted mb-4">
               <Icon name="bar-chart" size={48} className="opacity-20" />
             </div>
-            <div className="text-secondary font-medium">No data to display</div>
+            <div className="text-text-muted font-medium">No data to display</div>
           </div>
         </div>
       )}

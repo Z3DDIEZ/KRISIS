@@ -37,6 +37,10 @@ function getInitials(displayName: string | null): string {
   return (nameParts[0][0] + nameParts[nameParts.length - 1][0]).toUpperCase()
 }
 
+/**
+ * Profile page for managing identity, resume, and security actions.
+ * @returns The profile view.
+ */
 function Profile() {
   const [user, loading] = useAuthState(auth)
   const [isEditing, setIsEditing] = useState(false)
@@ -196,20 +200,16 @@ function Profile() {
   if (!user) {
     return (
       <div className="text-center py-12">
-        <p className="text-zinc-500 dark:text-zinc-400">Please sign in to view your profile.</p>
+        <p className="text-text-muted">Please sign in to view your profile.</p>
       </div>
     )
   }
 
   return (
-    <div className="max-w-4xl mx-auto animate-fade-in p-6 space-y-6">
+    <div className="max-w-4xl mx-auto animate-fade-in px-6 sm:px-8 pb-16 pt-6 space-y-6">
       <header className="mb-2">
-        <h1 className="text-3xl font-black text-zinc-900 dark:text-white tracking-tight">
-          Profile
-        </h1>
-        <p className="text-zinc-500 dark:text-zinc-400 font-medium">
-          Manage your professional identity and account settings
-        </p>
+        <h1 className="heading-lg text-text-primary">Profile</h1>
+        <p className="text-text-muted">Manage your professional identity and account settings.</p>
       </header>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -219,12 +219,10 @@ function Profile() {
             <div className="w-24 h-24 mx-auto rounded-full flex items-center justify-center text-white font-bold text-3xl mb-4 shadow-lg ring-4 ring-primary-500/10 bg-primary-600">
               {getInitials(user.displayName) || user.email?.[0].toUpperCase() || '?'}
             </div>
-            <h3 className="text-xl font-bold text-zinc-900 dark:text-white mb-1">
+            <h3 className="text-xl font-bold text-text-primary mb-1">
               {user.displayName || 'User'}
             </h3>
-            <p className="text-zinc-500 dark:text-zinc-400 text-sm font-medium mb-4 break-all">
-              {user.email}
-            </p>
+            <p className="text-text-muted text-sm font-medium mb-4 break-all">{user.email}</p>
 
             <div className="flex justify-center mb-6">
               <Badge
@@ -238,11 +236,9 @@ function Profile() {
               </Badge>
             </div>
 
-            <div className="mt-6 pt-6 border-t border-zinc-100 dark:border-zinc-800">
-              <div className="text-xs font-bold text-zinc-400 uppercase tracking-wide">
-                Member Since
-              </div>
-              <div className="text-sm font-bold text-zinc-900 dark:text-white mt-1">
+            <div className="mt-6 pt-6 border-t border-border">
+              <div className="text-xs font-semibold text-text-muted">Member Since</div>
+              <div className="text-sm font-semibold text-text-primary mt-1">
                 {user.metadata.creationTime
                   ? new Date(user.metadata.creationTime).toLocaleDateString('en-US', {
                       month: 'long',
@@ -257,8 +253,8 @@ function Profile() {
         {/* Profile Settings Card */}
         <div className="lg:col-span-2 space-y-8">
           <Card className="p-8">
-            <div className="mb-6 pb-4 border-b border-zinc-100 dark:border-zinc-800">
-              <h3 className="text-lg font-bold text-zinc-900 dark:text-white flex items-center gap-2">
+            <div className="mb-6 pb-4 border-b border-border">
+              <h3 className="text-lg font-semibold text-text-primary flex items-center gap-2">
                 <Icon name="person" size={20} className="text-primary-500" />
                 Personal Information
               </h3>
@@ -269,7 +265,7 @@ function Profile() {
               <div className="form-group">
                 <label
                   htmlFor="displayName"
-                  className="text-sm font-bold text-zinc-900 dark:text-white mb-2 block"
+                  className="text-sm font-bold text-text-primary mb-2 block"
                 >
                   Display Name
                 </label>
@@ -280,7 +276,7 @@ function Profile() {
                       id="displayName"
                       value={displayName}
                       onChange={(e) => setDisplayName(e.target.value)}
-                      className="flex-1 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-700 rounded-lg px-4 py-2 text-zinc-900 dark:text-white focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 outline-none transition-all"
+                      className="flex-1 bg-bg-surface border border-border rounded-lg px-4 py-2 text-text-primary focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 outline-none transition-all"
                       placeholder="Your full name"
                       autoFocus
                     />
@@ -302,14 +298,14 @@ function Profile() {
                     </div>
                   </div>
                 ) : (
-                  <div className="flex items-center justify-between p-4 bg-zinc-50 dark:bg-zinc-900/50 rounded-lg border border-zinc-200 dark:border-zinc-800 group hover:border-primary-500/50 transition-colors">
-                    <span className="text-zinc-900 dark:text-white font-medium">
+                  <div className="flex items-center justify-between p-4 bg-bg-subtle rounded-lg border border-border group hover:border-primary-500/50 transition-colors">
+                    <span className="text-text-primary font-medium">
                       {user.displayName || 'Not specified'}
                     </span>
                     <button
                       type="button"
                       onClick={() => setIsEditing(true)}
-                      className="text-xs font-bold text-primary-600 hover:text-primary-700 uppercase tracking-wide px-2"
+                      className="text-xs font-semibold text-primary-600 hover:text-primary-700 px-2"
                     >
                       Edit
                     </button>
@@ -318,13 +314,13 @@ function Profile() {
               </div>
 
               <div className="form-group">
-                <label className="text-sm font-bold text-zinc-900 dark:text-white mb-2 block">
+                <label className="text-sm font-bold text-text-primary mb-2 block">
                   Email Address
                 </label>
-                <div className="flex items-center gap-3 p-4 bg-zinc-50/50 dark:bg-zinc-900/30 rounded-lg border border-zinc-200 dark:border-zinc-800 text-zinc-500 dark:text-zinc-400">
-                  <Icon name="mail" size={18} className="text-zinc-400" />
+                <div className="flex items-center gap-3 p-4 bg-bg-subtle rounded-lg border border-border text-text-muted">
+                  <Icon name="mail" size={18} className="text-text-muted" />
                   <span className="font-medium">{user.email}</span>
-                  <Icon name="lock" size={14} className="ml-auto text-zinc-400 opacity-50" />
+                  <Icon name="lock" size={14} className="ml-auto text-text-muted opacity-50" />
                 </div>
               </div>
             </form>
@@ -332,15 +328,15 @@ function Profile() {
 
           {/* Default Resume Card */}
           <Card className="p-8">
-            <div className="mb-6 pb-4 border-b border-zinc-100 dark:border-zinc-800">
-              <h3 className="text-lg font-bold text-zinc-900 dark:text-white flex items-center gap-2">
+            <div className="mb-6 pb-4 border-b border-border">
+              <h3 className="text-lg font-semibold text-text-primary flex items-center gap-2">
                 <Icon name="description" size={20} className="text-primary-500" />
                 Default Resume
               </h3>
             </div>
 
             <div className="space-y-6">
-              <p className="text-zinc-500 dark:text-zinc-400 text-sm">
+              <p className="text-text-muted text-sm">
                 Upload your primary resume. This content will be automatically used to populate new
                 applications.
               </p>
@@ -353,26 +349,26 @@ function Profile() {
                     onChange={handleResumeUpload}
                     className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
                   />
-                  <div className="flex items-center justify-center gap-3 p-6 border-2 border-dashed border-zinc-200 dark:border-zinc-700 rounded-xl group-hover:border-primary-500/50 group-hover:bg-primary-500/5 transition-all bg-zinc-50/50 dark:bg-zinc-900/20">
+                  <div className="flex items-center justify-center gap-3 p-6 border border-dashed border-border rounded-xl group-hover:border-primary-500/50 group-hover:bg-primary-500/5 transition-all bg-bg-subtle">
                     <Icon
                       name="upload_file"
                       size={24}
-                      className="text-zinc-400 group-hover:text-primary-500 transition-colors"
+                      className="text-text-muted group-hover:text-primary-500 transition-colors"
                     />
-                    <span className="text-sm font-bold text-zinc-400 group-hover:text-primary-600 transition-colors">
+                    <span className="text-sm font-semibold text-text-muted group-hover:text-primary-600 transition-colors">
                       {isProcessingResume ? 'Processing PDF...' : 'Click to Upload Resume (PDF)'}
                     </span>
                   </div>
                 </div>
 
                 <div className="form-group">
-                  <label className="text-sm font-bold text-zinc-900 dark:text-white mb-2 block">
+                  <label className="text-sm font-bold text-text-primary mb-2 block">
                     Extracted Content
                   </label>
                   <textarea
                     value={resumeText}
                     onChange={(e) => setResumeText(e.target.value)}
-                    className="w-full min-h-[200px] font-mono text-xs bg-zinc-50 dark:bg-zinc-900/50 border border-zinc-200 dark:border-zinc-700 rounded-lg p-4 text-zinc-600 dark:text-zinc-300 focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 outline-none transition-all resize-y"
+                    className="w-full min-h-[200px] font-mono text-xs bg-bg-subtle border border-border rounded-lg p-4 text-text-secondary focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 outline-none transition-all resize-y"
                     placeholder="Resume content will appear here..."
                   />
                 </div>
@@ -393,9 +389,9 @@ function Profile() {
 
           {/* Account Actions Card */}
           <Card className="p-8 border-l-4 border-l-red-500/20">
-            <div className="mb-6 pb-4 border-b border-zinc-100 dark:border-zinc-800">
-              <h3 className="text-lg font-bold text-zinc-900 dark:text-white flex items-center gap-2">
-                <Icon name="security" size={20} className="text-zinc-400" />
+            <div className="mb-6 pb-4 border-b border-border">
+              <h3 className="text-lg font-semibold text-text-primary flex items-center gap-2">
+                <Icon name="security" size={20} className="text-text-muted" />
                 Security & Account
               </h3>
             </div>
@@ -418,7 +414,7 @@ function Profile() {
                     <button
                       onClick={handleResendVerification}
                       disabled={isResendingVerification}
-                      className="text-xs font-bold bg-white dark:bg-orange-900 text-orange-700 dark:text-orange-200 px-3 py-1.5 rounded-lg border border-orange-200 dark:border-orange-800 shadow-sm hover:shadow-md transition-all"
+                      className="text-xs font-semibold bg-bg-surface dark:bg-orange-900 text-orange-700 dark:text-orange-200 px-3 py-1.5 rounded-lg border border-orange-200 dark:border-orange-800 shadow-sm hover:shadow-md transition-all"
                     >
                       {isResendingVerification ? 'Sending...' : 'Resend Email'}
                     </button>
@@ -430,14 +426,14 @@ function Profile() {
                 <button
                   onClick={handlePasswordReset}
                   disabled={isResettingPassword}
-                  className="p-6 bg-zinc-50 dark:bg-zinc-900/50 hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded-xl border border-zinc-200 dark:border-zinc-800 flex flex-col items-center gap-3 transition-colors group"
+                  className="p-6 bg-bg-subtle hover:bg-bg-surface rounded-xl border border-border flex flex-col items-center gap-3 transition-colors group"
                 >
                   <Icon
                     name="lock"
                     size={20}
-                    className="text-zinc-400 group-hover:text-primary-500 transition-colors"
+                    className="text-text-muted group-hover:text-primary-500 transition-colors"
                   />
-                  <span className="text-xs font-bold text-zinc-500 uppercase tracking-wide group-hover:text-primary-600">
+                  <span className="text-xs font-semibold text-text-muted group-hover:text-primary-600">
                     Reset Password
                   </span>
                 </button>
@@ -452,7 +448,7 @@ function Profile() {
                       size={20}
                       className="text-red-400 group-hover:text-red-500 transition-colors"
                     />
-                    <span className="text-xs font-bold text-red-600/70 group-hover:text-red-600 uppercase tracking-wide">
+                    <span className="text-xs font-semibold text-red-600/70 group-hover:text-red-600">
                       Delete Account
                     </span>
                   </button>
@@ -469,13 +465,13 @@ function Profile() {
                       <button
                         onClick={handleDeleteAccount}
                         disabled={isDeletingAccount}
-                        className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg font-bold text-xs uppercase tracking-wide shadow-sm"
+                        className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg font-semibold text-sm shadow-sm"
                       >
                         {isDeletingAccount ? 'Deleting...' : 'Confirm Delete'}
                       </button>
                       <button
                         onClick={() => setShowDeleteConfirm(false)}
-                        className="bg-white dark:bg-transparent border border-gray-200 dark:border-red-800 text-zinc-500 px-4 py-2 rounded-lg font-bold text-xs uppercase tracking-wide"
+                        className="bg-bg-surface dark:bg-transparent border border-border dark:border-red-800 text-text-muted px-4 py-2 rounded-lg font-semibold text-sm"
                       >
                         Cancel
                       </button>

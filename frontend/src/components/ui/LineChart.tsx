@@ -24,6 +24,11 @@ interface TooltipData {
   visible: boolean
 }
 
+/**
+ * LineChart - Minimal line chart with optional grid and tooltips.
+ * @param props - Chart data and display settings.
+ * @returns The rendered line chart.
+ */
 function LineChart({
   data,
   height = 300,
@@ -165,7 +170,7 @@ function LineChart({
                   x2={`calc(100% - ${paddingX}px)`}
                   y2={y}
                   stroke="currentColor"
-                  className="text-zinc-200 dark:text-zinc-800"
+                  className="text-border"
                   strokeWidth="1"
                   strokeDasharray="4 4"
                 />
@@ -174,7 +179,7 @@ function LineChart({
                   y={y}
                   textAnchor="end"
                   alignmentBaseline="middle"
-                  className="text-[10px] fill-zinc-400 dark:fill-zinc-500 font-black uppercase tracking-wider"
+                  className="text-xs fill-text-muted font-semibold"
                 >
                   {formatValue(tick)}
                 </text>
@@ -217,7 +222,7 @@ function LineChart({
               cx={point.x}
               cy={point.y}
               r="5"
-              fill="white"
+              fill="var(--bg-surface)"
               stroke="#EA580C"
               strokeWidth="2.5"
               className={cn(
@@ -242,7 +247,7 @@ function LineChart({
               x={point.x}
               y={paddingY + chartHeight + 25}
               textAnchor="middle"
-              className="text-[10px] fill-zinc-400 dark:fill-zinc-500 font-black uppercase tracking-tight"
+              className="text-xs fill-text-muted font-semibold"
             >
               {point.label}
             </text>
@@ -260,12 +265,10 @@ function LineChart({
             transform: 'translate(-50%, -100%)',
           }}
         >
-          <div className="bg-white/90 dark:bg-zinc-900/90 backdrop-blur-xl border border-zinc-200 dark:border-zinc-800 rounded-xl shadow-2xl px-4 py-3 min-w-[130px]">
-            <div className="text-[10px] font-black text-zinc-400 dark:text-zinc-500 uppercase tracking-widest mb-1">
-              {tooltip.label}
-            </div>
+          <div className="bg-bg-surface/95 backdrop-blur-xl border border-border rounded-xl shadow-2xl px-4 py-3 min-w-[130px]">
+            <div className="text-xs font-semibold text-text-muted mb-1">{tooltip.label}</div>
             <div className="flex items-center justify-between">
-              <span className="text-sm font-black text-zinc-900 dark:text-white">
+              <span className="text-sm font-semibold text-text-primary">
                 {formatValue(tooltip.value)}
               </span>
               <div className="w-1.5 h-1.5 rounded-full bg-primary-600 dark:bg-primary-500 animate-pulse ml-3 shadow-[0_0_8px_rgba(234,88,12,0.6)]" />

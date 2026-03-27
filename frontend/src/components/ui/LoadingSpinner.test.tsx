@@ -1,4 +1,3 @@
-
 import { render, screen } from '@testing-library/react'
 import { describe, it, expect } from 'vitest'
 import LoadingSpinner from './LoadingSpinner'
@@ -36,10 +35,8 @@ describe('LoadingSpinner', () => {
       'animate-spin',
       'rounded-full',
       'border-2',
-      'border-zinc-200',
-      'dark:border-zinc-800',
-      'border-t-primary-600',
-      'dark:border-t-primary-500'
+      'border-border',
+      'border-t-primary-600'
     )
   })
 })

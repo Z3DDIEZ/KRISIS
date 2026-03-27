@@ -20,6 +20,11 @@ interface DropdownProps {
   disabled?: boolean
 }
 
+/**
+ * Dropdown - Contextual menu with optional nested items.
+ * @param props - Trigger, items, and placement options.
+ * @returns The dropdown trigger and menu.
+ */
 function Dropdown({
   trigger,
   items,
@@ -136,12 +141,7 @@ function Dropdown({
 
   const renderMenuItem = (item: DropdownItem, depth = 0) => {
     if (item.separator) {
-      return (
-        <div
-          key={`separator-${depth}`}
-          className="border-t border-zinc-100 dark:border-zinc-800/60 my-1"
-        />
-      )
+      return <div key={`separator-${depth}`} className="border-t border-border my-1" />
     }
 
     const hasChildren = item.children && item.children.length > 0
@@ -155,14 +155,12 @@ function Dropdown({
           className={`
             w-full flex items-center gap-3 px-4 py-3 text-left transition-all duration-200
             ${item.disabled ? 'opacity-30 cursor-not-allowed' : 'cursor-pointer'}
-            ${item.danger ? 'text-red-500 hover:bg-red-50 dark:hover:bg-red-900/10' : 'text-zinc-600 dark:text-zinc-400 hover:text-primary-600 dark:hover:text-primary-400 hover:bg-primary-50/50 dark:hover:bg-primary-900/5'}
+            ${item.danger ? 'text-red-600 hover:bg-red-50 dark:hover:bg-red-900/10' : 'text-text-secondary hover:text-primary-600 hover:bg-primary-50/50 dark:hover:bg-primary-900/5'}
             ${depth > 0 ? 'pl-8' : ''}
           `}
         >
           {item.icon && <Icon name={item.icon} size={16} />}
-          <span className="flex-1 text-[11px] font-black uppercase tracking-wider">
-            {item.label}
-          </span>
+          <span className="flex-1 text-xs font-semibold">{item.label}</span>
           {hasChildren && (
             <Icon
               name="arrow-right"
@@ -174,7 +172,7 @@ function Dropdown({
 
         {/* Submenu */}
         {hasChildren && isSubmenuActive && (
-          <div className="absolute left-full top-0 ml-1 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl shadow-2xl min-w-48 animate-fade-in overflow-hidden">
+          <div className="absolute left-full top-0 ml-1 bg-bg-surface border border-border rounded-xl shadow-2xl min-w-48 animate-fade-in overflow-hidden">
             {item.children!.map((child) => renderMenuItem(child, depth + 1))}
           </div>
         )}
@@ -196,7 +194,7 @@ function Dropdown({
         createPortal(
           <div
             ref={dropdownRef}
-            className="fixed z-50 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl shadow-[0_10px_40px_rgba(0,0,0,0.1)] dark:shadow-[0_10px_40px_rgba(0,0,0,0.3)] min-w-56 animate-fade-in overflow-hidden"
+            className="fixed z-50 bg-bg-surface border border-border rounded-xl shadow-[0_10px_40px_rgba(0,0,0,0.12)] min-w-56 animate-fade-in overflow-hidden"
             style={dropdownStyle}
           >
             <div className="py-2">{items.map((item) => renderMenuItem(item))}</div>

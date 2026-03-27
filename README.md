@@ -80,6 +80,7 @@ cp .env.example .env # Inject your secure tokens
 ### Execution
 
 ```bash
+cd frontend   # Navigate to the frontend directory
 npm run dev   # Initiate Local Command Center
 npm run build # Compile Production-Grade Artifacts
 ```

@@ -13,6 +13,10 @@ import Icon from '../components/ui/Icon'
 import { Card } from '../components/ui/Card'
 import { Button } from '../components/ui/Button'
 
+/**
+ * AuthPage - Authentication entry for sign-in and sign-up.
+ * @returns The authentication page content.
+ */
 function AuthPage() {
   const navigate = useNavigate()
   const [isSignUp, setIsSignUp] = useState(false)
@@ -79,52 +83,46 @@ function AuthPage() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center p-8 bg-zinc-50 dark:bg-zinc-950 overflow-hidden relative font-primary">
+    <div className="min-h-screen flex flex-col items-center justify-center p-8 bg-bg-subtle overflow-hidden relative font-primary">
       <div className="w-full max-w-md relative z-10">
         <div className="flex items-center justify-center gap-3 mb-10">
           <div className="w-12 h-12 bg-primary-600 rounded-xl flex items-center justify-center shadow-lg shadow-primary-600/20">
             <Icon name="work" size={24} className="text-white" />
           </div>
-          <span className="font-black text-3xl tracking-tight text-zinc-900 dark:text-white">
-            KRISIS
-          </span>
+          <span className="font-bold text-3xl tracking-tight text-text-primary">KRISIS</span>
         </div>
 
-        <Card className="p-8 shadow-xl border-zinc-100 dark:border-zinc-800">
+        <Card className="p-8 shadow-xl">
           <header className="mb-10 text-center">
-            <h1 className="text-4xl font-black text-zinc-900 dark:text-white uppercase tracking-[0.2em] mb-4">
-              Auth Portal
+            <h1 className="text-3xl sm:text-4xl font-semibold text-text-primary mb-4">
+              Access Portal
             </h1>
-            <p className="text-zinc-500 dark:text-zinc-400 font-medium text-lg max-w-sm mx-auto">
-              Secure access to the intelligence protocol
+            <p className="text-text-muted font-medium text-lg max-w-sm mx-auto">
+              Secure access to your intelligence workspace
             </p>
           </header>
 
           <form className="space-y-6" onSubmit={handleEmailAuth}>
             <div className="space-y-4">
               <div className="flex flex-col gap-2">
-                <label className="text-xs font-bold text-zinc-500 dark:text-zinc-400 uppercase tracking-wide">
-                  Email
-                </label>
+                <label className="text-xs font-semibold text-text-muted">Email</label>
                 <input
                   type="email"
                   required
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="w-full h-12 px-4 rounded-lg border border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-900 text-zinc-900 dark:text-white outline-none focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 transition-all font-medium text-sm placeholder-zinc-400"
+                  className="w-full h-12 px-4 rounded-lg border border-border bg-bg-subtle text-text-primary outline-none focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 transition-all font-medium text-sm placeholder:text-text-muted"
                   placeholder="name@example.com"
                 />
               </div>
 
               <div className="flex flex-col gap-2">
                 <div className="flex justify-between items-center">
-                  <label className="text-xs font-bold text-zinc-500 dark:text-zinc-400 uppercase tracking-wide">
-                    Password
-                  </label>
+                  <label className="text-xs font-semibold text-text-muted">Password</label>
                   {!isSignUp && (
                     <button
                       type="button"
-                      className="text-xs font-bold text-primary-600 hover:text-primary-700 transition-colors"
+                      className="text-xs font-semibold text-primary-600 hover:text-primary-700 transition-colors"
                     >
                       Forgot?
                     </button>
@@ -136,13 +134,13 @@ function AuthPage() {
                     required
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    className="w-full h-12 px-4 rounded-lg border border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-900 text-zinc-900 dark:text-white outline-none focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 transition-all font-medium text-sm placeholder-zinc-400"
+                    className="w-full h-12 px-4 rounded-lg border border-border bg-bg-subtle text-text-primary outline-none focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 transition-all font-medium text-sm placeholder:text-text-muted"
                     placeholder="••••••••"
                   />
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-4 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-300 transition-colors"
+                    className="absolute right-4 top-1/2 -translate-y-1/2 text-text-muted hover:text-text-primary transition-colors"
                   >
                     <Icon name={showPassword ? 'visibility-off' : 'visibility'} size={18} />
                   </button>
@@ -151,15 +149,13 @@ function AuthPage() {
 
               {isSignUp && (
                 <div className="flex flex-col gap-2 animate-fade-in">
-                  <label className="text-xs font-bold text-zinc-500 dark:text-zinc-400 uppercase tracking-wide">
-                    Confirm Password
-                  </label>
+                  <label className="text-xs font-semibold text-text-muted">Confirm Password</label>
                   <input
                     type={showPassword ? 'text' : 'password'}
                     required
                     value={confirmPassword}
                     onChange={(e) => setConfirmPassword(e.target.value)}
-                    className="w-full h-12 px-4 rounded-lg border border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-900 text-zinc-900 dark:text-white outline-none focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 transition-all font-medium text-sm placeholder-zinc-400"
+                    className="w-full h-12 px-4 rounded-lg border border-border bg-bg-subtle text-text-primary outline-none focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 transition-all font-medium text-sm placeholder:text-text-muted"
                     placeholder="••••••••"
                   />
                 </div>
@@ -177,9 +173,9 @@ function AuthPage() {
 
             <div className="relative flex items-center justify-center py-2">
               <div className="absolute inset-0 flex items-center">
-                <div className="w-full border-t border-zinc-100 dark:border-zinc-800"></div>
+                <div className="w-full border-t border-border"></div>
               </div>
-              <span className="relative px-4 bg-white dark:bg-zinc-900 text-xs font-medium text-zinc-400">
+              <span className="relative px-4 bg-bg-surface text-xs font-medium text-text-muted">
                 Or continue with
               </span>
             </div>
@@ -188,7 +184,7 @@ function AuthPage() {
               type="button"
               onClick={handleGoogleAuth}
               disabled={loading}
-              className="w-full h-12 border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 hover:bg-zinc-50 dark:hover:bg-zinc-800 text-zinc-900 dark:text-white font-bold flex items-center justify-center gap-3 rounded-lg transition-all text-sm"
+              className="w-full h-12 border border-border bg-bg-surface hover:bg-bg-subtle text-text-primary font-semibold flex items-center justify-center gap-3 rounded-lg transition-all text-sm"
             >
               <svg className="w-5 h-5" viewBox="0 0 24 24">
                 <path
@@ -214,7 +210,7 @@ function AuthPage() {
 
           <button
             onClick={() => setIsSignUp(!isSignUp)}
-            className="mt-8 mx-auto block text-xs font-bold text-primary-600 hover:text-primary-700 transition-colors"
+            className="mt-8 mx-auto block text-xs font-semibold text-primary-600 hover:text-primary-700 transition-colors"
           >
             {isSignUp ? 'Already have an account? Sign In' : "Don't have an account? Sign Up"}
           </button>

@@ -28,6 +28,10 @@ function getInitials(displayName: string | null): string {
   return (nameParts[0][0] + nameParts[nameParts.length - 1][0]).toUpperCase()
 }
 
+/**
+ * UserMenu - Profile dropdown for authenticated users.
+ * @returns The user menu button and dropdown panel.
+ */
 function UserMenu() {
   const [user] = useAuthState(auth)
   const [isOpen, setIsOpen] = useState(false)
@@ -63,26 +67,24 @@ function UserMenu() {
     <div className="relative" ref={menuRef}>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="w-[42px] h-[42px] flex items-center justify-center rounded-xl font-black text-sm bg-primary-600 text-white shadow-lg shadow-primary-500/20 hover:scale-105 transition-all duration-200"
+        className="w-[42px] h-[42px] flex items-center justify-center rounded-xl font-semibold text-sm bg-primary-600 text-white shadow-md shadow-primary-500/20 hover:scale-105 transition-all duration-200"
         aria-label="User menu"
       >
         {initials}
       </button>
 
       {isOpen && (
-        <div className="absolute right-0 mt-3 w-72 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl shadow-2xl z-50 animate-fade-in divide-y divide-zinc-100 dark:divide-zinc-800/60 overflow-hidden">
+        <div className="absolute right-0 mt-3 w-72 bg-bg-surface border border-border rounded-2xl shadow-2xl z-50 animate-fade-in divide-y divide-border overflow-hidden">
           <div className="p-5">
             <div className="flex items-center gap-4">
-              <div className="w-14 h-14 rounded-xl flex items-center justify-center font-black text-xl bg-zinc-900 dark:bg-zinc-800 text-white shadow-inner">
+              <div className="w-14 h-14 rounded-xl flex items-center justify-center font-semibold text-xl bg-bg-subtle text-primary-600 border border-border shadow-inner">
                 {initials}
               </div>
               <div className="flex-1 min-w-0">
-                <p className="font-black text-zinc-900 dark:text-white truncate">
+                <p className="font-semibold text-text-primary truncate">
                   {user.displayName || 'Anonymous User'}
                 </p>
-                <p className="text-xs font-medium text-zinc-500 dark:text-zinc-400 truncate">
-                  {user.email}
-                </p>
+                <p className="text-xs font-medium text-text-muted truncate">{user.email}</p>
               </div>
             </div>
           </div>
@@ -90,7 +92,7 @@ function UserMenu() {
           <div className="p-2 space-y-1">
             <Link
               to="/profile"
-              className="flex items-center gap-3 px-4 py-3 text-[10px] font-black uppercase tracking-[0.2em] text-zinc-600 dark:text-zinc-400 hover:bg-zinc-50 dark:hover:bg-zinc-800/50 hover:text-primary-600 dark:hover:text-primary-400 rounded-xl transition-all"
+              className="flex items-center gap-3 px-4 py-3 text-xs font-semibold text-text-secondary hover:bg-bg-subtle hover:text-primary-600 rounded-xl transition-all"
               onClick={() => setIsOpen(false)}
             >
               <Icon name="person" size={16} />
@@ -99,7 +101,7 @@ function UserMenu() {
 
             <Link
               to="/settings"
-              className="flex items-center gap-3 px-4 py-3 text-[10px] font-black uppercase tracking-[0.2em] text-zinc-600 dark:text-zinc-400 hover:bg-zinc-50 dark:hover:bg-zinc-800/50 hover:text-primary-600 dark:hover:text-primary-400 rounded-xl transition-all"
+              className="flex items-center gap-3 px-4 py-3 text-xs font-semibold text-text-secondary hover:bg-bg-subtle hover:text-primary-600 rounded-xl transition-all"
               onClick={() => setIsOpen(false)}
             >
               <Icon name="settings" size={16} />
@@ -110,7 +112,7 @@ function UserMenu() {
           <div className="p-2">
             <button
               onClick={handleSignOut}
-              className="flex items-center gap-3 w-full px-4 py-3 text-[10px] font-black uppercase tracking-[0.2em] text-red-500 hover:bg-red-50 dark:hover:bg-red-900/10 rounded-xl transition-all"
+              className="flex items-center gap-3 w-full px-4 py-3 text-xs font-semibold text-red-600 hover:bg-red-50 dark:hover:bg-red-900/10 rounded-xl transition-all"
             >
               <Icon name="logout" size={16} />
               Sign Out

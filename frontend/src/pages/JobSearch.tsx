@@ -22,6 +22,10 @@ interface JobResult {
   job_posted_at_datetime_utc?: string
 }
 
+/**
+ * Job search page for querying and saving opportunities.
+ * @returns The job search view.
+ */
 function JobSearch() {
   const [query, setQuery] = useState('')
   const [loading, setLoading] = useState(false)
@@ -77,26 +81,24 @@ function JobSearch() {
   }
 
   return (
-    <div className="max-w-6xl mx-auto animate-fade-in p-6 space-y-8">
+    <div className="max-w-6xl mx-auto animate-fade-in px-6 sm:px-8 pb-16 pt-6 space-y-8">
       <header className="text-center space-y-2">
-        <h1 className="text-4xl font-black text-zinc-900 dark:text-white uppercase tracking-[0.2em]">
-          JOB SEARCH
-        </h1>
-        <p className="text-zinc-500 dark:text-zinc-400 font-medium text-lg">
+        <h1 className="heading-xl text-text-primary">Job Search</h1>
+        <p className="text-text-muted text-lg">
           Search across thousands of job boards to find your next role
         </p>
       </header>
 
       <div className="max-w-2xl mx-auto">
-        <Card className="p-2 flex items-center gap-2 shadow-lg shadow-primary-500/10 border-primary-100 dark:border-primary-900/30">
+        <Card className="p-2 flex items-center gap-2 border border-border shadow-sm">
           <form onSubmit={handleSearch} className="flex-1 flex items-center relative">
-            <Icon name="search" size={20} className="absolute left-4 text-zinc-400" />
+            <Icon name="search" size={20} className="absolute left-4 text-text-muted" />
             <input
               type="text"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               placeholder="e.g. React Developer Remote"
-              className="w-full h-12 pl-12 pr-4 bg-transparent border-none focus:ring-0 text-lg font-medium text-zinc-900 dark:text-white placeholder-zinc-400 outline-none"
+              className="w-full h-12 pl-12 pr-4 bg-transparent border-none focus:ring-0 text-lg font-medium text-text-primary placeholder:text-text-muted outline-none"
             />
           </form>
           <Button
@@ -119,10 +121,10 @@ function JobSearch() {
         {results.map((job) => (
           <Card
             key={job.job_id}
-            className="flex flex-col h-full hover:shadow-glow hover:border-primary-500/50 transition-all group p-6"
+            className="flex flex-col h-full transition-all group p-6 hover:shadow-md"
           >
             <div className="flex justify-between items-start mb-4">
-              <div className="w-12 h-12 bg-zinc-100 dark:bg-zinc-800 rounded-lg flex items-center justify-center overflow-hidden border border-zinc-200 dark:border-zinc-700">
+              <div className="w-12 h-12 bg-bg-subtle rounded-lg flex items-center justify-center overflow-hidden border border-border">
                 {job.employer_logo ? (
                   <img
                     src={job.employer_logo}
@@ -130,7 +132,7 @@ function JobSearch() {
                     className="w-full h-full object-contain"
                   />
                 ) : (
-                  <span className="font-bold text-xl text-zinc-500 dark:text-zinc-400">
+                  <span className="font-bold text-xl text-text-muted">
                     {job.employer_name.charAt(0)}
                   </span>
                 )}
@@ -139,20 +141,18 @@ function JobSearch() {
             </div>
 
             <div className="mb-4">
-              <h3 className="text-lg font-bold text-zinc-900 dark:text-white mb-1 line-clamp-2 group-hover:text-primary-600 transition-colors">
+              <h3 className="text-lg font-bold text-text-primary mb-1 line-clamp-2 group-hover:text-primary-600 transition-colors">
                 {job.job_title}
               </h3>
-              <p className="text-xs text-zinc-500 dark:text-zinc-400 font-bold uppercase tracking-wide">
-                {job.employer_name}
-              </p>
+              <p className="text-xs text-text-muted font-semibold">{job.employer_name}</p>
             </div>
 
-            <p className="text-sm text-zinc-600 dark:text-zinc-300 line-clamp-4 leading-relaxed mb-6 flex-1">
+            <p className="text-sm text-text-secondary line-clamp-4 leading-relaxed mb-6 flex-1">
               {job.job_description}
             </p>
 
-            <div className="flex items-center justify-between pt-4 border-t border-zinc-100 dark:border-zinc-800 mt-auto">
-              <span className="text-xs font-medium text-zinc-400 flex items-center gap-1">
+            <div className="flex items-center justify-between pt-4 border-t border-border mt-auto">
+              <span className="text-xs font-medium text-text-muted flex items-center gap-1">
                 <Icon name="location_on" size={14} />
                 {job.job_city ? `${job.job_city}, ` : ''}
                 {job.job_country}
@@ -162,14 +162,14 @@ function JobSearch() {
                   href={job.job_apply_link}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="p-2 text-zinc-400 hover:text-primary-600 transition-colors rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-800"
+                  className="p-2 text-text-muted hover:text-primary-600 transition-colors rounded-lg hover:bg-bg-subtle"
                   title="View Original"
                 >
                   <Icon name="visibility" size={18} />
                 </a>
                 <button
                   onClick={() => handleSaveJob(job)}
-                  className="p-2 text-zinc-400 hover:text-primary-600 transition-colors rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-800"
+                  className="p-2 text-text-muted hover:text-primary-600 transition-colors rounded-lg hover:bg-bg-subtle"
                   title="Save Application"
                 >
                   <Icon name="add" size={18} />
@@ -182,13 +182,11 @@ function JobSearch() {
 
       {!loading && results.length === 0 && query && (
         <Card className="p-12 text-center max-w-lg mx-auto">
-          <div className="w-16 h-16 bg-zinc-100 dark:bg-zinc-800 rounded-full flex items-center justify-center mx-auto mb-4 text-zinc-400">
+          <div className="w-16 h-16 bg-bg-subtle rounded-full flex items-center justify-center mx-auto mb-4 text-text-muted">
             <Icon name="search" size={32} />
           </div>
-          <h3 className="text-lg font-bold text-zinc-900 dark:text-white mb-1">No jobs found</h3>
-          <p className="text-zinc-500 dark:text-zinc-400">
-            Try adjusting your search terms or location
-          </p>
+          <h3 className="text-lg font-semibold text-text-primary mb-1">No jobs found</h3>
+          <p className="text-text-muted">Try adjusting your search terms or location.</p>
         </Card>
       )}
     </div>

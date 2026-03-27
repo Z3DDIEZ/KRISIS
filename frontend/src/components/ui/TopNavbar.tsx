@@ -83,9 +83,7 @@ function TopNavbar({ onToggleSidebar }: TopNavbarProps) {
           <div className="text-primary-600">
             <Icon name="dashboard" size={24} />
           </div>
-          <span className="font-bold text-lg tracking-tight text-text-primary">
-            KRISIS
-          </span>
+          <span className="font-bold text-lg tracking-tight text-text-primary">KRISIS</span>
         </Link>
       </div>
 
@@ -126,7 +124,7 @@ function TopNavbar({ onToggleSidebar }: TopNavbarProps) {
           </button>
         ) : (
           <div className="hidden sm:flex items-center gap-1">
-            <kbd className="hidden sm:inline-block px-1.5 py-0.5 text-[10px] font-semibold text-text-muted bg-bg-subtle rounded border border-border uppercase tracking-tight">
+            <kbd className="hidden sm:inline-block px-1.5 py-0.5 text-xs font-semibold text-text-muted bg-bg-subtle rounded border border-border">
               Cmd+K
             </kbd>
           </div>

@@ -39,6 +39,10 @@ interface DashboardStats {
   successRate: number
 }
 
+/**
+ * Dashboard page with application overview, urgent actions, and recent activity.
+ * @returns The dashboard view.
+ */
 function Dashboard() {
   const [user, loading] = useAuthState(auth)
   const [applications, setApplications] = useState<Application[]>([])
@@ -157,7 +161,7 @@ function Dashboard() {
   if (!user) {
     return (
       <div className="text-center py-12">
-        <p className="text-zinc-500 dark:text-zinc-400">Please sign in to view your dashboard.</p>
+        <p className="text-text-muted">Please sign in to view your dashboard.</p>
       </div>
     )
   }
@@ -191,15 +195,15 @@ function Dashboard() {
       variants={containerVariants}
       initial="hidden"
       animate="show"
-      className="min-h-screen p-6 flex flex-col gap-8 max-w-7xl mx-auto"
+      className="min-h-screen px-6 sm:px-8 pb-16 pt-6 flex flex-col gap-8 max-w-7xl mx-auto"
     >
       <motion.div variants={itemVariants}>
         <PageHeader
           title="Strategic Overview"
-          description="Synthetizing your market position and application velocity."
+          description="Synthesising your market position and application velocity."
           action={
             <Link to="/applications/new">
-              <Button variant="primary" className="gap-2 rounded-none border-2 border-brand-midnight shadow-md hover:shadow-lg transition-all">
+              <Button variant="primary" className="gap-2">
                 <Icon name="work" size={18} />
                 New Deployment
               </Button>
@@ -259,12 +263,9 @@ function Dashboard() {
 
       {/* Recent Activity */}
       <motion.div variants={itemVariants}>
-        <Card className="overflow-hidden border-2 border-brand-midnight shadow-md" aria-labelledby="recent-activity-heading">
-          <div className="px-6 py-5 border-b-2 border-brand-midnight flex justify-between items-center bg-brand-gray/10">
-            <h2
-              id="recent-activity-heading"
-              className="text-[11px] uppercase tracking-widest font-black text-brand-midnight dark:text-zinc-100"
-            >
+        <Card className="overflow-hidden" aria-labelledby="recent-activity-heading">
+          <div className="px-6 py-5 border-b border-border flex justify-between items-center bg-bg-subtle">
+            <h2 id="recent-activity-heading" className="text-sm font-semibold text-text-primary">
               Recent Tactical Data
             </h2>
           </div>
@@ -272,40 +273,37 @@ function Dashboard() {
           <div className="p-0">
             {applications.length === 0 ? (
               <div className="p-16 text-center">
-                <div className="w-20 h-20 bg-brand-orange/10 rounded-none border-2 border-brand-orange flex items-center justify-center mx-auto mb-6">
-                  <Icon name="work" size={40} className="text-brand-orange" />
+                <div className="w-20 h-20 bg-primary-100/70 rounded-2xl border border-primary-200 flex items-center justify-center mx-auto mb-6">
+                  <Icon name="work" size={40} className="text-primary-600" />
                 </div>
-                <h3 className="text-xl font-black text-brand-midnight dark:text-white mb-2 uppercase tracking-tight">
-                  Pipeline Empty
-                </h3>
-                <p className="text-zinc-500 dark:text-zinc-400 mb-8 max-w-sm mx-auto text-sm leading-relaxed">
-                  Start tracking your job applications to get AI-powered insights and stay organized.
+                <h3 className="heading-md text-text-primary mb-2">Pipeline Empty</h3>
+                <p className="text-text-muted mb-8 max-w-sm mx-auto text-sm leading-relaxed">
+                  Start tracking your job applications to get AI-powered insights and stay
+                  organized.
                 </p>
                 <Link to="/applications/new">
-                  <Button variant="primary" className="gap-2 px-8 py-3 rounded-none border-2 border-brand-midnight shadow-md">
+                  <Button variant="primary" className="gap-2 px-8 py-3">
                     <Icon name="work" size={18} />
                     Initialize Tracking
                   </Button>
                 </Link>
               </div>
             ) : (
-              <div className="divide-y-2 divide-brand-midnight/10 dark:divide-zinc-800">
+              <div className="divide-y divide-border">
                 {applications.slice(0, 10).map((application) => (
                   <div
                     key={application.id}
-                    className="flex items-center justify-between p-6 hover:bg-brand-orange/5 dark:hover:bg-zinc-800/50 transition-colors group relative overflow-hidden"
+                    className="flex items-center justify-between p-6 hover:bg-bg-subtle transition-colors group relative overflow-hidden"
                   >
                     <div className="flex items-center gap-4">
-                      <div className="w-12 h-12 bg-white dark:bg-zinc-800 border-2 border-brand-midnight rounded-none flex items-center justify-center font-black text-xl text-brand-orange shadow-sm group-hover:scale-110 transition-transform">
+                      <div className="w-12 h-12 bg-bg-surface border border-border rounded-lg flex items-center justify-center font-semibold text-lg text-primary-600 shadow-sm group-hover:scale-105 transition-transform">
                         {application.company.charAt(0)}
                       </div>
                       <div>
-                        <h4 className="font-black text-brand-midnight dark:text-zinc-100 text-sm uppercase tracking-tight">
+                        <h4 className="font-semibold text-text-primary text-sm">
                           {application.company}
                         </h4>
-                        <p className="text-[11px] font-black text-brand-midnight/70 dark:text-zinc-400">
-                          {application.role}
-                        </p>
+                        <p className="text-xs text-text-muted">{application.role}</p>
                       </div>
                     </div>
 
@@ -314,11 +312,9 @@ function Dashboard() {
                       {application.latestAnalysis && (
                         <div className="hidden lg:flex items-center gap-6">
                           <div className="flex flex-col items-center">
-                            <span className="text-[11px] font-black text-brand-midnight/60 dark:text-zinc-500 uppercase tracking-widest">
-                              Match
-                            </span>
+                            <span className="text-xs font-semibold text-text-muted">Match</span>
                             <span
-                              className={`text-sm font-black tabular-nums ${
+                              className={`text-sm font-semibold tabular-nums ${
                                 application.latestAnalysis.fitScore >= 70
                                   ? 'text-success'
                                   : application.latestAnalysis.fitScore >= 40
@@ -330,11 +326,9 @@ function Dashboard() {
                             </span>
                           </div>
                           <div className="flex flex-col items-center">
-                            <span className="text-[11px] font-black text-brand-midnight/60 dark:text-zinc-500 uppercase tracking-widest">
-                              Risk
-                            </span>
+                            <span className="text-xs font-semibold text-text-muted">Risk</span>
                             <span
-                              className={`text-sm font-black tabular-nums ${
+                              className={`text-sm font-semibold tabular-nums ${
                                 application.latestAnalysis.ghostingRisk >= 70
                                   ? 'text-error'
                                   : application.latestAnalysis.ghostingRisk >= 40
@@ -349,19 +343,17 @@ function Dashboard() {
                       )}
 
                       <div className="hidden md:block text-right">
-                        <p className="text-[11px] font-black text-brand-midnight/60 dark:text-zinc-500 uppercase tracking-widest mb-1">
-                          Deployed
-                        </p>
-                        <p className="text-xs font-black text-brand-midnight dark:text-zinc-100 tabular-nums">
+                        <p className="text-xs font-semibold text-text-muted mb-1">Deployed</p>
+                        <p className="text-xs font-semibold text-text-primary tabular-nums">
                           {formatDateForDisplay(application.dateApplied)}
                         </p>
                       </div>
-                      <Badge variant={getBadgeVariant(application.status)} className="rounded-none border border-current font-black text-[10px] uppercase tracking-wider">
+                      <Badge variant={getBadgeVariant(application.status)}>
                         {application.status}
                       </Badge>
                       <Link
                         to={`/applications/${application.id}`}
-                        className="p-2 text-brand-midnight/20 hover:text-brand-orange transition-colors"
+                        className="p-2 text-text-muted hover:text-primary-600 transition-colors"
                       >
                         <Icon name="visibility" size={18} />
                       </Link>
@@ -369,10 +361,10 @@ function Dashboard() {
                   </div>
                 ))}
 
-                <div className="p-4 bg-brand-midnight text-center">
+                <div className="p-4 bg-bg-subtle text-center">
                   <Link
                     to="/applications"
-                    className="text-[10px] font-black text-brand-signal hover:text-brand-orange transition-colors flex items-center justify-center gap-2 uppercase tracking-[0.2em]"
+                    className="text-xs font-semibold text-text-secondary hover:text-primary-600 transition-colors flex items-center justify-center gap-2"
                   >
                     View Comprehensive Pipeline ({applications.length})
                     <Icon name="arrow-right" size={14} />

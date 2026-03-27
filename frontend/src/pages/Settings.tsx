@@ -20,6 +20,10 @@ interface Application {
   visaSponsorship: boolean
 }
 
+/**
+ * Settings page for preferences, notifications, and data export.
+ * @returns The settings view.
+ */
 function Settings() {
   const [user] = useAuthState(auth)
   const [isDark, setIsDark] = useState(false)
@@ -125,14 +129,10 @@ function Settings() {
   }
 
   return (
-    <div className="max-w-4xl mx-auto animate-fade-in font-primary p-6 space-y-8">
+    <div className="max-w-4xl mx-auto animate-fade-in font-primary px-6 sm:px-8 pb-16 pt-6 space-y-8">
       <header className="mb-2">
-        <h1 className="text-3xl font-black text-zinc-900 dark:text-white tracking-tight">
-          Settings
-        </h1>
-        <p className="text-zinc-500 dark:text-zinc-400 font-medium">
-          Manage your account preferences and data
-        </p>
+        <h1 className="heading-lg text-text-primary">Settings</h1>
+        <p className="text-text-muted">Manage your account preferences and data.</p>
       </header>
 
       <div className="flex flex-col gap-8">
@@ -140,17 +140,17 @@ function Settings() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           {/* Appearance Card */}
           <Card className="p-6">
-            <div className="mb-6 pb-4 border-b border-zinc-100 dark:border-zinc-800">
-              <h3 className="text-lg font-bold text-zinc-900 dark:text-white flex items-center gap-2">
+            <div className="mb-6 pb-4 border-b border-border">
+              <h3 className="text-lg font-semibold text-text-primary flex items-center gap-2">
                 <Icon name="palette" size={18} className="text-primary-500" />
                 Appearance
               </h3>
             </div>
 
-            <div className="flex items-center justify-between p-4 bg-zinc-50 dark:bg-zinc-900/50 rounded-xl border border-zinc-200 dark:border-zinc-800 hover:border-primary-500/20 transition-all">
+            <div className="flex items-center justify-between p-4 bg-bg-subtle rounded-xl border border-border hover:border-primary-500/20 transition-all">
               <div>
-                <div className="text-sm font-bold text-zinc-900 dark:text-white mb-1">Theme</div>
-                <div className="text-xs text-zinc-500 dark:text-zinc-400 font-medium">
+                <div className="text-sm font-semibold text-text-primary mb-1">Theme</div>
+                <div className="text-xs text-text-muted">
                   {isDark ? 'Dark mode is active' : 'Light mode is active'}
                 </div>
               </div>
@@ -160,25 +160,25 @@ function Settings() {
 
           {/* Account Settings Card */}
           <Card className="p-6">
-            <div className="mb-6 pb-4 border-b border-zinc-100 dark:border-zinc-800">
-              <h3 className="text-lg font-bold text-zinc-900 dark:text-white flex items-center gap-2">
+            <div className="mb-6 pb-4 border-b border-border">
+              <h3 className="text-lg font-semibold text-text-primary flex items-center gap-2">
                 <Icon name="bolt" size={18} className="text-primary-500" />
                 Notifications
               </h3>
             </div>
 
-            <label className="flex items-start gap-3 p-4 bg-zinc-50 dark:bg-zinc-900/50 rounded-xl border border-zinc-200 dark:border-zinc-800 cursor-pointer hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors">
+            <label className="flex items-start gap-3 p-4 bg-bg-subtle rounded-xl border border-border cursor-pointer hover:bg-bg-surface transition-colors">
               <input
                 type="checkbox"
                 id="email-notifications"
-                className="mt-1 rounded border-zinc-300 text-primary-600 focus:ring-primary-500"
+                className="mt-1 rounded border-border text-primary-600 focus:ring-primary-500"
                 defaultChecked
               />
               <div className="flex-1">
-                <div className="text-sm font-bold text-zinc-900 dark:text-white mb-0.5">
+                <div className="text-sm font-semibold text-text-primary mb-0.5">
                   Weekly Summaries
                 </div>
-                <div className="text-xs text-zinc-500 dark:text-zinc-400 font-medium">
+                <div className="text-xs text-text-muted">
                   Receive weekly progress reports and AI insights via email
                 </div>
               </div>
@@ -188,8 +188,8 @@ function Settings() {
 
         {/* Enhanced Data Export Card */}
         <Card className="p-8">
-          <div className="mb-8 pb-4 border-b border-zinc-100 dark:border-zinc-800">
-            <h3 className="text-lg font-bold text-zinc-900 dark:text-white flex items-center gap-2">
+          <div className="mb-8 pb-4 border-b border-border">
+            <h3 className="text-lg font-semibold text-text-primary flex items-center gap-2">
               <Icon name="download" size={20} className="text-primary-500" />
               Data Export
             </h3>
@@ -198,55 +198,51 @@ function Settings() {
           <div className="space-y-8">
             {/* Export Stats */}
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-              <div className="p-4 bg-zinc-900 text-white rounded-xl relative overflow-hidden group">
+              <div className="p-4 bg-bg-surface border border-border rounded-xl relative overflow-hidden group">
                 <div className="relative z-10">
-                  <div className="text-3xl font-bold mb-1">{applications.length}</div>
-                  <div className="text-xs font-bold opacity-70 uppercase tracking-wide">
-                    Total Apps
+                  <div className="text-3xl font-semibold text-text-primary mb-1">
+                    {applications.length}
                   </div>
+                  <div className="text-xs font-semibold text-text-muted">Total Apps</div>
                 </div>
                 <Icon
                   name="work"
                   size={48}
-                  className="absolute -right-4 -bottom-4 opacity-10 group-hover:opacity-20 transition-opacity"
+                  className="absolute -right-4 -bottom-4 opacity-10 text-text-muted group-hover:opacity-20 transition-opacity"
                 />
               </div>
 
-              <div className="p-4 bg-zinc-50 dark:bg-zinc-900/50 rounded-xl border border-zinc-200 dark:border-zinc-800 relative overflow-hidden group">
+              <div className="p-4 bg-bg-subtle rounded-xl border border-border relative overflow-hidden group">
                 <div className="relative z-10">
-                  <div className="text-3xl font-bold text-zinc-900 dark:text-white mb-1">
+                  <div className="text-3xl font-semibold text-text-primary mb-1">
                     {applications.filter((app) => app.status === 'Offer').length}
                   </div>
-                  <div className="text-xs font-bold text-zinc-500 dark:text-zinc-400 uppercase tracking-wide">
-                    Offers
-                  </div>
+                  <div className="text-xs font-semibold text-text-muted">Offers</div>
                 </div>
                 <Icon
                   name="verified"
                   size={48}
-                  className="absolute -right-4 -bottom-4 opacity-5 group-hover:opacity-10 transition-opacity"
+                  className="absolute -right-4 -bottom-4 opacity-5 text-text-muted group-hover:opacity-10 transition-opacity"
                 />
               </div>
 
-              <div className="p-4 bg-zinc-50 dark:bg-zinc-900/50 rounded-xl border border-zinc-200 dark:border-zinc-800 relative overflow-hidden group">
+              <div className="p-4 bg-bg-subtle rounded-xl border border-border relative overflow-hidden group">
                 <div className="relative z-10">
-                  <div className="text-3xl font-bold text-zinc-900 dark:text-white mb-1">
+                  <div className="text-3xl font-semibold text-text-primary mb-1">
                     {applications.filter((app) => app.visaSponsorship).length}
                   </div>
-                  <div className="text-xs font-bold text-zinc-500 dark:text-zinc-400 uppercase tracking-wide">
-                    Visa Sponsored
-                  </div>
+                  <div className="text-xs font-semibold text-text-muted">Visa Sponsored</div>
                 </div>
                 <Icon
                   name="public"
                   size={48}
-                  className="absolute -right-4 -bottom-4 opacity-5 group-hover:opacity-10 transition-opacity"
+                  className="absolute -right-4 -bottom-4 opacity-5 text-text-muted group-hover:opacity-10 transition-opacity"
                 />
               </div>
 
               <div className="p-4 bg-primary-50 dark:bg-primary-900/10 rounded-xl border border-primary-200 dark:border-primary-800/30 relative overflow-hidden group">
                 <div className="relative z-10">
-                  <div className="text-3xl font-bold text-primary-600 mb-1">
+                  <div className="text-3xl font-semibold text-primary-600 mb-1">
                     {applications.length > 0
                       ? Math.round(
                           (applications.filter((app) => app.status !== 'Applied').length /
@@ -256,7 +252,7 @@ function Settings() {
                       : 0}
                     %
                   </div>
-                  <div className="text-xs font-bold text-primary-700 dark:text-primary-400 uppercase tracking-wide">
+                  <div className="text-xs font-semibold text-primary-700 dark:text-primary-400">
                     Active
                   </div>
                 </div>
@@ -273,20 +269,20 @@ function Settings() {
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 {/* Format Selection */}
                 <div className="form-group">
-                  <label className="text-sm font-bold text-zinc-900 dark:text-white mb-2 block">
+                  <label className="text-sm font-semibold text-text-primary mb-2 block">
                     Format
                   </label>
-                  <div className="flex bg-zinc-100 dark:bg-zinc-800 p-1 rounded-lg border border-zinc-200 dark:border-zinc-700">
+                  <div className="flex bg-bg-subtle p-1 rounded-lg border border-border">
                     <button
                       onClick={() => setExportFormat('csv')}
-                      className={`flex-1 py-2 rounded-md text-xs font-bold uppercase transition-all flex items-center justify-center gap-2 ${exportFormat === 'csv' ? 'bg-white dark:bg-zinc-900 shadow-sm text-primary-600' : 'text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-white'}`}
+                      className={`flex-1 py-2 rounded-md text-xs font-semibold transition-all flex items-center justify-center gap-2 ${exportFormat === 'csv' ? 'bg-bg-surface shadow-sm text-primary-600' : 'text-text-muted hover:text-text-primary'}`}
                     >
                       <Icon name="table" size={16} />
                       CSV (Excel)
                     </button>
                     <button
                       onClick={() => setExportFormat('json')}
-                      className={`flex-1 py-2 rounded-md text-xs font-bold uppercase transition-all flex items-center justify-center gap-2 ${exportFormat === 'json' ? 'bg-white dark:bg-zinc-900 shadow-sm text-primary-600' : 'text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-white'}`}
+                      className={`flex-1 py-2 rounded-md text-xs font-semibold transition-all flex items-center justify-center gap-2 ${exportFormat === 'json' ? 'bg-bg-surface shadow-sm text-primary-600' : 'text-text-muted hover:text-text-primary'}`}
                     >
                       <Icon name="code" size={16} />
                       JSON
@@ -296,7 +292,7 @@ function Settings() {
 
                 {/* Scope Selection */}
                 <div className="form-group">
-                  <label className="text-sm font-bold text-zinc-900 dark:text-white mb-2 block">
+                  <label className="text-sm font-semibold text-text-primary mb-2 block">
                     Export Scope
                   </label>
                   <div className="relative">
@@ -305,13 +301,13 @@ function Settings() {
                       onChange={(e) =>
                         setExportScope(e.target.value as 'all' | 'recent' | 'offers')
                       }
-                      className="w-full h-[42px] px-3 rounded-lg border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-zinc-900 dark:text-white text-sm font-medium focus:border-primary-500 focus:ring-1 focus:ring-primary-500 outline-none transition-all appearance-none"
+                      className="w-full h-[42px] px-3 rounded-lg border border-border bg-bg-surface text-text-primary text-sm font-medium focus:border-primary-500 focus:ring-1 focus:ring-primary-500 outline-none transition-all appearance-none"
                     >
                       <option value="all">All Applications ({applications.length})</option>
                       <option value="recent">Past 30 Days</option>
                       <option value="offers">Offers Only</option>
                     </select>
-                    <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-zinc-500">
+                    <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-text-muted">
                       <Icon name="expand_more" size={16} />
                     </div>
                   </div>
@@ -319,16 +315,14 @@ function Settings() {
               </div>
 
               {/* Action Area */}
-              <div className="p-6 bg-zinc-50 dark:bg-zinc-900/30 border border-zinc-200 dark:border-zinc-800 rounded-xl flex flex-col sm:flex-row items-center justify-between gap-6">
+              <div className="p-6 bg-bg-subtle border border-border rounded-xl flex flex-col sm:flex-row items-center justify-between gap-6">
                 <div className="flex items-start gap-4">
                   <div className="w-10 h-10 bg-primary-100 dark:bg-primary-900/30 text-primary-600 rounded-lg flex items-center justify-center shrink-0 mt-1">
                     <Icon name="info" size={20} />
                   </div>
                   <div>
-                    <h4 className="text-sm font-bold text-zinc-900 dark:text-white mb-1">
-                      Export Details
-                    </h4>
-                    <p className="text-xs text-zinc-500 dark:text-zinc-400 font-medium leading-relaxed max-w-md">
+                    <h4 className="text-sm font-semibold text-text-primary mb-1">Export Details</h4>
+                    <p className="text-xs text-text-muted leading-relaxed max-w-md">
                       Your export will include all companies, roles, status history, and personal
                       notes.
                     </p>
@@ -344,14 +338,12 @@ function Settings() {
                   {isExporting ? (
                     <>
                       <div className="animate-spin rounded-full h-4 w-4 border-2 border-white/30 border-t-white" />
-                      <span className="font-bold text-xs">Processing...</span>
+                      <span className="font-semibold text-xs">Processing...</span>
                     </>
                   ) : (
                     <>
                       <Icon name="download" size={18} />
-                      <span className="font-bold text-xs uppercase tracking-wide">
-                        Download Data
-                      </span>
+                      <span className="font-semibold text-xs">Download Data</span>
                     </>
                   )}
                 </Button>
@@ -360,7 +352,9 @@ function Settings() {
               {applications.length === 0 && (
                 <div className="p-4 bg-yellow-50 dark:bg-yellow-900/10 border border-yellow-200 dark:border-yellow-900/30 rounded-lg flex items-center gap-3 text-yellow-800 dark:text-yellow-200">
                   <Icon name="warning" size={18} />
-                  <span className="text-xs font-bold">No application data found to export.</span>
+                  <span className="text-xs font-semibold">
+                    No application data found to export.
+                  </span>
                 </div>
               )}
             </div>
@@ -368,10 +362,10 @@ function Settings() {
         </Card>
 
         {/* Support & Community Section */}
-        <Card className="p-8 border border-dashed border-zinc-300 dark:border-zinc-700 bg-zinc-50/50 dark:bg-zinc-900/20 shadow-none">
+        <Card className="p-8 border border-dashed border-border bg-bg-subtle shadow-none">
           <div className="text-center">
-            <h4 className="text-sm font-bold text-zinc-900 dark:text-white mb-2">Need Help?</h4>
-            <p className="text-xs text-zinc-500 dark:text-zinc-400 mb-6 max-w-sm mx-auto">
+            <h4 className="text-sm font-semibold text-text-primary mb-2">Need Help?</h4>
+            <p className="text-xs text-text-muted mb-6 max-w-sm mx-auto">
               Check out our documentation or contact support.
             </p>
             <div className="flex justify-center gap-4">

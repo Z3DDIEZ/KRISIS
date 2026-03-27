@@ -96,9 +96,7 @@ function Sidebar({ primaryItems, secondaryItems, isOpen, onClose, isCollapsed }:
         <div className="flex items-center gap-3 text-primary-600 dark:text-primary-500">
           <Icon name="work" size={24} className="shrink-0" />
           {!isCollapsed && (
-            <span className="font-bold text-lg tracking-tight text-text-primary">
-              KRISIS
-            </span>
+            <span className="font-bold text-lg tracking-tight text-text-primary">KRISIS</span>
           )}
         </div>
       </div>
@@ -126,15 +124,11 @@ function Sidebar({ primaryItems, secondaryItems, isOpen, onClose, isCollapsed }:
                 title={isCollapsed ? item.name : undefined}
               >
                 <div
-                  className={`shrink-0 ${isActive(item.href) ? 'text-primary-600 dark:text-primary-400' : 'text-zinc-400 group-hover:text-text-primary'}`}
+                  className={`shrink-0 ${isActive(item.href) ? 'text-primary-600' : 'text-text-muted group-hover:text-text-primary'}`}
                 >
                   <Icon name={item.iconName} size={20} />
                 </div>
-                {!isCollapsed && (
-                  <span className="truncate text-sm font-medium">
-                    {item.name}
-                  </span>
-                )}
+                {!isCollapsed && <span className="truncate text-sm font-medium">{item.name}</span>}
                 {isActive(item.href) && !isCollapsed && (
                   <div className="absolute left-0 w-1 h-5 bg-primary-600 rounded-r-full shadow-[0_0_8px_rgba(234,88,12,0.4)]" />
                 )}
@@ -146,11 +140,7 @@ function Sidebar({ primaryItems, secondaryItems, isOpen, onClose, isCollapsed }:
 
       {/* Secondary Navigation */}
       <div className="px-3 mt-auto">
-        <div
-          className={`eyebrow mb-4 px-3 ${isCollapsed ? 'hidden' : 'block'}`}
-        >
-          Workspace
-        </div>
+        <div className={`eyebrow mb-4 px-3 ${isCollapsed ? 'hidden' : 'block'}`}>Workspace</div>
         <ul className="space-y-1 border-t border-border pt-4">
           {secondaryItems.map((item) => (
             <li key={item.href}>
@@ -172,7 +162,7 @@ function Sidebar({ primaryItems, secondaryItems, isOpen, onClose, isCollapsed }:
                 title={isCollapsed ? item.name : undefined}
               >
                 <div
-                  className={`shrink-0 ${isActive(item.href) ? 'text-text-primary' : 'text-zinc-400 group-hover:text-text-primary'}`}
+                  className={`shrink-0 ${isActive(item.href) ? 'text-text-primary' : 'text-text-muted group-hover:text-text-primary'}`}
                 >
                   <Icon name={item.iconName} size={20} />
                 </div>
