@@ -5,7 +5,7 @@ import { doc, getDoc, addDoc, updateDoc, collection, serverTimestamp } from 'fir
 import { auth, db, functions } from '../lib/firebase'
 import { getTodayDate } from '../lib/dateUtils'
 import Icon from '../components/ui/Icon'
-import { extractTextFromPDF } from '../utils/pdfHelpers'
+
 import { httpsCallable } from 'firebase/functions'
 import { toast } from 'sonner'
 import { useForm } from 'react-hook-form'
@@ -116,6 +116,7 @@ function ApplicationDetail() {
     }
 
     try {
+      const { extractTextFromPDF } = await import('../utils/pdfHelpers')
       const text = await extractTextFromPDF(file)
       setResumeText(text)
       toast.success('Resume data extracted successfully.')

@@ -10,7 +10,7 @@ import { auth, db } from '../lib/firebase'
 import { doc, getDoc, setDoc } from 'firebase/firestore'
 import { toast } from 'sonner'
 import Icon from '../components/ui/Icon'
-import { extractTextFromPDF } from '../utils/pdfHelpers'
+
 import { Card } from '../components/ui/Card'
 import { Button } from '../components/ui/Button'
 import { Badge } from '../components/ui/Badge'
@@ -79,6 +79,7 @@ function Profile() {
 
     setIsProcessingResume(true)
     try {
+      const { extractTextFromPDF } = await import('../utils/pdfHelpers')
       const text = await extractTextFromPDF(file)
       setResumeText(text)
       toast.success('Resume extracted successfully')

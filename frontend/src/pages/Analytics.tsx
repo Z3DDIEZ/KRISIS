@@ -19,7 +19,7 @@ import {
   Legend,
 } from 'recharts'
 import StatCard from '../components/ui/StatCard'
-import { exportIntelligenceReport } from '../lib/ReportExporter'
+
 import { handleError } from '../lib/ErrorHandler'
 import { Card } from '../components/ui/Card'
 import { Button } from '../components/ui/Button'
@@ -293,9 +293,10 @@ function Analytics() {
         {/* Modern Timeframe Switcher & Export */}
         <div className="flex items-center gap-6">
           <button
-            onClick={() =>
+            onClick={async () => {
+              const { exportIntelligenceReport } = await import('../lib/ReportExporter')
               exportIntelligenceReport(applications, analyticsData!, selectedTimeframe)
-            }
+            }}
             className="flex items-center gap-2 text-sm font-semibold text-primary-600 hover:text-primary-700 px-4 py-2 transition-colors"
           >
             <Icon name="download" size={18} />
@@ -635,9 +636,10 @@ function Analytics() {
 
                 <div className="flex gap-4">
                   <Button
-                    onClick={() =>
+                    onClick={async () => {
+                      const { exportIntelligenceReport } = await import('../lib/ReportExporter')
                       exportIntelligenceReport(applications, analyticsData!, selectedTimeframe)
-                    }
+                    }}
                     variant="primary"
                     className="flex items-center gap-3 px-8 shadow-xl"
                   >

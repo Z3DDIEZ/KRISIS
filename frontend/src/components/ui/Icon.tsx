@@ -1,5 +1,39 @@
-import * as LucideIcons from 'lucide-react'
-import { LucideProps } from 'lucide-react'
+import {
+  LayoutDashboard,
+  Briefcase,
+  TrendingUp,
+  User,
+  Download,
+  Settings,
+  LogOut,
+  Plus,
+  Search,
+  X,
+  Eye,
+  Edit3,
+  Check,
+  Zap,
+  Info,
+  AlertTriangle,
+  Trash2,
+  Grid,
+  Table,
+  List,
+  ChevronLeft,
+  ChevronRight,
+  ChevronUp,
+  ChevronDown,
+  Calendar,
+  PieChart,
+  BarChart3,
+  LineChart,
+  Lightbulb,
+  CheckCircle,
+  Globe,
+  HelpCircle,
+  type LucideIcon,
+  type LucideProps
+} from 'lucide-react'
 
 interface IconProps extends LucideProps {
   name: string
@@ -8,57 +42,55 @@ interface IconProps extends LucideProps {
   alt?: string
 }
 
-const iconMap: Record<string, keyof typeof LucideIcons> = {
+const iconMap: Record<string, LucideIcon> = {
   // Navigation
-  'dashboard': 'LayoutDashboard',
-  'work': 'Briefcase',
-  'trending-up': 'TrendingUp',
-  'person': 'User',
-  'download': 'Download',
-  'settings': 'Settings',
-  'logout': 'LogOut',
+  'dashboard': LayoutDashboard,
+  'work': Briefcase,
+  'trending-up': TrendingUp,
+  'person': User,
+  'download': Download,
+  'settings': Settings,
+  'logout': LogOut,
 
   // Actions
-  'add': 'Plus',
-  'search': 'Search',
-  'close': 'X',
-  'visibility': 'Eye',
-  'edit': 'Edit3',
-  'check': 'Check',
-  'bolt': 'Zap',
-  'info': 'Info',
-  'warning': 'AlertTriangle',
-  'delete': 'Trash2',
-  'grid': 'Grid',
-  'table': 'Table',
-  'list': 'List',
-  'arrow-left': 'ChevronLeft',
-  'arrow-right': 'ChevronRight',
-  'arrow-up': 'ChevronUp',
-  'arrow-down': 'ChevronDown',
+  'add': Plus,
+  'search': Search,
+  'close': X,
+  'visibility': Eye,
+  'edit': Edit3,
+  'check': Check,
+  'bolt': Zap,
+  'info': Info,
+  'warning': AlertTriangle,
+  'delete': Trash2,
+  'grid': Grid,
+  'table': Table,
+  'list': List,
+  'arrow-left': ChevronLeft,
+  'arrow-right': ChevronRight,
+  'arrow-up': ChevronUp,
+  'arrow-down': ChevronDown,
 
   // Miscellaneous
-  'calendar': 'Calendar',
-  'pie-chart': 'PieChart',
-  'bar-chart': 'BarChart3',
-  'line-chart': 'LineChart',
-  'lightbulb': 'Lightbulb',
-  'verified': 'CheckCircle',
-  'public': 'Globe',
+  'calendar': Calendar,
+  'pie-chart': PieChart,
+  'bar-chart': BarChart3,
+  'line-chart': LineChart,
+  'lightbulb': Lightbulb,
+  'verified': CheckCircle,
+  'public': Globe,
 }
 
 function Icon({ name, size = 24, className = '', alt = '', ...props }: IconProps) {
-  const iconName = iconMap[name] || 'HelpCircle'
-  const LucideIcon = (LucideIcons as unknown as Record<string, React.FC<LucideProps>>)[iconName]
+  const SvgIcon = iconMap[name] || HelpCircle
 
-  if (!LucideIcon) {
-    console.warn(`Icon "${name}" (mapped to "${String(iconName)}") not found in lucide-react`)
-    return <LucideIcons.HelpCircle size={size} className={className} {...props} />
+  if (!iconMap[name]) {
+    console.warn(`Icon "${name}" not found in lucide-react explicit imports`)
   }
 
   return (
-    <LucideIcon
-      size={size}
+    <SvgIcon
+      size={size as number | string}
       className={className}
       aria-label={alt || name}
       {...props}
