@@ -66,7 +66,7 @@ function MainLayout({ children }: MainLayoutProps) {
       <div className="h-screen bg-bg-subtle text-text-primary font-primary flex flex-col overflow-hidden transition-all duration-300">
         <a
           href="#main-content"
-          className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-1/2 focus:-translate-x-1/2 z-50 px-4 py-2 bg-brand-orange text-white rounded-none shadow-md font-bold"
+          className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-1/2 focus:-translate-x-1/2 z-50 px-4 py-2 bg-primary-600 text-text-inverse rounded-lg shadow-md font-semibold"
         >
           Skip to main content
         </a>

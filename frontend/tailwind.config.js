@@ -15,10 +15,10 @@ export default {
       colors: {
         // Brand Identity (Bauhaus Industrial)
         brand: {
-          midnight: '#0A0A0A',
-          signal: '#FAFAFA',
-          orange: '#E67E22',
-          gray: '#E5E5E5',
+          midnight: 'var(--text-primary)',
+          signal: 'var(--text-inverse)',
+          orange: 'var(--primary-600)',
+          gray: 'var(--bg-subtle)',
         },
         // Semantic Tokens
         bg: {
@@ -35,20 +35,20 @@ export default {
         border: {
           DEFAULT: 'var(--border-subtle)',
           strong: 'var(--border-strong)',
-          industrial: '#0A0A0A',
+          industrial: 'var(--border-strong)',
         },
         // Secondary/Status
         primary: {
-          50: '#fff7ed',
-          100: '#ffedd5',
-          200: '#fed7aa',
-          300: '#fdba74',
-          400: '#fb923c',
-          500: '#E67E22', // Brand Orange
-          600: '#D35400',
-          700: '#B03A2E',
-          800: '#7B241C',
-          900: '#641E16',
+          50: 'var(--primary-50)',
+          100: 'var(--primary-100)',
+          200: 'var(--primary-200)',
+          300: 'var(--primary-300)',
+          400: 'var(--primary-400)',
+          500: 'var(--primary-500)',
+          600: 'var(--primary-600)',
+          700: 'var(--primary-700)',
+          800: 'var(--primary-800)',
+          900: 'var(--primary-900)',
         },
         zinc: {
           50: '#fafafa',
