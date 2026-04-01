@@ -60,6 +60,8 @@ Constraints enforced via Firestore rules:
 * Ownership fields are immutable
 * Schema validation is enforced using allowlisted fields
 * Cross-user reads and writes are rejected
+* Application payloads and `latestAnalysis` structures are validated for type and size
+* User profile updates allow `defaultResume` with a bounded size limit
 
 ---
 

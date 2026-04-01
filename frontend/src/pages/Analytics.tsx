@@ -21,6 +21,7 @@ import {
 import StatCard from '../components/ui/StatCard'
 
 import { handleError } from '../lib/ErrorHandler'
+import { parseApplicationRecord } from '../lib/schemas'
 import { Card } from '../components/ui/Card'
 import { Button } from '../components/ui/Button'
 
@@ -94,13 +95,18 @@ function Analytics() {
         const apps: Application[] = []
         querySnapshot.forEach((doc) => {
           const data = doc.data()
+          const parsed = parseApplicationRecord(data)
+          if (!parsed.success) {
+            console.warn('Invalid application record', doc.id, parsed.error.flatten())
+            return
+          }
           apps.push({
             id: doc.id,
-            company: data.company || '',
-            role: data.role || '',
-            dateApplied: data.dateApplied || '',
-            status: data.status || 'Applied',
-            visaSponsorship: Boolean(data.visaSponsorship),
+            company: parsed.data.company,
+            role: parsed.data.role,
+            dateApplied: parsed.data.dateApplied,
+            status: parsed.data.status,
+            visaSponsorship: parsed.data.visaSponsorship,
           })
         })
         setApplications(apps)
@@ -278,6 +284,14 @@ function Analytics() {
     return (
       <div className="flex items-center justify-center min-h-64">
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-500"></div>
+      </div>
+    )
+  }
+
+  if (!user) {
+    return (
+      <div className="text-center py-20">
+        <p className="text-text-muted">Please sign in to view your analytics.</p>
       </div>
     )
   }

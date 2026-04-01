@@ -1,9 +1,6 @@
 /** @type {import('tailwindcss').Config} */
 export default {
-  content: [
-    "./index.html",
-    "./src/**/*.{js,ts,jsx,tsx}",
-  ],
+  content: ['./index.html', './src/**/*.{js,ts,jsx,tsx}'],
   darkMode: ['class', '[data-theme="dark"]'],
   theme: {
     extend: {
@@ -68,32 +65,32 @@ export default {
         error: '#DC2626',
       },
       borderRadius: {
-        'none': '0',
-        'xs': '1px',
-        'sm': '2px', // Industrial sharp
+        none: '0',
+        xs: '1px',
+        sm: '2px', // Industrial sharp
         DEFAULT: '0',
-        'md': '4px',
-        'lg': '8px',
-        'full': '9999px',
+        md: '4px',
+        lg: '8px',
+        full: '9999px',
       },
     },
     boxShadow: {
-      'sm': '1px 1px 0px rgba(0, 0, 0, 0.05)',
-      'md': '4px 4px 0px rgba(0, 0, 0, 0.08)', // Bauhaus offset
-      'lg': '8px 8px 0px rgba(0, 0, 0, 0.08)', // Bauhaus deep
-      'xl': '12px 12px 0px rgba(0, 0, 0, 0.08)',
-      'orange': '0 0 0 3px rgba(230, 126, 34, 0.1)',
-      'none': 'none',
+      sm: '1px 1px 0px rgba(0, 0, 0, 0.05)',
+      md: '4px 4px 0px rgba(0, 0, 0, 0.08)', // Bauhaus offset
+      lg: '8px 8px 0px rgba(0, 0, 0, 0.08)', // Bauhaus deep
+      xl: '12px 12px 0px rgba(0, 0, 0, 0.08)',
+      orange: '0 0 0 3px rgba(230, 126, 34, 0.1)',
+      none: 'none',
     },
     transitionTimingFunction: {
-      'standard': 'cubic-bezier(0.4, 0.0, 0.2, 1)',
-      'decelerate': 'cubic-bezier(0.0, 0.0, 0.2, 1)',
-      'accelerate': 'cubic-bezier(0.4, 0.0, 1, 1)',
+      standard: 'cubic-bezier(0.4, 0.0, 0.2, 1)',
+      decelerate: 'cubic-bezier(0.0, 0.0, 0.2, 1)',
+      accelerate: 'cubic-bezier(0.4, 0.0, 1, 1)',
     },
     transitionDuration: {
-      'fast': '150ms',
-      'base': '250ms',
-      'slow': '350ms',
+      fast: '150ms',
+      base: '250ms',
+      slow: '350ms',
     },
   },
   plugins: [],

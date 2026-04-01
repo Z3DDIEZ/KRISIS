@@ -10,7 +10,7 @@ import { httpsCallable } from 'firebase/functions'
 import { toast } from 'sonner'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { applicationSchema, type ApplicationValues } from '../lib/schemas'
+import { applicationSchema, parseApplicationRecord, type ApplicationValues } from '../lib/schemas'
 import { useTranslation } from 'react-i18next'
 import { useUIStore } from '../lib/store'
 import { motion, type Transition } from 'framer-motion'
@@ -175,16 +175,22 @@ function ApplicationDetail() {
 
       if (docSnap.exists()) {
         const data = docSnap.data()
+        const parsed = parseApplicationRecord(data)
+        if (!parsed.success) {
+          dispatchNotification('Application data is invalid.', 'error')
+          setIsLoading(false)
+          return
+        }
         const loadedData: ApplicationValues = {
-          company: data.company || '',
-          role: data.role || '',
-          status: data.status || 'Applied',
-          dateApplied: data.dateApplied || getTodayDate(),
-          notes: data.notes || '',
-          resumeUrl: data.resumeUrl || '',
-          visaSponsorship: Boolean(data.visaSponsorship),
-          requestAnalysis: false,
-          latestAnalysis: data.latestAnalysis,
+          company: parsed.data.company,
+          role: parsed.data.role,
+          status: parsed.data.status,
+          dateApplied: parsed.data.dateApplied || getTodayDate(),
+          notes: parsed.data.notes,
+          resumeUrl: parsed.data.resumeUrl,
+          visaSponsorship: parsed.data.visaSponsorship,
+          requestAnalysis: parsed.data.requestAnalysis,
+          latestAnalysis: parsed.data.latestAnalysis,
         }
         reset(loadedData)
       } else {
@@ -629,9 +635,9 @@ function ApplicationDetail() {
                   <p className="mt-6 text-xs text-center leading-relaxed text-text-muted bg-bg-subtle p-4 border border-border rounded-lg w-full">
                     Vector alignment analysis:
                     <span className="text-primary-600 font-semibold mt-2 block text-base">
-                      {formData.latestAnalysis.fitScore >= 80
+                      {(formData.latestAnalysis.fitScore ?? 0) >= 80
                         ? 'Critical match'
-                        : formData.latestAnalysis.fitScore >= 60
+                        : (formData.latestAnalysis.fitScore ?? 0) >= 60
                           ? 'High alignment'
                           : 'Marginal signal'}
                     </span>

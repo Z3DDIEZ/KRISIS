@@ -10,6 +10,7 @@ import StatCard from '../components/ui/StatCard'
 import PageHeader from '../components/ui/PageHeader'
 import { handleError } from '../lib/ErrorHandler'
 import UrgentActions from '../components/ui/UrgentActions'
+import { parseApplicationRecord } from '../lib/schemas'
 import { Card } from '../components/ui/Card'
 import { Badge } from '../components/ui/Badge'
 import { Button } from '../components/ui/Button'
@@ -82,7 +83,12 @@ function Dashboard() {
 
         querySnapshot.forEach((doc) => {
           const data = doc.data()
-          const app = { id: doc.id, ...data } as Application
+          const parsed = parseApplicationRecord(data)
+          if (!parsed.success) {
+            console.warn('Invalid application record', doc.id, parsed.error.flatten())
+            return
+          }
+          const app = { id: doc.id, ...parsed.data } as Application
           apps.push(app)
           totalApps++
 

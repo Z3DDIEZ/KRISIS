@@ -30,19 +30,70 @@ service cloud.firestore {
         || request.resource.data[field] == resource.data[field];
     }
 
+    function isValidLatestAnalysis(data) {
+      return data is map
+        && data.keys().hasOnly([
+          'fitScore',
+          'ghostingRisk',
+          'urgencyLevel',
+          'tacticalSignal',
+          'matchAnalysis',
+          'keyMatches',
+          'missingKeywords',
+          'suggestedImprovements',
+          'analyzedAt'
+        ])
+        && (!('fitScore' in data) || data.fitScore is number)
+        && (!('ghostingRisk' in data) || data.ghostingRisk is number)
+        && (!('urgencyLevel' in data) || data.urgencyLevel is number)
+        && (!('tacticalSignal' in data) || data.tacticalSignal is string)
+        && (!('matchAnalysis' in data) || data.matchAnalysis is string)
+        && (!('keyMatches' in data) || data.keyMatches is list)
+        && (!('missingKeywords' in data) || data.missingKeywords is list)
+        && (!('suggestedImprovements' in data) || data.suggestedImprovements is list)
+        && (!('analyzedAt' in data) || data.analyzedAt is string);
+    }
+
+    function isValidApplicationData(data) {
+      return data.company is string
+        && data.company.size() > 0
+        && data.company.size() <= 100
+        && data.role is string
+        && data.role.size() > 0
+        && data.role.size() <= 100
+        && data.status in [
+          'Applied', 'Phone Screen', 'Technical Interview',
+          'Final Round', 'Offer', 'Rejected'
+        ]
+        && data.dateApplied is string
+        && data.dateApplied.size() == 10
+        && (!('notes' in data) || (data.notes is string && data.notes.size() <= 1000))
+        && (!('resumeUrl' in data) || (data.resumeUrl is string && data.resumeUrl.size() <= 1000))
+        && (!('visaSponsorship' in data) || data.visaSponsorship is bool)
+        && (!('requestAnalysis' in data) || data.requestAnalysis is bool)
+        && (!('latestAnalysis' in data) || isValidLatestAnalysis(data.latestAnalysis))
+        && (!('userId' in data) || data.userId == request.auth.uid);
+    }
+
     // User profile documents
     match /users/{userId} {
       allow read: if isOwner(userId);
       allow create: if isOwner(userId)
         && onlyAllowedFields([
-          'email', 'displayName', 'photoURL', 'createdAt', 'settings'
+          'email', 'displayName', 'photoURL', 'createdAt', 'settings', 'defaultResume'
         ])
-        && request.resource.data.createdAt is timestamp;
+        && request.resource.data.createdAt is timestamp
+        && (!('defaultResume' in request.resource.data)
+            || (request.resource.data.defaultResume is string
+                && request.resource.data.defaultResume.size() <= 50000));
 
       allow update: if isOwner(userId)
         && request.resource.data.diff(resource.data).changedKeys()
-           .hasOnly(['settings'])
-        && immutable('createdAt');
+           .hasOnly(['settings', 'defaultResume', 'displayName', 'photoURL'])
+        && immutable('createdAt')
+        && (!('defaultResume' in request.resource.data)
+            || (request.resource.data.defaultResume is string
+                && request.resource.data.defaultResume.size() <= 50000));
 
       allow delete: if false; // Users cannot delete their own profile
     }
@@ -55,35 +106,30 @@ service cloud.firestore {
         && onlyAllowedFields([
           'company', 'role', 'status', 'dateApplied', 'notes',
           'resumeUrl', 'visaSponsorship', 'createdAt', 'updatedAt',
-          'requestAnalysis', 'userId'
+          'requestAnalysis', 'userId', 'latestAnalysis'
         ])
-        && request.resource.data.company is string
-        && request.resource.data.company.size() > 0
-        && request.resource.data.company.size() <= 100
-        && request.resource.data.role is string
-        && request.resource.data.role.size() > 0
-        && request.resource.data.role.size() <= 100
-        && request.resource.data.status in [
-          'Applied', 'Phone Screen', 'Technical Interview',
-          'Final Round', 'Offer', 'Rejected'
-        ]
-        && request.resource.data.dateApplied is string
-        && request.resource.data.dateApplied.size() == 10
-        && (!('visaSponsorship' in request.resource.data.keys())
-            || request.resource.data.visaSponsorship is bool)
+        && isValidApplicationData(request.resource.data)
         && request.resource.data.createdAt is timestamp
         && request.resource.data.updatedAt is timestamp;
 
       allow update: if isOwner(userId)
         && request.resource.data.diff(resource.data).changedKeys()
-           .hasOnly(['status', 'notes', 'resumeUrl', 'visaSponsorship', 'updatedAt', 'requestAnalysis'])
-        && (!('visaSponsorship' in request.resource.data.diff(resource.data).changedKeys())
-            || request.resource.data.visaSponsorship is bool)
+           .hasOnly([
+             'company',
+             'role',
+             'status',
+             'dateApplied',
+             'notes',
+             'resumeUrl',
+             'visaSponsorship',
+             'updatedAt',
+             'requestAnalysis',
+             'latestAnalysis'
+           ])
+        && isValidApplicationData(request.resource.data)
         && request.resource.data.updatedAt is timestamp
         && immutable('createdAt')
-        && immutable('company')
-        && immutable('role')
-        && immutable('dateApplied');
+        && immutable('userId');
 
       allow delete: if isOwner(userId);
     }

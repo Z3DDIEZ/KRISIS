@@ -6,6 +6,7 @@ import { exportApplicationsToCsv } from '../utils/exportHelpers'
 import { toast } from 'sonner'
 import DarkModeToggle from '../components/ui/DarkModeToggle'
 import Icon from '../components/ui/Icon'
+import { parseApplicationRecord } from '../lib/schemas'
 import { Card } from '../components/ui/Card'
 import { Button } from '../components/ui/Button'
 
@@ -45,15 +46,14 @@ function Settings() {
       const apps: Application[] = []
       querySnapshot.forEach((doc) => {
         const data = doc.data()
+        const parsed = parseApplicationRecord(data)
+        if (!parsed.success) {
+          console.warn('Invalid application record', doc.id, parsed.error.flatten())
+          return
+        }
         apps.push({
           id: doc.id,
-          company: data.company || '',
-          role: data.role || '',
-          dateApplied: data.dateApplied || '',
-          status: data.status || 'Applied',
-          visaSponsorship: Boolean(data.visaSponsorship),
-          notes: data.notes,
-          resumeUrl: data.resumeUrl,
+          ...parsed.data,
         })
       })
       setApplications(apps)

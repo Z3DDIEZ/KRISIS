@@ -15,6 +15,7 @@ import { formatDateForDisplay } from '../lib/dateUtils'
 import { toast } from 'sonner'
 import Icon from '../components/ui/Icon'
 import { useSearch } from '../hooks/use-search'
+import { parseApplicationRecord } from '../lib/schemas'
 import { Card } from '../components/ui/Card'
 import { Button } from '../components/ui/Button'
 import { Badge } from '../components/ui/Badge'
@@ -69,15 +70,14 @@ function Applications() {
         const apps: Application[] = []
         querySnapshot.forEach((doc) => {
           const data = doc.data()
+          const parsed = parseApplicationRecord(data)
+          if (!parsed.success) {
+            console.warn('Invalid application record', doc.id, parsed.error.flatten())
+            return
+          }
           apps.push({
             id: doc.id,
-            company: data.company || '',
-            role: data.role || '',
-            dateApplied: data.dateApplied || '',
-            status: data.status || 'Applied',
-            visaSponsorship: Boolean(data.visaSponsorship),
-            notes: data.notes,
-            resumeUrl: data.resumeUrl,
+            ...parsed.data,
             createdAt: data.createdAt,
             updatedAt: data.updatedAt,
           })
