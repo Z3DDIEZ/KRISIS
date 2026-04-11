@@ -43,15 +43,23 @@ service cloud.firestore {
           'suggestedImprovements',
           'analyzedAt'
         ])
-        && (!('fitScore' in data) || data.fitScore is number)
-        && (!('ghostingRisk' in data) || data.ghostingRisk is number)
-        && (!('urgencyLevel' in data) || data.urgencyLevel is number)
-        && (!('tacticalSignal' in data) || data.tacticalSignal is string)
-        && (!('matchAnalysis' in data) || data.matchAnalysis is string)
-        && (!('keyMatches' in data) || data.keyMatches is list)
-        && (!('missingKeywords' in data) || data.missingKeywords is list)
-        && (!('suggestedImprovements' in data) || data.suggestedImprovements is list)
-        && (!('analyzedAt' in data) || data.analyzedAt is string);
+        && (!('fitScore' in data) || (data.fitScore is number && data.fitScore >= 0 && data.fitScore <= 100))
+        && (!('ghostingRisk' in data) || (data.ghostingRisk is number && data.ghostingRisk >= 0 && data.ghostingRisk <= 100))
+        && (!('urgencyLevel' in data) || (data.urgencyLevel is number && data.urgencyLevel >= 0 && data.urgencyLevel <= 100))
+        && (!('tacticalSignal' in data) || (data.tacticalSignal is string && data.tacticalSignal.size() <= 200))
+        && (!('matchAnalysis' in data) || (data.matchAnalysis is string && data.matchAnalysis.size() <= 5000))
+        && (!('keyMatches' in data) || (data.keyMatches is list && data.keyMatches.size() <= 50))
+        && (!('missingKeywords' in data) || (data.missingKeywords is list && data.missingKeywords.size() <= 50))
+        && (!('suggestedImprovements' in data) || (data.suggestedImprovements is list && data.suggestedImprovements.size() <= 50))
+        && (!('analyzedAt' in data) || (data.analyzedAt is string && data.analyzedAt.size() <= 40));
+    }
+
+    function isValidUserSettings(data) {
+      return data is map
+        && data.keys().hasOnly([
+          'emailNotifications'
+        ])
+        && (!('emailNotifications' in data) || data.emailNotifications is bool);
     }
 
     function isValidApplicationData(data) {
@@ -82,6 +90,17 @@ service cloud.firestore {
         && onlyAllowedFields([
           'email', 'displayName', 'photoURL', 'createdAt', 'settings', 'defaultResume'
         ])
+        && request.resource.data.email is string
+        && request.resource.data.email.size() > 3
+        && request.resource.data.email.size() <= 320
+        && (!('displayName' in request.resource.data)
+            || (request.resource.data.displayName is string
+                && request.resource.data.displayName.size() <= 120))
+        && (!('photoURL' in request.resource.data)
+            || (request.resource.data.photoURL is string
+                && request.resource.data.photoURL.size() <= 1000))
+        && (!('settings' in request.resource.data)
+            || isValidUserSettings(request.resource.data.settings))
         && request.resource.data.createdAt is timestamp
         && (!('defaultResume' in request.resource.data)
             || (request.resource.data.defaultResume is string
@@ -91,6 +110,14 @@ service cloud.firestore {
         && request.resource.data.diff(resource.data).changedKeys()
            .hasOnly(['settings', 'defaultResume', 'displayName', 'photoURL'])
         && immutable('createdAt')
+        && (!('displayName' in request.resource.data)
+            || (request.resource.data.displayName is string
+                && request.resource.data.displayName.size() <= 120))
+        && (!('photoURL' in request.resource.data)
+            || (request.resource.data.photoURL is string
+                && request.resource.data.photoURL.size() <= 1000))
+        && (!('settings' in request.resource.data)
+            || isValidUserSettings(request.resource.data.settings))
         && (!('defaultResume' in request.resource.data)
             || (request.resource.data.defaultResume is string
                 && request.resource.data.defaultResume.size() <= 50000));

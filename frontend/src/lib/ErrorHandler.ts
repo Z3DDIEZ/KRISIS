@@ -17,6 +17,12 @@ export const ERROR_MESSAGES: Record<string | number, string> = {
     'network-error': 'Connection Error: Unable to reach the server.'
 };
 
+/**
+ * handleError - Maps unknown errors to user-friendly toasts.
+ * @param error - Unknown error object from async or runtime failures.
+ * @param context - Optional area label to aid debugging.
+ * @returns The resolved status key and message shown to the user.
+ */
 export const handleError = (error: unknown, context?: string) => {
     console.error(`[KRISIS ${context || 'Core'}] Error:`, error);
 
@@ -29,13 +35,20 @@ export const handleError = (error: unknown, context?: string) => {
     }
 
     toast.error(message, {
-        description: err?.message || 'Check logs for trace details.',
+        description: (import.meta.env.DEV || import.meta.env.VITE_SHOW_ERROR_DETAILS === 'true')
+          ? (err?.message || 'Check logs for trace details.')
+          : undefined,
         duration: 5000
     });
 
     return { status, message };
 };
 
+/**
+ * getErrorMessage - Retrieves a friendly message for a status code or key.
+ * @param status - Status code or error key.
+ * @returns A user-facing message string.
+ */
 export const getErrorMessage = (status: number | string) => {
     return ERROR_MESSAGES[status] || ERROR_MESSAGES['default'];
 };

@@ -69,6 +69,7 @@ function Analytics() {
   const [user, loading] = useAuthState(auth)
   const [applications, setApplications] = useState<Application[]>([])
   const [isLoading, setIsLoading] = useState(true)
+  const [excludedInvalidDates, setExcludedInvalidDates] = useState(0)
   const [selectedTimeframe, setSelectedTimeframe] = useState<
     'all' | '6months' | '3months' | '1month'
   >('all')
@@ -92,12 +93,18 @@ function Analytics() {
           new Promise((resolve) => setTimeout(resolve, 400)), // Mimic report generation baseline
         ])
 
+        let invalidDateCount = 0
         const apps: Application[] = []
         querySnapshot.forEach((doc) => {
           const data = doc.data()
           const parsed = parseApplicationRecord(data)
           if (!parsed.success) {
             console.warn('Invalid application record', doc.id, parsed.error.flatten())
+            return
+          }
+          const appliedAt = new Date(parsed.data.dateApplied)
+          if (Number.isNaN(appliedAt.getTime())) {
+            invalidDateCount += 1
             return
           }
           apps.push({
@@ -110,6 +117,7 @@ function Analytics() {
           })
         })
         setApplications(apps)
+        setExcludedInvalidDates(invalidDateCount)
       } catch (error) {
         handleError(error, 'Analytics Load')
       } finally {
@@ -302,6 +310,15 @@ function Analytics() {
         <header>
           <h1 className="heading-xl text-text-primary">Analytics</h1>
           <p className="text-text-muted text-lg">Track your application performance and stats.</p>
+          {excludedInvalidDates > 0 && (
+            <div className="mt-4 flex items-start gap-2 rounded-lg border border-border bg-bg-subtle px-4 py-3 text-sm text-text-muted max-w-xl">
+              <Icon name="info" size={18} className="text-text-muted shrink-0 mt-0.5" />
+              <span>
+                {excludedInvalidDates} record{excludedInvalidDates === 1 ? '' : 's'} excluded due
+                to invalid dates.
+              </span>
+            </div>
+          )}
         </header>
 
         {/* Modern Timeframe Switcher & Export */}
